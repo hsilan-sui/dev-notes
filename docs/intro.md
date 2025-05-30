@@ -2,8 +2,9 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# 開場
 
+在 AI 工具百家爭鳴的年代
 Let's discover **Docusaurus in less than 5 minutes**.
 
 ## Getting Started

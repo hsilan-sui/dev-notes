@@ -22,7 +22,7 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   //url: 'https://your-docusaurus-site.example.com',  // 網站的網域（部署後的網址）
-  baseUrl: "/", //子路徑（如 GitHub Pages 通常是 '/專案名/'）
+  baseUrl: "/dev-notes/", //子路徑（如 GitHub Pages 通常是 '/專案名/'）
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -33,7 +33,7 @@ const config = {
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-
+  trailingSlash: false,
   /**
    * 第二區：功能與外掛設定
    */
@@ -168,6 +168,7 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
+        showLineNumbers: true, //開啟行號
       },
     }),
 };

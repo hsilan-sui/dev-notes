@@ -1,0 +1,8 @@
+{
+  "label": "Tanstack Query(React Query)",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "透過練習作品專案來學習 React Query 的使用，使用後發現真是一個很方便的工具！官網：https://tanstack.com/"
+  }
+}
