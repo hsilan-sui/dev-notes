@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunksui_dev_notes=self.webpackChunksui_dev_notes||[]).push([[7303],{7303:(e,s,u)=>{u.d(s,{createInfoServices:()=>c.v});var c=u(8525);u(3579)}}]);
