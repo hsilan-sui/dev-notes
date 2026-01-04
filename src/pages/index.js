@@ -240,7 +240,7 @@ export default function Home() {
       <p>
         把查詢、整理、更新這些重複工作，變成可重用的資料流程。
       </p>
-      <Link to="/docs">查看相關筆記 →</Link>
+      <Link to="/docs/intro">查看相關筆記 →</Link>
     </div>
 
     <div style={{ border: "1px solid #e5e7eb", padding: "1.5rem" }}>
@@ -248,7 +248,7 @@ export default function Home() {
       <p>
         面對多狀態、多角色的需求，設計不會失控的後端結構。
       </p>
-      <Link to="/docs">查看相關筆記 →</Link>
+      <Link to="/docs/intro">查看相關筆記 →</Link>
     </div>
 
     <div style={{ border: "1px solid #e5e7eb", padding: "1.5rem" }}>
@@ -256,7 +256,7 @@ export default function Home() {
       <p>
         把後端能力包成一般人也能操作的互動服務。
       </p>
-      <Link to="/docs">查看相關筆記 →</Link>
+      <Link to="/docs/intro">查看相關筆記 →</Link>
     </div>
   </div>
 </section>

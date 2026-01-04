@@ -107,10 +107,9 @@ const config = {
         items: [
           //導覽列按鈕
           {
-            type: "docSidebar",
-            sidebarId: "tutorialSidebar",
-            position: "left",
-            label: "程式筆記",
+            to: '/docs/intro',
+            label: '程式筆記',
+            position: 'left',
           },
           { to: "/blog", label: "部落格", position: "left" },
           {
