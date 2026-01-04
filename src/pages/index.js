@@ -256,7 +256,7 @@ export default function Home() {
       <p>
         把後端能力包成一般人也能操作的互動服務。
       </p>
-      <Link to="/docs/intro">查看相關筆記 →</Link>
+      <Link to="/docs">查看相關筆記 →</Link>
     </div>
   </div>
 </section>
