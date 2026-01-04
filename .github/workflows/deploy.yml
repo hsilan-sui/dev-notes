@@ -35,6 +35,6 @@ jobs:
 
       - name: Deploy to gh-pages
         env:
-          GIT_USER: hsilan-sui
+          GIT_USER: github-actions[bot]
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run deploy
