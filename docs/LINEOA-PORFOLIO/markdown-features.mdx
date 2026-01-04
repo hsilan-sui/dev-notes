@@ -34,10 +34,10 @@ Let's see how to [Create a page](/create-a-page).
 ```
 
 ```md
-Let's see how to
+Let's see how to [Create a page](./create-a-page.md).
 ```
 
-**Result:** Let's see how to
+**Result:** Let's see how to [Create a page](./create-a-page.md).
 
 ## Images
 
@@ -107,7 +107,7 @@ This action is dangerous
 
 ## MDX and React Components
 
-can make your documentation more **interactive** and allows using any **React components inside Markdown**:
+[MDX](https://mdxjs.com/) can make your documentation more **interactive** and allows using any **React components inside Markdown**:
 
 ```jsx
 export const Highlight = ({children, color}) => (
@@ -131,19 +131,18 @@ This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
 This is <Highlight color="#1877F2">Facebook blue</Highlight> !
 ```
 
-export const Highlight = ({ children, color }) => (
+export const Highlight = ({children, color}) => (
   <span
     style={{
       backgroundColor: color,
-      borderRadius: "20px",
-      color: "#fff",
-      padding: "10px",
-      cursor: "pointer",
+      borderRadius: '20px',
+      color: '#fff',
+      padding: '10px',
+      cursor: 'pointer',
     }}
     onClick={() => {
       alert(`You clicked the color ${color} with label ${children}`);
-    }}
-  >
+    }}>
     {children}
   </span>
 );
@@ -151,80 +150,3 @@ export const Highlight = ({ children, color }) => (
 This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
 
 This is <Highlight color="#1877F2">Facebook blue</Highlight> !
-
-<Highlight color="#f97316">步驟一</Highlight>
-<Highlight color="#fda4af">可愛標籤</Highlight>
-<Highlight color="#60a5fa">技術術語</Highlight>
-<Highlight color="#c084fc">子分類</Highlight>
-
-### 1️⃣ 步驟一：初始化專案
-
-說明內容...
-
-### 2️⃣ 步驟二：安裝依賴
-
-說明內容...
-
-### 3️⃣ 步驟三：設定 Git 與版本控制
-
-說明內容...
-
-### 4️⃣ 步驟四：建立專案結構
-
-說明內容...
-
-### 5️⃣ 步驟五：安裝 Tailwind CSS
-
-說明內容...
-
-### 6️⃣ 步驟六：建立首頁頁面
-
-說明內容...
-
-### 7️⃣ 步驟七：整合路由或導覽
-
-說明內容...
-
-### 8️⃣ 步驟八：測試開發模式
-
-說明內容...
-
-### 9️⃣ 步驟九：部署到 Vercel / GitHub Pages
-
-說明內容...
-
-### ① 初始化 npm 專案
-
-說明內容...
-
-### ② 安裝 React / Next.js
-
-說明內容...
-
-### ③ 加入 Tailwind CSS
-
-說明內容...
-
-### ④ 製作首頁元件
-
-說明內容...
-
-### ⑤ 設計 UI 框架
-
-說明內容...
-
-### ⑥ 加入資料請求邏輯
-
-說明內容...
-
-### ⑦ 處理錯誤與 loading 狀態
-
-說明內容...
-
-### ⑧ 優化頁面排版與 RWD
-
-說明內容...
-
-### ⑨ 上線並分享給朋友 🎉
-
-說明內容...

@@ -4,15 +4,35 @@
  */
 
 .heroBanner {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
   padding: 4rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+    /* background: radial-gradient(
+    circle at 70% 50%,
+    #1f2933 0%,
+    #0b1220 60%
+  ); */
+
+
 }
 
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 2rem;
+    
+  }
+  .skillTag {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .heroRing {
+    animation: none !important;
   }
 }
 
@@ -20,4 +40,88 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.skillFloat {
+  position: absolute;
+  inset: 0;
+  z-index: 3;            /* 在圓環與照片之上 */
+  pointer-events: none; /* 不影響滑鼠操作 */
+}
+
+.skillTag {
+  position: absolute;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.25);
+
+  white-space: nowrap;
+
+  animation: float 4.5s ease-in-out infinite; /* ⬅️ 稍微快一點 */
+}
+
+
+/* .skillTag {
+  position: absolute;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.25);
+
+  white-space: nowrap;
+
+  animation: float 6s ease-in-out infinite; /* ⬅️ 慢一點 */
+/* } */ 
+
+
+
+.skillTag:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.skillTag:nth-child(3) {
+  animation-delay: 2s;
+}
+
+.skillTag:nth-child(4) {
+  animation-delay: 3s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(-22px) scale(1.06); /* ⬅️ 更有感 */
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.85;
+  }
+}
+
+
+
+
+@keyframes slowRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.heroRing {
+  animation: slowRotate 50s linear infinite;
+  
 }

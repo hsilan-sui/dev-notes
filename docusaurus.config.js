@@ -99,10 +99,10 @@ const config = {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: "Sui筆記部落", //導覽列左上角標題
+        title: "Sui_技術共學", //導覽列左上角標題
         logo: {
-          alt: "My Site Logo",
-          src: "img/logo.svg", // Logo 圖檔
+          alt: "Sui_技術筆記",
+          src: "img/logo.png", // Logo 圖檔
         },
         items: [
           //導覽列按鈕
@@ -110,11 +110,11 @@ const config = {
             type: "docSidebar",
             sidebarId: "tutorialSidebar",
             position: "left",
-            label: "Tutorial",
+            label: "程式筆記",
           },
-          { to: "/blog", label: "Blog", position: "left" },
+          { to: "/blog", label: "部落格", position: "left" },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/hsilan-sui/hsilan-sui",
             label: "GitHub",
             position: "right",
           },
