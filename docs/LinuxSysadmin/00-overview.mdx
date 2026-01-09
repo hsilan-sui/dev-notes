@@ -1,0 +1,249 @@
+---
+title: "總覽"
+sidebar_position: 0
+---
+
+## 我的學習方式
+我不想是完全依照章節線性進行死死的學一門課，因為我過往學習比較是從動手做，遇到坑，想方設法解決跟找答案或透過模仿相似的模式來協助理解，然後事後回過頭整理理解使用Mermaid來協助整理架構，雖然這樣速度慢，但我很享受這種學習方式，很紮實。
+
+我上課前，會和GPT同事討論，這門課的定位與內容含金量以及課程整體的架構圖，並討論學習方式，那這次的定位是：
+
+- 「如何用 DevOps 工程師視角，重新組織這堂 Linux Sysadmin 課程」(GPT同事幫我定位的，學習這門課的方法)
+
+## 課程順序 × 提綱契領
+```mermaid
+flowchart TD
+    A[Linux 系統核心能力] --> B[操作基礎層]
+    A --> C[系統管理層]
+    A --> D[自動化層]
+    A --> E[容器與部署層]
+    A --> F[網路與安全層]
+
+    %% 基礎層
+    B --> B1[終端操作與指令理解]
+    B --> B2[檔案系統與結構]
+    B --> B3[權限與使用者]
+    B --> B4[程序與資源觀念]
+
+    %% 系統管理層
+    C --> C1[服務管理]
+    C --> C2[排程與背景任務]
+    C --> C3[磁碟與掛載]
+    C --> C4[系統啟動與常駐服務]
+
+    %% 自動化層
+    D --> D1[指令流程化]
+    D --> D2[條件與迴圈控制]
+    D --> D3[系統任務腳本化]
+    D --> D4[跨主機自動化觀念]
+
+    %% 容器層
+    E --> E1[容器與系統關係]
+    E --> E2[程序隔離與資源限制]
+    E --> E3[資料保存與權限]
+    E --> E4[部署流程理解]
+
+    %% 網路與安全層
+    F --> F1[主機連線與通訊]
+    F --> F2[連線監控與除錯]
+    F --> F3[帳號與權限風險]
+    F --> F4[基本系統防護]
+
+    %% 樣式定義
+    classDef base fill:#E8F5E9,stroke:#2E7D32,stroke-width:1px
+    classDef admin fill:#E3F2FD,stroke:#1565C0,stroke-width:1px
+    classDef auto fill:#FFF8E1,stroke:#F9A825,stroke-width:1px
+    classDef container fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1px
+    classDef security fill:#FBE9E7,stroke:#D84315,stroke-width:1px
+
+    class B,B1,B2,B3,B4 base
+    class C,C1,C2,C3,C4 admin
+    class D,D1,D2,D3,D4 auto
+    class E,E1,E2,E3,E4 container
+    class F,F1,F2,F3,F4 security
+
+```
+
+- 分段看：
+```mermaid
+flowchart TD
+    A[Linux 在 DevOps 中的角色]
+
+    subgraph L1[系統管理層]
+        B1[服務管理與啟停]
+        B2[排程與背景任務]
+        B3[磁碟與系統資源]
+    end
+
+    subgraph L2[自動化層]
+        C1[指令流程化]
+        C2[條件與迴圈控制]
+        C3[系統任務腳本化]
+        C4[跨主機自動化觀念]
+    end
+
+    subgraph L3[容器與部署層]
+        D1[容器與系統關係]
+        D2[程序與資源隔離]
+        D3[資料保存與權限]
+        D4[部署流程理解]
+    end
+
+    subgraph L4[網路與安全層]
+        E1[主機連線與通訊]
+        E2[連線狀態與除錯]
+        E3[帳號與權限風險]
+        E4[基本系統防護]
+    end
+
+    A --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+
+    %% 樣式
+    classDef admin fill:#E3F2FD,stroke:#1565C0
+    classDef auto fill:#FFF8E1,stroke:#F9A825
+    classDef container fill:#F3E5F5,stroke:#6A1B9A
+    classDef security fill:#FBE9E7,stroke:#D84315
+
+    class B1,B2,B3 admin
+    class C1,C2,C3,C4 auto
+    class D1,D2,D3,D4 container
+    class E1,E2,E3,E4 security
+
+```
+
+其實生活中我在實務專案中已經頻繁使用 Linux 指令與環境，但欠缺的是——
+如何用「系統管理與自動化」的角度，重新理解這些操作。
+
+因此，我將課程內容重新整理為幾個能力層級，並調整學習順序：
+- 先從「系統如何被管理」開始
+- 再進入「如何把維運工作自動化」
+- 接著理解容器與部署背後的 Linux 行為
+- 最後補上網路與安全的整體視角
+
+--- 
+## 課程章節分配
+### 🟡 Week 1｜Linux 系統管理的骨架（先建立視角）
+
+> 主線章節: Section 17｜System Administration
+- cron / anacron
+- systemd / systemctl
+- mount / df
+
+- 這週要做到的事（很重要）
+:::tip My tip
+
+Linux 服務怎麼啟動、停止、重啟
+
+任務怎麼排程
+
+:::
+
+
+- 實際做一件小事：
+:::tip My tip
+用 cron 跑一個你現有的專案任務
+
+或用 systemctl 管一個服務
+:::
+
+
+📌 這週的定位
+<Highlight color="#1877F2">「開始用 Linux 管系統，不只是下指令。」</Highlight> !
+
+---
+
+### 🟡 Week 2–3｜Bash 自動化（DevOps 核心能力）
+
+> 主線章節: Section 20｜Bash Shell Scripting（選重點）
+- variables
+- if / elif / else
+- for / while
+- functions
+- 這週要做到的事（很重要）
+:::tip My tip
+
+寫一支完整 script
+
+一定要有的產出
+
+:::
+
+
+👉 至少一支「真的能用」的 Bash script
+
+範例（選一個就好）：
+- 檢查服務是否存活
+- 跑資料更新流程
+- 部署前檢查環境
+
+📌 這兩週的定位
+<Highlight color="#1877F2">「我能用 Bash 把重複的維運工作自動化。」</Highlight> !
+
+---
+
+### 🟡 Week 4｜Ansible（理解定位，不鑽太深）
+
+> 主線章節: Section 30｜Automating with Ansible
+
+重點不是寫 Playbook
+
+而是回答這個問題：
+
+:::tip My tip
+
+「什麼情境下，我會選 Ansible，而不是 Bash？」
+
+:::
+
+
+📌 這週的定位
+<Highlight color="#1877F2">「我知道自動化工具的分工，而不是只會硬寫 script。」</Highlight> !
+
+---
+
+### 🔵 Week 5｜Linux × Docker（把實作過的講完整）
+
+> 主線章節: Section 23｜Podman（觀念）
+> 主線章節: Section 24｜Docker Project
+
+要整理的是
+- Linux process / permission / volume
+- 為什麼 container 會需要這些
+
+📌 這週的定位
+<Highlight color="#1877F2">「我理解 Docker 背後的 Linux 系統行為。」</Highlight> !
+
+---
+
+### 🟣 Week 6｜網路與連線（Server 必備）
+
+> 主線章節: Section 13｜Networking（選重點）
+- ip / ssh
+- ports / ss / netstat
+- scp / rsync
+
+
+📌 這週的定位
+<Highlight color="#1877F2">「我能在 Linux Server 上查連線、解問題。」</Highlight> !
+
+---
+
+### 🟣 Week 7｜安全觀念（拉高度，不鑽洞）
+
+> 主線章節:Project #2｜Security Hardening
+- sshd / sudo / permissions
+
+
+📌 這週的定位
+<Highlight color="#1877F2">「我知道 Linux Server 的基本安全風險與防護方向。」</Highlight> !
+
+---
+
+### Week 8–10｜尾聲
+
+📌 這兩週的定位實作：
+<Highlight color="#1877F2">「在專案中使用 Linux 進行系統管理與自動化，包含 Bash 腳本、排程、Container 與基本網路設定。」</Highlight> !
+
