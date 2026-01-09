@@ -10,6 +10,172 @@ sidebar_position: 0
 
 - 「如何用 DevOps 工程師視角，重新組織這堂 Linux Sysadmin 課程」(GPT同事幫我定位的，學習這門課的方法)
 
+---
+
+## 搭配Raspberry Pi 4 + Raspberry Pi OS Lite
+這是我在學習這門課時，搭配操作Raspberry Pi 4作為Linux Server，Pi 4是去年我在健行科大職訓局受訓的AIOT工程師實戰班得到的戰利品，剛好又再一次用上了！
+
+讓我複習了起來：
+:::tip My tip
+
+✅ 1. 樹莓派作業系統選擇: Raspberry Pi OS Lite(Headless Linux Server)
+
+✅ 2. 開機後，設定username＝登入這台機器的使用者
+    - username 和 password(建立第一個 Linux user)
+        - **是我 SSH 登入用的**
+        - **是我 sudo 的身份**
+        ≈ 我在這台 server 的「主要操作者」
+
+✅ 3. server name(hostname) | 這台 linux server 機器Pi的名字
+
+✅ 4. 網路連線設定
+```bash
+sudo raspi-config
+```
+會進入到 Raspberry Pi 的系統設定工具（TUI）
+
+✅ 5. 選擇網域國家
+- 系統層在做的事是：
+- 設定無線法規區域
+- 決定允許的 Wi-Fi 頻道
+- 沒設 → 無線可能直接不起來
+
+✅ 6. Wireless 設定=> 設定：SSID和Password
+- 實際上是在做：
+    - 寫入 wpa_supplicant 設定
+    - systemd 開機時會讀這份設定
+    - 自動連線
+
+✅ 7. 重開機讓設定生效(我只是想驗證這台 server 每次開機都能自動連網)
+```bash
+sudo reboot
+```
+:::
+
+> 我在 Raspberry Pi 4 上安裝 Raspberry Pi OS Lite，
+> 以 Headless Server 為前提建立 Linux 使用者與 hostname，
+> 透過 raspi-config 設定 WLAN 國家碼與 Wi-Fi 連線，
+> 驗證 systemd 與網路服務在重開機後能自動恢復連線，
+> 作為後續系統服務與自動化實驗的基礎環境。
+
+```
+硬體
+↓
+作業系統
+↓
+使用者
+↓
+網路
+↓
+可重開機復原
+```
+
+### 系統更新『流程』
+其實我一直搞不懂以下兩個指令，順便好好趁機搞清楚：
+
+<Highlight color="#1877F2">在 Linux 世界裡，系統更新不是一個動作，而是一個流程。先知道「現在最新是什麼」，再決定「要不要更新」</Highlight>
+
+> 讓這台 Linux Server 的套件狀態，與「官方倉庫的已知狀態」同步。
+
+為了：
+- 安全性
+- 可預期性
+- 降低除錯成本
+
+指令：
+```bash
+sudo apt update
+```
+
+:::tip My tip
+系統層實際在做的事：
+- 連線到套件倉庫（repository）
+- 下載「套件清單（index）」
+- 不會安裝任何東西
+
+:::
+
+<Highlight>apt update = 更新「目錄」，不是更新「軟體」</Highlight>
+
+--- 
+
+指令：
+```bash
+sudo apt upgrade
+更常用加 -y 
+sudo apt upgrade -y 
+# -y = automatically answer yes
+```
+
+在 Server / CI / 自動化裡：
+- 沒人可以在那邊按 y
+- 所以要自動化(寫 script 一定會用的習慣)
+
+:::tip My tip
+
+系統層實際在做的事：
+比對：
+- 目前安裝的套件版本
+- 倉庫裡最新的版本
+    - 有新版 → 升級
+    - 沒新版 → 不動
+
+:::
+
+<Highlight>apt upgrade = 根據剛剛的目錄，真的更新套件</Highlight>
+
+> 統整一下 系統更新在「整個 Server 生命週期」的位置
+
+```
+開機
+↓
+網路起來
+↓
+SSH 登入
+↓
+系統更新   ← 你現在在這裡
+↓
+安裝服務
+↓
+跑應用程式
+
+```
+
+### 繼續設定 SSH(安全的遠端登入協定) 
+> SSH = DevOps 工程師跟 Server 對話的主要方式 
+> 目的：我想要讓我的Linux server可以被遠端(筆電/AWS EC2)都可以連進來
+
+步驟：
+:::tip My tip
+
+✅ 1.確認 SSH 有沒有啟用
+```bash
+sudo systemctl status ssh
+```
+
+✅ 2.啟用 SSH（如果沒開）
+```bash
+sudo systemctl enable ssh # enable：開機自動啟動
+sudo systemctl start ssh # 現在立刻啟動
+
+```
+
+✅ 3.確認 Pi 的 IP(這台 Linux Server 在「網路世界」中的地址)
+```bash
+hostname -I
+```
+簡單來說，hostname是人看的懂的，ip是網路實際用來找機器的地址
+
+✅ 4.從另一台裝置 SSH 進來
+讓遠端client連進我的linux server
+```bash
+# 「用誰 @ 在哪一台機器」
+ssh xx@linux server_ipaddr
+```
+:::
+
+--- 
+
 ## 課程順序 × 提綱契領
 ```mermaid
 flowchart TD
