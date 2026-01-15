@@ -3,7 +3,7 @@ title: "總覽"
 sidebar_position: 0
 ---
 
-## 我的學習方式
+## 🟧 我的學習方式
 我不想是完全依照章節線性進行死死的學一門課，因為我過往學習比較是從動手做，遇到坑，想方設法解決跟找答案或透過模仿相似的模式來協助理解，然後事後回過頭整理理解使用Mermaid來協助整理架構，雖然這樣速度慢，但我很享受這種學習方式，很紮實。
 
 我上課前，會和GPT同事討論，這門課的定位與內容含金量以及課程整體的架構圖，並討論學習方式，那這次的定位是：
@@ -12,7 +12,7 @@ sidebar_position: 0
 
 ---
 
-## 搭配Raspberry Pi 4 + Raspberry Pi OS Lite
+## 🟦 搭配Raspberry Pi 4 + Raspberry Pi OS Lite
 這是我在學習這門課時，搭配操作Raspberry Pi 4作為Linux Server，Pi 4是去年我在健行科大職訓局受訓的AIOT工程師實戰班得到的戰利品，剛好又再一次用上了！
 
 讓我複習了起來：
@@ -70,7 +70,7 @@ sudo reboot
 可重開機復原
 ```
 
-### 系統更新『流程』
+### 0️⃣ 系統更新『流程』
 其實我一直搞不懂以下兩個指令，順便好好趁機搞清楚：
 
 <Highlight color="#1877F2">在 Linux 世界裡，系統更新不是一個動作，而是一個流程。先知道「現在最新是什麼」，再決定「要不要更新」</Highlight>
@@ -141,7 +141,7 @@ SSH 登入
 
 ```
 
-### 繼續設定 SSH(安全的遠端登入協定) 
+### 1️⃣ 繼續設定 SSH(安全的遠端登入協定) 
 > SSH = DevOps 工程師跟 Server 對話的主要方式 
 > 目的：我想要讓我的Linux server可以被遠端(筆電/AWS EC2)都可以連進來
 
@@ -176,7 +176,7 @@ ssh xx@linux server_ipaddr
 
 --- 
 
-## 課程順序 × 提綱契領
+## 🟦 課程順序 × 提綱契領
 ```mermaid
 flowchart TD
     A[Linux 系統核心能力] --> B[操作基礎層]
@@ -290,8 +290,8 @@ flowchart TD
 - 最後補上網路與安全的整體視角
 
 --- 
-## 課程章節分配
-### 🟡 Week 1｜Linux 系統管理的骨架（先建立視角）
+## 🟥 課程章節分配
+### 0️⃣ Week 1｜Linux 系統管理的骨架（先建立視角）
 
 > 主線章節: Section 17｜System Administration
 - cron / anacron
@@ -321,7 +321,7 @@ Linux 服務怎麼啟動、停止、重啟
 
 ---
 
-### 🟡 Week 2–3｜Bash 自動化（DevOps 核心能力）
+### 1️⃣ Week 2–3｜Bash 自動化（DevOps 核心能力）
 
 > 主線章節: Section 20｜Bash Shell Scripting（選重點）
 - variables
@@ -350,7 +350,7 @@ Linux 服務怎麼啟動、停止、重啟
 
 ---
 
-### 🟡 Week 4｜Ansible（理解定位，不鑽太深）
+### 2️⃣ Week 4｜Ansible（理解定位，不鑽太深）
 
 > 主線章節: Section 30｜Automating with Ansible
 
@@ -370,7 +370,7 @@ Linux 服務怎麼啟動、停止、重啟
 
 ---
 
-### 🔵 Week 5｜Linux × Docker（把實作過的講完整）
+### 3️⃣ Week 5｜Linux × Docker（把實作過的講完整）
 
 > 主線章節: Section 23｜Podman（觀念）
 > 主線章節: Section 24｜Docker Project
@@ -384,7 +384,7 @@ Linux 服務怎麼啟動、停止、重啟
 
 ---
 
-### 🟣 Week 6｜網路與連線（Server 必備）
+### 4️⃣ Week 6｜網路與連線（Server 必備）
 
 > 主線章節: Section 13｜Networking（選重點）
 - ip / ssh
@@ -397,7 +397,7 @@ Linux 服務怎麼啟動、停止、重啟
 
 ---
 
-### 🟣 Week 7｜安全觀念（拉高度，不鑽洞）
+### 5️⃣ Week 7｜安全觀念（拉高度，不鑽洞）
 
 > 主線章節:Project #2｜Security Hardening
 - sshd / sudo / permissions
@@ -408,8 +408,45 @@ Linux 服務怎麼啟動、停止、重啟
 
 ---
 
-### Week 8–10｜尾聲
+### 6️⃣ Week 8–10｜尾聲
 
 📌 這兩週的定位實作：
 <Highlight color="#1877F2">「在專案中使用 Linux 進行系統管理與自動化，包含 Bash 腳本、排程、Container 與基本網路設定。」</Highlight> !
 
+:::note 筆記 
+
+Some **content** with _Markdown_ `syntax`. Check [this `api`](#).
+
+:::
+
+:::tip 重點摘要
+
+Some **content** with _Markdown_ `syntax`. Check [this `api`](#).
+
+:::
+
+:::info 資訊
+
+Some **content** with _Markdown_ `syntax`. Check [this `api`](#).
+
+:::
+
+:::warning 警告 ⚠️⚠️⚠️⚠️⚠️
+
+Some **content** with _Markdown_ `syntax`. Check [this `api`](#).
+
+:::
+
+:::danger 危險 ❌❌❌❌❌
+
+Some **content** with _Markdown_ `syntax`. Check [this `api`](#).
+
+:::
+
+| 顏色 | Hex       | 用途語意      |
+| -- | --------- | --------- |
+| 藍 🟦  | `#1877F2` | 核心能力 / 主軸 |
+| 綠 🟩 | `#2E7D32` | 實作經驗      |
+| 橘 🟧 | `#EF6C00` | 設計取捨      |
+| 紅 🟥 | `#C62828` | 風險警示      |
+| 紫 🟪 | `#6A1B9A` | 進階 / 待補   |
