@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-JavaScript/ajaxhistory" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">【AJAX】AJAX非同步寫法的演進 | Sui筆記部落</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://hsilan-sui.github.io/dev-notes/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://hsilan-sui.github.io/dev-notes/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://hsilan-sui.github.io/dev-notes/docs/JavaScript/ajaxhistory"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="【AJAX】AJAX非同步寫法的演進 | Sui筆記部落"><meta data-rh="true" name="description" content="為什麼 JavaScript 需要非同步 ?"><meta data-rh="true" property="og:description" content="為什麼 JavaScript 需要非同步 ?"><link data-rh="true" rel="icon" href="/dev-notes/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://hsilan-sui.github.io/dev-notes/docs/JavaScript/ajaxhistory"><link data-rh="true" rel="alternate" href="https://hsilan-sui.github.io/dev-notes/docs/JavaScript/ajaxhistory" hreflang="en"><link data-rh="true" rel="alternate" href="https://hsilan-sui.github.io/dev-notes/docs/JavaScript/ajaxhistory" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"JavaScript","item":"https://hsilan-sui.github.io/dev-notes/docs/category/javascript"},{"@type":"ListItem","position":2,"name":"【AJAX】AJAX非同步寫法的演進","item":"https://hsilan-sui.github.io/dev-notes/docs/JavaScript/ajaxhistory"}]}</script><link rel="alternate" type="application/rss+xml" href="/dev-notes/blog/rss.xml" title="Sui筆記部落 RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/dev-notes/blog/atom.xml" title="Sui筆記部落 Atom Feed"><link rel="stylesheet" href="/dev-notes/assets/css/styles.a0c8da91.css">
+<script src="/dev-notes/assets/js/runtime~main.f1a9a877.js" defer="defer"></script>
+<script src="/dev-notes/assets/js/main.c60cec81.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/dev-notes/img/logo.png"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/dev-notes/"><div class="navbar__logo"><img src="/dev-notes/img/logo.png" alt="Sui_技術筆記" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/dev-notes/img/logo.png" alt="Sui_技術筆記" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Sui_技術共學</b></a><a class="navbar__item navbar__link" href="/dev-notes/docs/intro">程式筆記</a><a class="navbar__item navbar__link" href="/dev-notes/blog">部落格</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/hsilan-sui/hsilan-sui" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/linux-sysadmin"><span title="Linux Sysadmin" class="categoryLinkLabel_W154">Linux Sysadmin</span></a><button aria-label="Expand sidebar category &#x27;Linux Sysadmin&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/cicd筆記"><span title="CI/CD筆記" class="categoryLinkLabel_W154">CI/CD筆記</span></a><button aria-label="Expand sidebar category &#x27;CI/CD筆記&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/lineoa-porfolio"><span title="LINEOA-PORFOLIO" class="categoryLinkLabel_W154">LINEOA-PORFOLIO</span></a><button aria-label="Expand sidebar category &#x27;LINEOA-PORFOLIO&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/tanstack-queryreact-query"><span title="Tanstack Query(React Query)" class="categoryLinkLabel_W154">Tanstack Query(React Query)</span></a><button aria-label="Expand sidebar category &#x27;Tanstack Query(React Query)&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/nodejs"><span title="NodeJS" class="categoryLinkLabel_W154">NodeJS</span></a><button aria-label="Expand sidebar category &#x27;NodeJS&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/tutorial---basics"><span title="Tutorial - Basics" class="categoryLinkLabel_W154">Tutorial - Basics</span></a><button aria-label="Expand sidebar category &#x27;Tutorial - Basics&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/react"><span title="react" class="categoryLinkLabel_W154">react</span></a><button aria-label="Expand sidebar category &#x27;react&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--active" href="/dev-notes/docs/category/javascript"><span title="JavaScript" class="categoryLinkLabel_W154">JavaScript</span></a><button aria-label="Collapse sidebar category &#x27;JavaScript&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/dev-notes/docs/JavaScript/ajaxhistory"><span title="【AJAX】AJAX非同步寫法的演進" class="linkLabel_WmDU">【AJAX】AJAX非同步寫法的演進</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/markdown-features"><span title="【筆記_副標籤】筆記結構" class="linkLabel_WmDU">【筆記_副標籤】筆記結構</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/ajaxXhr"><span title="【AJAX_ES5】使用(XHR)XMLHttpReques發送 Ajax Call" class="linkLabel_WmDU">【AJAX_ES5】使用(XHR)XMLHttpReques發送 Ajax Call</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/create-a-document"><span title="Create a Document" class="linkLabel_WmDU">Create a Document</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/create-a-blog-post"><span title="Create a Blog Post" class="linkLabel_WmDU">Create a Blog Post</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/deploy-your-site"><span title="Deploy your site" class="linkLabel_WmDU">Deploy your site</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/js-fundamental-I"><span title="JavaScript 基礎(上)" class="linkLabel_WmDU">JavaScript 基礎(上)</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/JavaScript/js-fundamental-II"><span title="JavaScript 基礎(下)" class="linkLabel_WmDU">JavaScript 基礎(下)</span></a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/system-design--architecture"><span title="System Design &amp;&amp; Architecture" class="categoryLinkLabel_W154">System Design &amp;&amp; Architecture</span></a><button aria-label="Expand sidebar category &#x27;System Design &amp;&amp; Architecture&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/git"><span title="Git" class="categoryLinkLabel_W154">Git</span></a><button aria-label="Expand sidebar category &#x27;Git&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/dev-notes/docs/backend/ai-backend_01"><span title="backend" class="categoryLinkLabel_W154">backend</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/dev-notes/docs/docker_note/dev-dockerfile"><span title="docker_note" class="categoryLinkLabel_W154">docker_note</span></a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/dev-notes/docs/intro"><span title="筆記總覽" class="linkLabel_WmDU">筆記總覽</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/dev-notes/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/dev-notes/docs/category/javascript"><span>JavaScript</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">【AJAX】AJAX非同步寫法的演進</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>【AJAX】AJAX非同步寫法的演進</h1></header><blockquote>
+<p>為什麼 JavaScript 需要非同步 ?</p>
+</blockquote>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-先認識同步程式碼--單執行緒">🟧 先認識同步程式碼 | 單執行緒<a href="#-先認識同步程式碼--單執行緒" class="hash-link" aria-label="Direct link to 🟧 先認識同步程式碼 | 單執行緒" title="Direct link to 🟧 先認識同步程式碼 | 單執行緒" translate="no">​</a></h2>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>JavaScript 是「單執行緒」</div><div class="admonitionContent_BuS1"><ul>
+<li class="">JS 一次只能做一件事，如果：</li>
+<li class="">下載檔案</li>
+<li class="">等待 API 回傳</li>
+<li class="">等使用者點擊
+都用「同步」方式執行：</li>
+</ul><p>👉 整個程式會卡住，畫面會凍結</p></div></div>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1️⃣-同步程式碼synchronous-單執行緒">1️⃣ 同步程式碼（Synchronous）| 單執行緒<a href="#1️⃣-同步程式碼synchronous-單執行緒" class="hash-link" aria-label="Direct link to 1️⃣ 同步程式碼（Synchronous）| 單執行緒" title="Direct link to 1️⃣ 同步程式碼（Synchronous）| 單執行緒" translate="no">​</a></h3>
+<p>定義:</p>
+<ul>
+<li class="">程式一行一行照順序執行</li>
+<li class="">下一行一定要等前一行完成</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;第一行&#x27;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;第二行&#x27;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;第三行&#x27;</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre></div></div>
+<p>📌 特性：</p>
+<ul>
+<li class="">單執行緒</li>
+<li class="">前一行沒跑完，後面全部卡住</li>
+</ul>
+<p>另一個例子是：阻塞範例（alert）</p>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">alert</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;請按 OK&#x27;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;這行要等 前一行alert 結束&#x27;</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre></div></div>
+<p>📌 特性：</p>
+<ul>
+<li class="">alert 是同步、阻塞</li>
+<li class="">使用者不按 OK，程式不繼續</li>
+</ul>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2️⃣-同步的問題在哪">2️⃣ 同步的問題在哪？<a href="#2️⃣-同步的問題在哪" class="hash-link" aria-label="Direct link to 2️⃣ 同步的問題在哪？" title="Direct link to 2️⃣ 同步的問題在哪？" translate="no">​</a></h3>
+<p>如果某行程式需要很久：</p>
+<ul>
+<li class="">計時 5 秒</li>
+<li class="">載入大型圖片</li>
+<li class="">等 API 回應</li>
+</ul>
+<p>👉 整個頁面會卡住</p>
+<p>這在實務上是不能接受的，所有的使用者都是沒有耐心的。</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-計時器timers--settimeout註冊callbackfn毫秒">🟦 計時器(Timers) ｜ setTimeout(註冊callbackFn,毫秒)<a href="#-計時器timers--settimeout註冊callbackfn毫秒" class="hash-link" aria-label="Direct link to 🟦 計時器(Timers) ｜ setTimeout(註冊callbackFn,毫秒)" title="Direct link to 🟦 計時器(Timers) ｜ setTimeout(註冊callbackFn,毫秒)" translate="no">​</a></h2>
+<blockquote>
+<p>計時器(Timers) ，最簡單的一種非同步(asynchrony)，我想要在指定的長度的一段時間過去之後，執行某些程式碼，計時器只是「通知機制」</p>
+</blockquote>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>setTimeout(註冊callbackFn,毫秒)</div><div class="admonitionContent_BuS1"><p>計時器不會幫我「做事情」，它只負責：</p><p>時間到了 → 通知我 → 你自己定義要做什麼</p><p>而「我定義的事情」就是 callback。</p></div></div>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token comment" style="color:#999988;font-style:italic">//const id = setTimeout(callMe, 5000);</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token comment" style="color:#999988;font-style:italic">//clearTimeout(id);</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">setTimeout</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">callMe</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">5000</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">function</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">callMe</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&quot;3觸發回乎&quot;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&quot;1&quot;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">log</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&quot;2&quot;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token comment" style="color:#999988;font-style:italic">//輸出會是這樣</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token string" style="color:#e3116c">&quot;1&quot;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token string" style="color:#e3116c">&quot;2&quot;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token string" style="color:#e3116c">&quot;3觸發回乎&quot;</span><br></span></code></pre></div></div>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><p>JS中的非同步程式設計是透過callbacks(回呼/回調)來完成，</p><p>一個callback是我所撰寫並傳入給其他函式的一種函式，</p><p>然後該函式會在某個條件達成或是某個(非同步)事件發生時，調用(回頭呼叫/calls back)我的函式</p></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-認識ajax-與-xhr">🟦 認識：AJAX 與 XHR<a href="#-認識ajax-與-xhr" class="hash-link" aria-label="Direct link to 🟦 認識：AJAX 與 XHR" title="Direct link to 🟦 認識：AJAX 與 XHR" translate="no">​</a></h2>
+<span style="background-color:#25c2a0;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">AJAX一種 在不重新整理整個頁面的情況下</span>
+<br>
+<span style="background-color:#25c2a0;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">由 JavaScript 在背景(非同步)向伺服器發 HTTP 請求資料，拿資料回來後再處理，不重新整理畫面</span>
+<div class="theme-admonition theme-admonition-note admonition_xJq3 alert alert--secondary"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg></span>AJAX 是什麼（Asynchronous JavaScript And XML）</div><div class="admonitionContent_BuS1"><p>👉 AJAX一種 在不重新整理整個頁面的情況下，
+由 JavaScript 在背景(非同步)向伺服器發 HTTP 請求資料，拿資料回來後再處理，不重新整理畫面</p><p>📌 關鍵字：
+JavaScript &amp; HTTP &amp; 非同步</p><p>📌 特性：</p><ul>
+<li class="">不重新整理頁面</li>
+<li class="">使用 HTTP Request</li>
+<li class="">背景取得資料</li>
+</ul></div></div>
+<div class="theme-admonition theme-admonition-note admonition_xJq3 alert alert--secondary"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg></span>XHR 是什麼（XMLHttpRequest）</div><div class="admonitionContent_BuS1"><p>👉 瀏覽器提供的一個 原生 API</p><p>👉 是「早期實作 AJAX 的工具之一」</p><p>📌 特性：</p><ul>
+<li class="">AJAX 是概念，XHR 是實作方式
+-（後來有 fetch、axios，但底層都還是 AJAX）</li>
+</ul></div></div>
+<p>AJAX 的基本流程</p>
+<!-- -->
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="0️⃣-為什麼-ajax-一開始會用-xhr">0️⃣ 為什麼 AJAX 一開始會用 XHR<a href="#0️⃣-為什麼-ajax-一開始會用-xhr" class="hash-link" aria-label="Direct link to 0️⃣ 為什麼 AJAX 一開始會用 XHR" title="Direct link to 0️⃣ 為什麼 AJAX 一開始會用 XHR" translate="no">​</a></h3>
+<p><span style="background-color:#1877F2;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">XHR 是「瀏覽器給的東西」(瀏覽器 API)</span> !</p>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><p>因為 XHR 是「瀏覽器給的東西」(瀏覽器 API)</p><p>👉 瀏覽器為了讓網頁「不要整頁重載」，就提供了 XHR(XMLHttpRequest)物件</p><p>它依賴：</p><ul>
+<li class="">window</li>
+<li class="">瀏覽器事件機制</li>
+<li class="">瀏覽器網路層</li>
+</ul><p>在瀏覽器裡：</p><ul>
+<li class="">有 window</li>
+<li class="">有 DOM</li>
+<li class="">有畫面</li>
+<li class="">有使用者操作</li>
+</ul></div></div>
+<ul>
+<li class="">所以 XHR 的本質是：瀏覽器內建的 HTTP 請求工具</li>
+</ul>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>❌❌❌❌❌</div><div class="admonitionContent_BuS1"><p>早期 AJAX 透過 XMLHttpRequest 搭配事件處理非同步，但程式可讀性差，維護成本高。</p></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-ajax-非同步寫法的演進">🟦 AJAX 非同步寫法的演進<a href="#-ajax-非同步寫法的演進" class="hash-link" aria-label="Direct link to 🟦 AJAX 非同步寫法的演進" title="Direct link to 🟦 AJAX 非同步寫法的演進" translate="no">​</a></h2>
+<blockquote>
+<p>從 XHR → Promise → fetch → async await</p>
+</blockquote>
+<p>AJAX 是一種非同步請求資料的概念，</p>
+<ul>
+<li class="">早期使用 XMLHttpRequest 搭配 callback，</li>
+<li class="">ES6 引入 Promise 改善流程控制，</li>
+<li class="">fetch 則是基於 Promise 的現代 AJAX API，</li>
+<li class="">async await 是 Promise 的語法糖，
+讓非同步程式能以同步方式撰寫，是目前主流做法。</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="0️⃣-先給一張全景時間軸圖">0️⃣ 先給一張「全景時間軸圖」<a href="#0️⃣-先給一張全景時間軸圖" class="hash-link" aria-label="Direct link to 0️⃣ 先給一張「全景時間軸圖」" title="Direct link to 0️⃣ 先給一張「全景時間軸圖」" translate="no">​</a></h3>
+<!-- -->
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1️⃣-第一代xmlhttprequestes5">1️⃣ 第一代：XMLHttpRequest（ES5）<a href="#1️⃣-第一代xmlhttprequestes5" class="hash-link" aria-label="Direct link to 1️⃣ 第一代：XMLHttpRequest（ES5）" title="Direct link to 1️⃣ 第一代：XMLHttpRequest（ES5）" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-出現背景why">🔹 出現背景（Why）<a href="#-出現背景why" class="hash-link" aria-label="Direct link to 🔹 出現背景（Why）" title="Direct link to 🔹 出現背景（Why）" translate="no">​</a></h4>
+<ul>
+<li class="">JavaScript 最早<strong>沒有非同步流程控制工具</strong></li>
+<li class="">瀏覽器只提供「事件」來處理網路回應 <br>
+👉 所以只能用 <strong>事件監聽</strong> 來等資料回來</li>
+</ul>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-寫法特色how">🔹 寫法特色（How）<a href="#-寫法特色how" class="hash-link" aria-label="Direct link to 🔹 寫法特色（How）" title="Direct link to 🔹 寫法特色（How）" translate="no">​</a></h4>
+<ul>
+<li class="">使用 <code>XMLHttpRequest</code></li>
+<li class="">用事件 <code>load</code> 處理結果</li>
+<li class="">非同步靠 callback</li>
+</ul>
+<p>📌 結論：</p>
+<blockquote>
+<p>「我先送請求，
+等瀏覽器跟我說資料回來，我再處理」</p>
+</blockquote>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-問題點why-被淘汰">🔹 問題點（Why 被淘汰）<a href="#-問題點why-被淘汰" class="hash-link" aria-label="Direct link to 🔹 問題點（Why 被淘汰）" title="Direct link to 🔹 問題點（Why 被淘汰）" translate="no">​</a></h4>
+<ul>
+<li class="">巢狀 callback 很難讀</li>
+<li class="">錯誤處理麻煩</li>
+<li class="">this 與狀態混亂</li>
+<li class="">程式流程不直覺</li>
+</ul>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>XMLHttpRequest 問題</div><div class="admonitionContent_BuS1"><p>📌 常被稱為：
+<strong>callback hell（回呼地獄）</strong></p><blockquote>
+<p>早期 AJAX 透過 XMLHttpRequest 搭配事件處理非同步，但程式可讀性差，維護成本高。</p>
+</blockquote></div></div>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2️⃣-第二代promisees6">2️⃣ 第二代：Promise（ES6）<a href="#2️⃣-第二代promisees6" class="hash-link" aria-label="Direct link to 2️⃣ 第二代：Promise（ES6）" title="Direct link to 2️⃣ 第二代：Promise（ES6）" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-出現背景why-1">🔹 出現背景（Why）<a href="#-出現背景why-1" class="hash-link" aria-label="Direct link to 🔹 出現背景（Why）" title="Direct link to 🔹 出現背景（Why）" translate="no">​</a></h4>
+<p>ES6 正式引入 <strong>Promise</strong></p>
+<p>👉 解決「非同步流程無法線性閱讀」的問題</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-promise-在做什麼do-what">🔹 Promise 在做什麼（Do what）<a href="#-promise-在做什麼do-what" class="hash-link" aria-label="Direct link to 🔹 Promise 在做什麼（Do what）" title="Direct link to 🔹 Promise 在做什麼（Do what）" translate="no">​</a></h4>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><p>Promise 把非同步結果變成一個「未來會完成的值」</p><ul>
+<li class="">狀態只有三種：</li>
+</ul><ul>
+<li class="">pending</li>
+<li class="">fulfilled</li>
+<li class="">rejected</li>
+</ul></div></div>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-寫法特色how-1">🔹 寫法特色（How）<a href="#-寫法特色how-1" class="hash-link" aria-label="Direct link to 🔹 寫法特色（How）" title="Direct link to 🔹 寫法特色（How）" translate="no">​</a></h4>
+<ul>
+<li class="">使用 <code>.then()</code> 接資料</li>
+<li class="">使用 <code>.catch()</code> 接錯誤</li>
+<li class="">流程可以串接</li>
+</ul>
+<p>📌 結論：</p>
+<blockquote>
+<p>「這件事完成後，再做下一件事」</p>
+</blockquote>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-改善了什麼why">🔹 改善了什麼（Why）<a href="#-改善了什麼why" class="hash-link" aria-label="Direct link to 🔹 改善了什麼（Why）" title="Direct link to 🔹 改善了什麼（Why）" translate="no">​</a></h4>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Promise</div><div class="admonitionContent_BuS1"><ul>
+<li class="">消除 callback 地獄</li>
+<li class="">流程比較線性</li>
+<li class="">錯誤可以集中處理</li>
+</ul><p>📌 但仍然是：</p><ul>
+<li class="">多層 then</li>
+<li class="">程式仍偏「橫向閱讀」</li>
+</ul><blockquote>
+<p>Promise 讓非同步結果可以被串接處理，大幅改善 callback 地獄問題。</p>
+</blockquote></div></div>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="3️⃣-第三代fetch-apies6">3️⃣ 第三代：fetch API（ES6）<a href="#3️⃣-第三代fetch-apies6" class="hash-link" aria-label="Direct link to 3️⃣ 第三代：fetch API（ES6）" title="Direct link to 3️⃣ 第三代：fetch API（ES6）" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-出現背景why-2">🔹 出現背景（Why）<a href="#-出現背景why-2" class="hash-link" aria-label="Direct link to 🔹 出現背景（Why）" title="Direct link to 🔹 出現背景（Why）" translate="no">​</a></h4>
+<p>XMLHttpRequest API 設計過時：</p>
+<ul>
+<li class="">太多狀態</li>
+<li class="">太多細節</li>
+<li class="">不符合 Promise 思維</li>
+</ul>
+<p>👉 瀏覽器推出 <strong>fetch</strong></p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-fetch-是什麼do-what">🔹 fetch 是什麼（Do what）<a href="#-fetch-是什麼do-what" class="hash-link" aria-label="Direct link to 🔹 fetch 是什麼（Do what）" title="Direct link to 🔹 fetch 是什麼（Do what）" translate="no">​</a></h4>
+<ul>
+<li class="">一個「以 Promise 為核心」的 HTTP API</li>
+<li class="">專門用來取代 XHR</li>
+</ul>
+<p>📌 關係一句話：</p>
+<blockquote>
+<p>fetch = 用 Promise 包裝好的 AJAX</p>
+</blockquote>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-寫法特色how-2">🔹 寫法特色（How）<a href="#-寫法特色how-2" class="hash-link" aria-label="Direct link to 🔹 寫法特色（How）" title="Direct link to 🔹 寫法特色（How）" translate="no">​</a></h4>
+<ul>
+<li class=""><code>fetch</code> 回傳 Promise</li>
+<li class="">回應資料再轉成 <strong>JSON</strong></li>
+<li class="">語意清楚</li>
+</ul>
+<p>📌 結論：</p>
+<blockquote>
+<p>「我 fetch 一個資源，
+然後處理回來的結果」</p>
+</blockquote>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-fetch-的限制why-還不夠">🔹 fetch 的限制（Why 還不夠）<a href="#-fetch-的限制why-還不夠" class="hash-link" aria-label="Direct link to 🔹 fetch 的限制（Why 還不夠）" title="Direct link to 🔹 fetch 的限制（Why 還不夠）" translate="no">​</a></h4>
+<ul>
+<li class="">仍然需要 then</li>
+<li class="">try catch 不直覺</li>
+<li class="">多請求時可讀性下降</li>
+</ul>
+<blockquote>
+<p>fetch 是瀏覽器提供的現代化 AJAX API，以 Promise 為基礎，取代舊的 XMLHttpRequest。</p>
+</blockquote>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4️⃣-第四代async-awaites2017">4️⃣ 第四代：async await（ES2017）<a href="#4️⃣-第四代async-awaites2017" class="hash-link" aria-label="Direct link to 4️⃣ 第四代：async await（ES2017）" title="Direct link to 4️⃣ 第四代：async await（ES2017）" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-出現背景why-3">🔹 出現背景（Why）<a href="#-出現背景why-3" class="hash-link" aria-label="Direct link to 🔹 出現背景（Why）" title="Direct link to 🔹 出現背景（Why）" translate="no">​</a></h4>
+<p>即使有 Promise：</p>
+<ul>
+<li class="">程式還是像「接水管」</li>
+<li class="">不像同步邏輯</li>
+</ul>
+<p>👉 async await 讓非同步<strong>看起來像同步</strong></p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-async-await-在做什麼do-what">🔹 async await 在做什麼（Do what）<a href="#-async-await-在做什麼do-what" class="hash-link" aria-label="Direct link to 🔹 async await 在做什麼（Do what）" title="Direct link to 🔹 async await 在做什麼（Do what）" translate="no">​</a></h4>
+<ul>
+<li class="">async 宣告一個非同步函式</li>
+<li class="">await 暫停在該行等待 Promise 完成</li>
+<li class="">實際上仍是非同步</li>
+</ul>
+<p>📌 關鍵觀念：</p>
+<blockquote>
+<p>await 只暫停「函式內部」，
+不會卡住整個程式或畫面</p>
+</blockquote>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-寫法特色how-3">🔹 寫法特色（How）<a href="#-寫法特色how-3" class="hash-link" aria-label="Direct link to 🔹 寫法特色（How）" title="Direct link to 🔹 寫法特色（How）" translate="no">​</a></h4>
+<ul>
+<li class="">像同步程式一樣由上往下</li>
+<li class="">可以用 try catch</li>
+<li class="">非同步流程超清楚</li>
+</ul>
+<p>📌 結論：</p>
+<blockquote>
+<p>「等這個結果回來，再往下做」</p>
+</blockquote>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="-為什麼是目前主流why">🔹 為什麼是目前主流（Why）<a href="#-為什麼是目前主流why" class="hash-link" aria-label="Direct link to 🔹 為什麼是目前主流（Why）" title="Direct link to 🔹 為什麼是目前主流（Why）" translate="no">​</a></h4>
+<ul>
+<li class="">可讀性最好</li>
+<li class="">錯誤處理最直覺</li>
+<li class="">最接近人類思考方式</li>
+</ul>
+<blockquote>
+<p>async await 是基於 Promise 的語法糖，讓非同步程式能以同步風格撰寫，但本質仍是非同步。</p>
+</blockquote>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="5️⃣-一張演進總整理表">5️⃣ 一張「演進總整理表」<a href="#5️⃣-一張演進總整理表" class="hash-link" aria-label="Direct link to 5️⃣ 一張「演進總整理表」" title="Direct link to 5️⃣ 一張「演進總整理表」" translate="no">​</a></h3>
+<table><thead><tr><th>時代</th><th>技術</th><th>來源類型</th><th>標準</th><th>核心重點</th></tr></thead><tbody><tr><td>第一代</td><td>XHR</td><td>瀏覽器 window API</td><td>ES5 時代</td><td>callback 地獄</td></tr><tr><td>第二代</td><td>Promise</td><td>JavaScript 語言</td><td>ES6</td><td>then 鏈可讀性</td></tr><tr><td>第三代</td><td>fetch</td><td>瀏覽器 window API</td><td>ES6</td><td>仍基於 Promise</td></tr><tr><td>第四代</td><td>async await</td><td>JavaScript 語言</td><td>ES2017</td><td>主流解法</td></tr></tbody></table>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="6️⃣-小結">6️⃣ 小結<a href="#6️⃣-小結" class="hash-link" aria-label="Direct link to 6️⃣ 小結" title="Direct link to 6️⃣ 小結" translate="no">​</a></h3>
+<blockquote>
+<p>AJAX 是一種非同步請求資料的概念，
+早期使用 XMLHttpRequest 搭配 callback，
+ES6 引入 Promise 改善流程控制，
+fetch 則是基於 Promise 的現代 AJAX API，
+而 async await 是 Promise 的語法糖，
+讓非同步程式能以同步方式撰寫，是目前主流做法。</p>
+</blockquote>
+<hr></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/JavaScript/00-ajaxhistory.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/dev-notes/docs/category/javascript"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">JavaScript</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/dev-notes/docs/JavaScript/markdown-features"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">【筆記_副標籤】筆記結構</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#-先認識同步程式碼--單執行緒" class="table-of-contents__link toc-highlight">🟧 先認識同步程式碼 | 單執行緒</a><ul><li><a href="#1️⃣-同步程式碼synchronous-單執行緒" class="table-of-contents__link toc-highlight">1️⃣ 同步程式碼（Synchronous）| 單執行緒</a></li><li><a href="#2️⃣-同步的問題在哪" class="table-of-contents__link toc-highlight">2️⃣ 同步的問題在哪？</a></li></ul></li><li><a href="#-計時器timers--settimeout註冊callbackfn毫秒" class="table-of-contents__link toc-highlight">🟦 計時器(Timers) ｜ setTimeout(註冊callbackFn,毫秒)</a></li><li><a href="#-認識ajax-與-xhr" class="table-of-contents__link toc-highlight">🟦 認識：AJAX 與 XHR</a><ul><li><a href="#0️⃣-為什麼-ajax-一開始會用-xhr" class="table-of-contents__link toc-highlight">0️⃣ 為什麼 AJAX 一開始會用 XHR</a></li></ul></li><li><a href="#-ajax-非同步寫法的演進" class="table-of-contents__link toc-highlight">🟦 AJAX 非同步寫法的演進</a><ul><li><a href="#0️⃣-先給一張全景時間軸圖" class="table-of-contents__link toc-highlight">0️⃣ 先給一張「全景時間軸圖」</a></li><li><a href="#1️⃣-第一代xmlhttprequestes5" class="table-of-contents__link toc-highlight">1️⃣ 第一代：XMLHttpRequest（ES5）</a></li><li><a href="#2️⃣-第二代promisees6" class="table-of-contents__link toc-highlight">2️⃣ 第二代：Promise（ES6）</a></li><li><a href="#3️⃣-第三代fetch-apies6" class="table-of-contents__link toc-highlight">3️⃣ 第三代：fetch API（ES6）</a></li><li><a href="#4️⃣-第四代async-awaites2017" class="table-of-contents__link toc-highlight">4️⃣ 第四代：async await（ES2017）</a></li><li><a href="#5️⃣-一張演進總整理表" class="table-of-contents__link toc-highlight">5️⃣ 一張「演進總整理表」</a></li><li><a href="#6️⃣-小結" class="table-of-contents__link toc-highlight">6️⃣ 小結</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/dev-notes/docs/intro">Tutorial</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://stackoverflow.com/questions/tagged/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">Stack Overflow<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://discordapp.com/invite/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">Discord<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://x.com/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">X<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/dev-notes/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/facebook/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 My Project, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
