@@ -1,0 +1,112 @@
+---
+title: "【AJAX_ES5】使用(XHR)XMLHttpReques發送 Ajax Call"
+sidebar_position: 2
+---
+
+## 🟧 發送ajax call: XHR請求
+
+> 先測試第一代的 AJAX call 發送 XHR(XMLHttpRequest)請求
+
+:::note
+
+- url 我想玩兩種：
+  - [六角提供](https://raw.githubusercontent.com/hexschool/2021-ui-frontend-job/master/frontend_data.json)
+
+- [REST Countries API](https://restcountries.com/)
+  - 我想要從API裡拿到某國家的相關資料
+:::
+
+---
+
+### 1️⃣ 定義流程
+
+```
+1. 建立一個 XMLHttpRequest 物件
+2. 設定發送網路請求的方法 與 設定網址 .open()
+3. 發送請求 .send() ==> request.send() 並不會等資料回來。
+4. 註冊一個 callback（load 事件）
+5. 主程式繼續往下跑
+6. 資料從伺服器回傳回來後 => onload 被呼叫
+```
+
+:::danger
+✔ send() 不會等待資料 => 非同步
+
+✔ 一切都要靠 設計load callback 來接結果
+:::
+
+### 2️⃣ 對應程式碼：
+
+
+```js
+"use strict";
+
+// ES5方式：使用 XMLHttpRequest 發送 GET 請求
+const request = new XMLHttpRequest();
+
+// 設定請求（方法 + URL）
+request.open("GET", "https://restcountries.com/v3.1/name/portugal");
+
+// ⚠️ 非同步|發送請求（非同步，不會等待回傳）
+request.send();
+
+// 註冊 callback，等待資料回來
+request.addEventListener("load", function () {
+  console.log(this); // XMLHttpRequest instance
+  // const data = JSON.parse(this.responseText);
+});
+```
+
+<iframe
+  height="300"
+  style={{ width: "100%" }}
+  scrolling="no"
+  title="XHR AJAX Demo"
+  src="https://codepen.io/sui-hsialn/embed/ZYOeBbP?default-tab=js"
+  frameBorder="0"
+  loading="lazy"
+  allowFullScreen
+/>
+
+
+🔹 補充 1：為什麼 send 不等資料？
+> 因為 Ajax 是非同步請求， .send() 的職責只是「送出請求」，資料會在背景傳輸，JavaScript 主執行緒不會被阻塞。
+
+
+🔹 補充 2：為什麼一定要 callback？
+> 因為資料「什麼時候回來」是無法預期的，JavaScript 只能先註冊一個 callback，等伺服器回應完成時，再由瀏覽器呼叫這個函式來處理結果。
+
+- 也就是說，在 Ajax 中：
+  - 我先定義「資料回來後要做什麼」
+  - 但不是我決定「什麼時候做」
+
+🔹 補充 3：為什麼現在不常用 XHR？
+> 因為資料回來的時間不確定，只能在事件發生時處理結果。
+
+| 問題          | 說明     |
+| ----------- | ------ |
+| 可讀性差        | 流程被拆散  |
+| 巢狀 callback | 難維護    |
+| 錯誤處理麻煩      | 必須手動判斷 |
+
+:::tip
+
+XMLHttpRequest 完全基於事件與 callback 設計，
+
+當非同步流程變多時，程式碼容易被拆散、巢狀化，
+
+可讀性與維護性都會快速下降。
+
+👉 ES6 Promise / async await 就是為了解決這些問題
+:::
+
+### 3️⃣ 先把請求包成函式
+
+
+```js
+
+```
+
+### 4️⃣ 回呼地獄
+我拿到了該國的資料，我想要依據該國家去抓它鄰國的資料呢？
+- 一樣先使用XHR來做：

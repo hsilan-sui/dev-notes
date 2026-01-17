@@ -1,6 +1,6 @@
 ---
-title: "【筆記_副標籤】筆記結構"
-sidebar_position: 1
+title: "【基本】Git基本操作"
+sidebar_position: 2
 ---
 
 
@@ -35,12 +35,52 @@ function HelloCodeTitle(props) {
 🟡🟢🔵✅❌⭕️📛💯🔴🟠🟡🟣⚫️🟤🔸🔹🔶🔷🟨 🟩 🟦 🟪 ⬛️⬜️🟫🟧🆘🟥♦️♦️🛑❌ 打勾
 ✳️0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣🔟▶️🌐
 
-## 🟦 段落主標
+## 🟦 開始使用Git
 
-### 0️⃣ 段落副標
+- 我要讓Git知道這個資料夾要進行版控
+ 
 
-### 1️⃣ 段落副標
 
+### 0️⃣ 初始化 git init 建立.git 就是本地儲存庫(local repository)
+
+> 我要在目前的資料夾或目錄夾的位置，建立一個新的 Git 倉庫(儲存庫)
+- <Highlight color="#1877F2">$ git init</Highlight> 
+<Highlight>會在該~/git-demo/目錄夾中建立了一個 .git/ 隱藏資料夾</Highlight>
+
+```bash
+sui-pi@raspberrypi:~/test_dir/git-demo $ git init
+Initialized empty Git repository in /home/sumi-pi/test_dir/git-demo/.git/
+
+
+sui-pi@raspberrypi:~/test_dir/git-demo $ ls -al
+#total 12
+#drwxrwxr-x 3 sumi-pi sumi-pi 4096 Jan 17 17:34 .
+#drwxrwxr-x 4 sumi-pi sumi-pi 4096 Jan 17 17:31 ..
+#drwxrwxr-x 7 sumi-pi sumi-pi 4096 Jan 17 17:34 .git #這裡就是本地.git儲存庫
+```
+:::tip 本地 Git 儲存庫（local Git repository）
+- 最重要的一行（成功訊息）
+- Initialized empty Git repository in /home/sumi-pi/test_dir/git-demo/.git/
+- ✅ Git repo 建立成功
+- ✅ .git/ 資料夾已存在
+- ✅ 你現在該資料夾git-demo/(本地工作區 Working Directory)「已經在 Git 管理之下」
+
+- 現在git-demo的git repo 狀態是什麼？
+  - 📂 有資料夾
+  - 🧠 Git 已開始追蹤
+  - ❌ 還沒有任何檔案被加入
+  - ❌ 還沒有任何 commit
+  - 所有 commit歷史、branch、HEAD指標、歷史紀錄
+  - 👉 全部都只存在本機git-demo/.git
+:::
+
+
+:::danger 觀念釐清
+- <Highlight color="#EF6C00">.git 就是 本地儲存庫(local repository)</Highlight> 
+- <Highlight color="#6A1B9A">git-demo 這個資料夾本身是 工作目錄區（working directory）</Highlight>
+:::
+
+### 1️⃣ working directory 工作目錄 ｜staging 暫存區域 | repo 儲存庫
 ### 2️⃣ 段落副標
 
 ### 3️⃣ 段落副標

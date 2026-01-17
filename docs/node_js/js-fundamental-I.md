@@ -1,6 +1,6 @@
 ---
 title: JavaScript 基礎(上)
-sidebar_position: 5
+sidebar_position: 4
 ---
 
 import Highlight from '@site/src/components/ui/Highlight.jsx';

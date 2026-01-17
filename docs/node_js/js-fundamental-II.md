@@ -1,5 +1,5 @@
 ---
-title: JavaScript 基礎(上)
+title: JavaScript 基礎(下)
 sidebar_position: 5
 ---
 
@@ -25,16 +25,11 @@ alert(`You clicked the color ${color} with label ${children}`);
   </span>
 ); -->
 
-# JavaScript 基礎(上)
-
-:::note
-雖然有 GPT 這個好同事，但總是對自己學習觀念碎片化不太滿意，所以透過 zeromaster.io 平台課程學習好好的把 JS 觀念透過 output 筆記梳理起來！
-:::
-
----
+# JavaScript 基礎(下)
 
 ## 0️⃣ 開場
 
+:::note
 學習需要『儀式感』，這陣子了解自己的動能起伏，那個起伏是有一陣很熱血沸騰，有一陣很凍僵，但透過了解自己的特質是恆毅力滿強的，那就從儀式感(前置 5 分鐘)帶入：
 
 > - <Highlight color="#f97316">泡好一杯咖啡 ☕</Highlight>
@@ -43,11 +38,13 @@ alert(`You clicked the color ${color} with label ${children}`);
 
 > - <Highlight color="#60a5fa">新增一個 md 筆記</Highlight>
 
+:::
+
 ### 用一張圖片來概覽這篇章要複習的主題：
 
 > ![JS 基礎-脈絡心智圖](/img/js-fun01.png)
 
-這邊筆記主要以右側的基礎觀念為主，
+這邊筆記主要以左側的基礎觀念為主，
 
 這是 zerotomaster.io 提供的總覽心智圖
 

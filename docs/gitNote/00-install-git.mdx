@@ -1,0 +1,172 @@
+---
+title: "【config】git安裝與設定"
+sidebar_position: 1
+---
+
+> 以下我以Raspberry Pi OS Lite做為練習
+
+## 🟧 更新套件清單（一定要做）
+
+- 用ssh登入樹莓派
+```bash
+ssh 樹莓派username@ipaddr
+```
+
+- 更新套件清單
+```bash
+sudo apt update
+sudo apt upgrade -y
+```
+
+:::tip 
+確保抓到最新的套件索引
+
+避免安裝舊版 git 或套件衝突
+:::
+
+## 🟦 Git安裝 與 config設定
+
+### 0️⃣ git安裝
+
+```bash
+sudo apt install git -y
+```
+
+---
+
+### 1️⃣ 確認 Git 是否安裝成功
+
+```bash
+git --version
+
+# 輸出
+## git version 2.47.3
+```
+
+### 2️⃣ 複習terminal指令
+
+- 因為我使用Raspberry Pi OS Lite(Linux)為練習，就是只有終端機XD
+
+- <Highlight color="#EF6C00">我在哪裡？</Highlight><Highlight color="#1877F2">$pwd</Highlight><Highlight>=print working directory</Highlight> `/home/sui-pi`
+
+```bash
+sui-pi@raspberrypi:~ $ pwd
+
+#輸出
+#/home/sui-pi
+```
+---
+- <Highlight color="#EF6C00">建立目錄夾/資料夾</Highlight><Highlight color="#1877F2">$mkdir</Highlight><Highlight>=make directory</Highlight> 
+```bash
+sui-pi@raspberrypi:~ $ mkdir hello
+
+#建立了hello資料夾
+```
+---
+- <Highlight color="#EF6C00">切換目錄夾</Highlight><Highlight color="#1877F2">$cd</Highlight><Highlight>=change directory</Highlight> 
+```bash
+sui-pi@raspberrypi:~ $ cd hello/
+
+#切換到hello資料夾中
+
+sui-pi@raspberrypi:~ $ pwd
+#  /home/sui-pi/hello
+```
+---
+- <Highlight color="#EF6C00">建立檔案file</Highlight><Highlight color="#1877F2">$touch</Highlight> 
+- <Highlight color="#EF6C00">列出該目錄夾中的檔案清單</Highlight><Highlight color="#1877F2">$ls</Highlight><Highlight>=list</Highlight>
+- <Highlight color="#EF6C00">列出該目錄夾中的(詳細)檔案清單</Highlight><Highlight color="#1877F2">$ls -al</Highlight><Highlight>=list</Highlight>    
+```bash
+sui-pi@raspberrypi:~/hello $ ls
+
+# index.html
+
+----
+
+sui-pi@raspberrypi:~/hello $ ls -al
+# total 8
+# drwxrwxr-x  2 sumi-pi sumi-pi 4096 Jan 17 16:24 .
+# drwx------ 10 sumi-pi sumi-pi 4096 Jan 17 16:19 ..
+# -rw-rw-r--  1 sumi-pi sumi-pi    0 Jan 17 16:24 index.html
+```
+
+- <Highlight color="#EF6C00">刪除檔案file</Highlight><Highlight color="#C62828">$rm</Highlight> 
+- <Highlight color="#EF6C00">刪除目錄夾directory</Highlight><Highlight color="#C62828">$rm -r</Highlight><Highlight>意思是針對目錄及底下檔案做遞歸刪除，把整個目錄跟其中的檔案都砍掉</Highlight>
+
+---
+- <Highlight color="#EF6C00">複製檔案</Highlight><Highlight color="#1877F2">$cp</Highlight> <Highlight>=copy</Highlight>    
+- 複製index.html 的檔案內容並命名檔案為 xxoo.html
+```bash
+sui-pi@raspberrypi:~/hello $ cp index.html xxoo.html
+
+sui-pi@raspberrypi:~/hello $ ls -al
+# total 8
+# drwxrwxr-x  2 sumi-pi sumi-pi 4096 Jan 17 16:36 .
+# drwx------ 10 sumi-pi sumi-pi 4096 Jan 17 16:19 ..
+# -rw-rw-r--  1 sumi-pi sumi-pi    0 Jan 17 16:36 index.html
+# -rw-rw-r--  1 sumi-pi sumi-pi    0 Jan 17 16:36 xxoo.html
+```
+----
+
+- <Highlight color="#EF6C00">搬遷/移動檔案**位置**</Highlight><Highlight color="#1877F2">$mv</Highlight> <Highlight>=move</Highlight>
+- <Highlight color="#EF6C00">更改檔案**名稱**</Highlight><Highlight color="#1877F2">$mv</Highlight> <Highlight>=move</Highlight> 
+- 移動xxoo.html 到 images/資料夾下
+```bash
+sumi-pi@raspberrypi:~/hello $ mv index.html images/ #搬遷檔案 index.html 到images/目錄夾下
+sumi-pi@raspberrypi:~/hello $ ls -al
+
+#total 12
+#drwxrwxr-x  3 sumi-pi sumi-pi 4096 Jan 17 16:41 .
+#drwx------ 10 sumi-pi sumi-pi 4096 Jan 17 16:19 ..
+#drwxrwxr-x  2 sumi-pi sumi-pi 4096 Jan 17 16:41 images
+#-rw-rw-r--  1 sumi-pi sumi-pi    0 Jan 17 16:36 xxoo.html
+```
+
+- 更改xxoo.html 檔名為 haha.html
+```bash
+sui-pi@raspberrypi:~/hello $ mv xxoo.html haha.html 
+
+#更改xxoo.html 檔名為 haha.html
+```
+----
+
+### 3️⃣ git config 設定姓名、Email
+- 設定個人資訊
+- <Highlight color="#EF6C00">檢視git目前設定並列出來</Highlight><Highlight color="#1877F2">$ git config --list</Highlight>
+
+- <Highlight color="#EF6C00">設定git(全域)username</Highlight><Highlight color="#1877F2">$ git config --global user.name "sui"</Highlight>
+- <Highlight color="#EF6C00">設定git(全域)email</Highlight><Highlight color="#1877F2">$ git config --global user.email "test@mail"</Highlight>
+
+
+:::tip 設定git config
+
+Git 每次的檔案版本發佈時，都會記錄該版本是哪位開發者做的
+```bash
+Commit: xxxx
+Parents: xxx
+Author: sui <test@mail> 
+Date: JAN 12, 2026 at 04:03:22 AM
+Labels: HEAD -> dev vercel/main
+```
+:::
+
+
+
+:::info git的config檔案
+
+其實輸入config指令時，是對`.gitconfig`檔案去做修正
+
+MacOs：~/.gitconfig
+
+:::
+
+
+- <Highlight color="#EF6C00">可以將全系統預設分支master改成main</Highlight><Highlight color="#1877F2">$ git config --global init.defaultBranc "main"</Highlight>
+
+:::note
+這個 repo 的第一個分支名稱叫做 master
+
+這是舊預設名稱
+
+現在很多專案（GitHub / GitLab）都改用 main
+:::
