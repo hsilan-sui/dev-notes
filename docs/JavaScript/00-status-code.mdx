@@ -1,0 +1,219 @@
+---
+title: "【HTTP】Status Code"
+sidebar_position: 0
+---
+
+> 用一個簡單的值，快速的表示當前 API 的請求結果是什麼
+
+## 🟧 HTTP 狀態碼
+
+
+| HTTP 狀態碼 |
+| -- | 
+| <Highlight color="#1877F2">1xx 資訊</Highlight>   |
+| <Highlight>2xx 成功</Highlight>  | 
+| <Highlight color="#EF6C00">3xx 重新導向</Highlight> | 
+| <Highlight color="#C62828">4xx 前端請求有誤</Highlight>| 
+| <Highlight color="#C62828">5xx 後端伺服有問題要處理</Highlight> | 
+
+
+## 🟦 2xx 請求成功
+
+
+| HTTP狀態碼 | 意思       | 使用情境       | 
+| ----- | --------- |--------- |
+| <Highlight>200 OK</Highlight> | 請求成功，伺服器已完成處理，並回傳結果 | GET 查詢資料成功&PUT PATCH更新成功&POST成功但「沒有特別強調建立新資源」| 
+| <Highlight>201 Created</Highlight>   | 請求成功，而且新的資源已被建立，用在POST的RESPONSE | POST 建立新資料&response body 回傳新資源 | 
+| <Highlight>202 Accepted</Highlight> | 請求已經接受，但尚未處理完成 | 非同步處理&背景任務（job / queue）&成功接收，但還在處理中 | 
+
+
+---
+
+## 🟦 3xx 重新導向
+
+> 👉 讓 client 知道「下一步該去哪」
+
+| HTTP狀態碼 | 意思       | 使用情境       | 
+| ----- | --------- |--------- |
+| <Highlight color="#EF6C00"> 301 Moved Permanently </Highlight> | 資源已「永久」搬家，之後都應該用新位置 | 網站換網域&API 路徑正式改版&HTTP → HTTPS（正式）SEO轉移權重| 
+| <Highlight color="#EF6C00">302 Found（暫時轉址）</Highlight>   | 暫時換地方，但未來可能會換回來 | 維修中導頁&歷史包袱很重，語意其實不精準 302 在不同 client 中，可能會把 POST 變成 GET | 
+| <Highlight color="#EF6C00">307 Temporary Redirect（暫時轉址，方法不變）</Highlight> | 暫時轉址，而且 HTTP method 必須保持原樣 | 307 明確規定：👉 POST 還是 POST(使用API Gateway / Proxy) | 
+| <Highlight color="#EF6C00">308 Permanent Redirect（永久轉址，方法不變）</Highlight> | 永久轉址但HTTP method 不可被改掉 | 301 + method 保證| 
+| <Highlight color="#EF6C00">304 Not Modified（不是轉網址，但屬於 3xx）</Highlight> | 資源沒有變，你用快取就好 | 瀏覽器快取/CDN/ETag / If-Modified-Since | 
+
+- <Highlight color="#EF6C00"> 301 Moved Permanently | 301 是能夠將網頁的權重、流量、排名，一口氣轉移到新的網站 </Highlight>
+
+
+:::tip
+- 👉 3xx 表示請求成功但需要重新導向。
+
+- 👉 301 與 308 是永久轉址，
+
+- 👉 302 與 307 是暫時轉址；
+
+- 👉 其中 307 與 308 會保證 HTTP method 不被改動，因此在 API 設計上比 302 更安全。
+
+- 👉 304 則是用於快取，表示資源未變更。
+:::
+---
+
+## 🟦 4xx 前端請求錯誤（Client Error）
+
+
+> 4xx 的核心概念
+- 👉 請求「有送到」
+- 👉 但 請求內容有問題，伺服器拒絕處理
+
+📌 為什麼一定要分 4xx？
+- 前端知道 是不是自己要改
+- 後端知道 不是系統壞掉
+- Log / 監控 / Debug 很關鍵
+
+:::danger 4xx 前端請求錯誤（Client Error）
+| HTTP狀態碼 | 意思       | 
+| ----- | --------- |
+| <Highlight color="#C62828">❌ 400 Bad Request</Highlight> | 請求格式錯誤，伺服器無法理解 | 
+| <Highlight color="#C62828">🔐 401 Unauthorized</Highlight>   | 需要驗證，但你沒有有效的身分憑證 | 
+| <Highlight color="#C62828">🚫 403 Forbidden</Highlight> | 你是誰我知道，但 你不能做這件事(權限不足) | 
+| <Highlight color="#C62828">🔍 404 Not Found</Highlight> | 資源不存在 | 
+| <Highlight color="#C62828">🔁 405 Method Not Allowed</Highlight> | 這個資源存在，但 HTTP 方法不被允許 | 
+| <Highlight color="#C62828">⚠️ 409 Conflict</Highlight> | 狀態衝突 請求與目前系統狀態衝突。 | 
+| <Highlight color="#C62828">🧾 422 Unprocessable Entity</Highlight> | 格式正確但業務驗證失敗 | 
+| <Highlight color="#C62828">429 Too Many Requests（Rate limit）</Highlight> | 我知道你是誰，但你用量太兇了|
+:::
+
+--- 
+
+<Highlight color="#C62828">❌ 400 Bad Request</Highlight> 請求格式錯誤，伺服器無法理解
+- 📌 常見原因
+  - 👉 JSON 格式錯
+  - 👉缺必要欄位
+  - 👉欄位型別不對
+  - 👉驗證失敗（validation）
+
+<Highlight color="#C62828">🔐 401 Unauthorized</Highlight> 需要驗證，但你沒有有效的身分憑證
+- 📌 常見原因(你進公司，卻沒帶員工證件)
+  - 👉 沒帶 token
+  - 👉 token 過期
+  - 👉 token 無效
+  - 👉 驗證失敗（validation）
+
+<Highlight color="#C62828">🚫 403 Forbidden</Highlight> 你是誰我知道，但 你不能做這件事(權限不足)
+- 📌 常見原因(我知道你是誰，但我不能讓你做)
+  - 👉 一般使用者呼叫管理員 API
+  - 👉 嘗試存取別人的資料
+
+<Highlight color="#C62828">🔍 404 Not Found</Highlight> 資源不存在
+- 📌 常見原因
+  - 👉 URL 錯誤
+  - 👉 查詢的 id 不存在
+  - 不要拿來當權限錯誤（很多人會用錯）
+
+<Highlight color="#C62828">🔁 405 Method Not Allowed</Highlight> 這個資源存在，但 HTTP 方法不被允許
+- 📌 常見原因
+  - 👉 你用錯動詞(HTTP 方法)了
+
+<Highlight color="#C62828">⚠️ 409 Conflict</Highlight> 狀態衝突 請求與目前系統狀態衝突。
+- 📌 常見原因
+  - 👉 註冊重複帳號
+  - 👉 建立重複唯一值資料
+- 例子
+  - email 已存在
+  - 同一時間重複下單
+
+<Highlight color="#C62828">🧾 422 Unprocessable Entity</Highlight> 格式正確但業務驗證失敗
+- 📌 常見原因
+  - 👉 欄位驗證不通過
+  - 👉 業務規則不符
+- 例子
+  - 密碼長度不符
+  - 日期早於今天
+
+- 和 400 的差別
+  - 400：看不懂
+  - 422：看得懂，但不能接受
+---
+|       | 401 | 403 |
+| ----- | --- | --- |
+| 有沒有身分 | ❌   | ✅   |
+| 能不能做  | 未驗證 | 被禁止 |
+
+|         | 400  | 422  |
+| ------- | ---- | ---- |
+| JSON 格式 | ❌ 或錯 | ✅    |
+| 商業邏輯    | 不談   | 驗證失敗 |
+
+
+| 狀態碼                       | 核心問題 | 伺服器知不知道你是誰 | 問題本質           |
+| ------------------------- | ---- | ---------- | -------------- |
+| **401 Unauthorized**      | 沒身分  | ❌ 不知道      | Authentication |
+| **403 Forbidden**         | 沒權限  | ✅ 知道       | Authorization  |
+| **429 Too Many Requests** | 太頻繁  | ✅ 知道       | Usage / Rate   |
+
+> 實務上，後端通常是這樣判斷的：
+
+1️⃣ 有沒有帶 token？
+   ❌ → 401
+
+2️⃣ token 有沒有合法？
+   ❌ → 401
+
+3️⃣ 有沒有權限？
+   ❌ → 403
+
+4️⃣ 請求頻率有沒有超過？
+   ❌ → 429
+
+5️⃣ 才進入業務邏輯
+
+---
+
+## 🟦 5xx 後端/伺服處理問題 
+
+> 👉 5xx 出現 = 系統責任在後端
+
+:::danger 5xx 後端/伺服錯誤（Server Error）
+| HTTP狀態碼 | 意思       | 
+| ----- | --------- |
+| <Highlight color="#C62828">💥 500 Internal Server Error</Highlight> | 伺服器發生未預期錯誤 | 
+| <Highlight color="#C62828">🔌 502 Bad Gateway</Highlight>   | 後端作為「中介」，但拿不到上游回應 | 
+| <Highlight color="#C62828">⏱ 503 Service Unavailable</Highlight> | 服務暫時無法使用 | 
+| <Highlight color="#C62828">⌛ 504 Gateway Timeout</Highlight> | 上游服務回太慢。 | 
+
+:::
+
+--- 
+
+- <Highlight color="#C62828">💥 500 Internal Server Error</Highlight> 伺服器發生未預期錯誤
+- 📌 常見原因(我壞掉了，而且我不知道哪裡壞)
+  - 👉 程式 exception
+  - 👉 null / undefined
+  - 👉 SQL 執行失敗
+  - 👉 沒 catch 到的錯誤
+- ⚠️ 實務重點
+  - 不要把錯誤細節回給前端
+  - 詳細錯誤只寫在 log
+
+- <Highlight color="#C62828">🔌 502 Bad Gateway</Highlight> 後端作為「中介」，但拿不到上游回應
+- 📌 常見原因(我去找別人，但對方沒回我)
+  - 👉 呼叫外部服務失敗
+  - 👉 API Gateway
+  - 👉 Nginx / Load Balancer
+ 
+- <Highlight color="#C62828">⏱ 503 Service Unavailable</Highlight> 服務暫時無法使用
+- 📌 常見原因(<Highlight>我沒壞，但我現在不能用</Highlight> )
+  - 👉 部署中
+  - 👉 系統過載
+  - 👉 維護中
+
+- <Highlight color="#C62828">⌛ 504 Gateway Timeout</Highlight> 上游服務回太慢
+- 📌 常見原因(<Highlight>我等對方等太久了</Highlight> )
+  - 👉 外部 API timeout
+  - 👉 DB 查詢太慢
+
+
+| 狀態碼 | 問題在誰 | 一句話    |
+| --- | ---- | ------ |
+| 502 | 上游掛了 | 對方沒回   |
+| 503 | 自己暫停 | 我暫時不能用 |
+| 504 | 上游太慢 | 等到超時   |
