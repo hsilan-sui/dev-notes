@@ -1,0 +1,239 @@
+---
+title: "【Hoisting】提升總結"
+sidebar_position: 10
+---
+
+
+### 對照表
+
+| 宣告方式         | 創建階段是否登記 | 初始狀態      | 是否存在 TDZ | 執行前可否使用 | Hoisting 行為說明               |
+| ------------ | -------- | --------- | -------- | ------- | --------------------------- |
+| var          | 有        | undefined | ❌ 無      | ✅ 可以    | 宣告被 hoisting，初始化為 undefined |
+| function 陳述式 | 有        | 整個函式      | ❌ 無      | ✅ 可以    | 函式本體被完整 hoisting            |
+| let          | 有        | 未初始化      | ✅ 有      | ❌ 不行    | 宣告被 hoisting，但受 TDZ 限制      |
+| const        | 有        | 未初始化      | ✅ 有      | ❌ 不行    | 宣告被 hoisting，但受 TDZ 限制      |
+| function 表達式 | 只有變數     | undefined | ❌ 無      | ❌ 不行    | 只有變數被 hoisting，函式不是         |
+
+
+## 總整理：
+
+1. **Creation 跟 Execution 差在哪**
+2. **Hoisting 是在哪個階段發生**
+3. **非同步怎麼透過 Event Loop 接進來**
+
+
+```mermaid
+flowchart TB
+    %% ===== 分層區塊 =====
+    subgraph JS引擎
+        direction TB
+
+        subgraph 呼叫堆疊
+            GEC["全域執行環境"]
+
+            subgraph 建立階段
+                VE["建立變數環境"]
+                SC["建立作用域鏈"]
+                THIS["設定 this"]
+                HOIST["Hoisting 將宣告放入環境"]
+            end
+
+            subgraph 執行階段
+                RUN["逐行執行程式"]
+                ASSIGN["變數賦值"]
+                CALL["函式呼叫"]
+            end
+        end
+    end
+
+    subgraph 瀏覽器或系統API
+        API["非同步任務註冊"]
+    end
+
+    subgraph 任務佇列
+        MACRO["一般任務佇列"]
+        MICRO["微任務佇列"]
+    end
+
+    LOOP["事件循環"]
+
+    %% ===== 流程連線 =====
+    GEC --> VE
+    VE --> SC
+    SC --> THIS
+    THIS --> HOIST
+    HOIST --> RUN
+
+    RUN --> ASSIGN
+    RUN --> CALL
+
+    CALL --> API
+    API --> MACRO
+    API --> MICRO
+
+    LOOP --> MICRO
+    MICRO --> RUN
+
+    LOOP --> MACRO
+    MACRO --> RUN
+
+    %% ===== 樣式定義 =====
+    classDef engine fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    classDef phase fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    classDef api fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    classDef queue fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    classDef loop fill:#FCE4EC,stroke:#AD1457,stroke-width:2px
+
+    %% ===== 套用樣式 =====
+    class GEC,呼叫堆疊 engine
+    class VE,SC,THIS,HOIST,建立階段,執行階段 phase
+    class API api
+    class MACRO,MICRO queue
+    class LOOP loop
+```
+
+---
+
+
+## 1️⃣ Creation Phase 在做什麼
+
+**Do**
+
+* 建立變數環境
+* 放入函式宣告
+* 初始化變數為 undefined
+* 決定 this
+
+**How**
+
+* 掃描整份程式
+* 不執行任何一行
+* 只做「宣告層級」的準備
+
+**Why**
+
+* 讓程式在執行前就知道「有哪些名字可以用」
+* 這就是 hoisting 能發生的原因
+
+---
+
+## 2️⃣ Execution Phase 在做什麼
+
+**Do**
+
+* 逐行執行程式
+* 指派變數實際值
+* 呼叫函式
+
+**How**
+
+* 引擎一行一行跑
+* 遇到非同步就丟給外部 API
+
+**Why**
+
+* 真正產生行為與結果
+* console.log 會在這裡才印
+
+---
+
+## 3️⃣ Hoisting 放在哪裡（關鍵）
+
+👉 **Hoisting 是 Creation Phase 的一部分**
+
+不是：
+
+* Event Loop
+* Execution Phase
+* 非同步
+
+而是：
+
+> 建立執行環境時，先把宣告放進變數環境
+
+---
+
+## 4️⃣ 非同步怎麼接進來
+
+**Do**
+
+* setTimeout 或 Promise 被註冊
+* 回呼被排進佇列
+
+**How**
+
+* 瀏覽器或系統 API 處理等待
+* 完成後放進任務佇列
+* Event Loop 決定什麼時候丟回 Call Stack
+
+**Why**
+
+* 避免阻塞主執行緒
+* 讓 JS 可以單執行緒卻能處理多工
+
+---
+
+
+
+> JavaScript 在執行前會先進入建立階段，建立執行環境、變數環境與作用域鏈，並在此階段完成 hoisting
+
+> 接著進入執行階段逐行執行程式，若遇到非同步操作則交由瀏覽器或系統 API 處理，完成後透過事件循環將任務放回呼叫堆疊執行。
+
+---
+
+```mermaid
+flowchart TB
+    %% ===== JS 引擎區 =====
+    subgraph JS引擎
+        direction TB
+
+        subgraph 呼叫堆疊
+            RUN["同步程式執行"]
+            ASYNC["遇到非同步操作"]
+            BACK["回到同步流程"]
+        end
+    end
+
+    %% ===== 系統 API =====
+    subgraph 瀏覽器或系統API
+        TIMER["計時器等待"]
+        PROMISEJOB["Promise 狀態完成"]
+    end
+
+    %% ===== 任務佇列 =====
+    subgraph 任務佇列
+        MICRO["微任務佇列"]
+        MACRO["一般任務佇列"]
+    end
+
+    LOOP["事件循環"]
+
+    %% ===== 流程 =====
+    RUN --> ASYNC
+
+    ASYNC --> TIMER
+    ASYNC --> PROMISEJOB
+
+    TIMER --> MACRO
+    PROMISEJOB --> MICRO
+
+    BACK --> LOOP
+
+    LOOP --> MICRO
+    MICRO --> RUN
+
+    LOOP --> MACRO
+    MACRO --> RUN
+
+    %% ===== 樣式 =====
+    classDef engine fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    classDef api fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    classDef queue fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    classDef loop fill:#FCE4EC,stroke:#AD1457,stroke-width:2px
+
+    class RUN,ASYNC,BACK engine
+    class TIMER,PROMISEJOB api
+    class MICRO,MACRO queue
+    class LOOP loop
+
+```

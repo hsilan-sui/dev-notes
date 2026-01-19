@@ -1,0 +1,147 @@
+---
+title: "【Scope】JS三種Scope作用域"
+sidebar_position: 7
+---
+
+## 🟧 JavaScript 的三種 Scope（作用域）
+
+在 JavaScript 中，**Scope 用來決定「變數在哪裡可以被存取」**。  
+目前常見的作用域分為三種：
+
+:::tip Scope 用來決定「變數在哪裡可以被存取」
+| Global Scope（全域作用域) | Function Scope（函式作用域） | Block Scope（區塊作用域，ES6）if/while |
+| -- | --------- | --------- |
+| `const  me = "sui";`;| `function calcAge(birthYear) {`| `if (year >= 1998 && year <= 1996) {` |
+| `const  job = "teacher";`| `var now = 2037;` | `const millenial = true;`     |
+| `var year = 1998;` |   `var age = now - birthYear;` | `const food = '吐司';`       |
+| 在fn或區塊以外宣告的變數 | `return age;` | `}`      |
+| 在全域宣告的變數，隨處可得 | `}` | `console.log(millenial) //ReferenceError`   |
+| 注意！var可以重新賦值 | `console.log(now) //ReferenceError` | 變數只能在區塊`{}`中取得   |
+| `year = 2007;` | 因為變數只能在函式作用域內取得 | <Highlight color="#1877F2">區塊作用域只有let和const有作用</Highlight>   |
+| `console.log(a); // 20`重新賦值ok | <Highlight color="#C62828">var 是globe scope 和function scope ＆let / const 都遵守 function scope</Highlight> |  <Highlight color="#C62828">❌ var不吃 block scope</Highlight>   |
+:::
+
+
+---
+
+### ✅ var要小心
+
+> **全域的 `var` 可以被重新賦值，也可以被重新宣告，
+> 後面的一定會覆蓋前面。**
+
+
+### 1️⃣ 全域 `var` 的兩個特性（重點）
+- 特性一：可以重新賦值
+
+```js
+var a = 10;
+a = 20;
+
+console.log(a); // 20
+```
+
+- 👉 沒問題，這是「重新賦值」
+
+---
+
+- 特性二：可以重新宣告（re-declare）
+
+```js
+var a = 10;
+var a = 30;
+
+console.log(a); // 30
+```
+
+👉 **後面直接取代前面**
+
+---
+
+### 2️⃣ 為什麼 `var` 會這樣（Why）
+- 背後機制（白話版）
+
+* 全域 `var` 會變成：
+
+  * **全域執行環境裡的一個變數**
+  * 在瀏覽器中甚至會掛在 `window` 上
+
+```js
+var x = 1;
+console.log(window.x); // 1
+```
+
+* 當你再次寫：
+
+```js
+var x = 2;
+console.log(window.x); // 2
+```
+
+JS 會覺得：
+> 「喔，同一個全域變數，再賦新值而已」
+
+---
+
+### 3️⃣ 對照 `let / const`
+- `let`：不能重複宣告(❌ SyntaxError)，但可以重新賦值
+
+```js
+let a = 10;
+a = 20;    // OK
+let a = 30; // ❌ SyntaxError
+```
+
+---
+
+- `const`：不能重複宣告(❌ SyntaxError)，也不能重新賦值(❌ TypeError)
+
+```js
+const a = 10;
+a = 20;     // ❌ TypeError
+const a = 30; // ❌ SyntaxError
+```
+
+---
+
+### 4️⃣ 最危險的地方
+
+#### 全域 `var` 會污染全域命名空間
+- var是吃函式作用域的(還好這裡有 function scope)
+```js
+var name = 'Sui';
+
+function test() {
+  var name = 'Other';
+}
+
+console.log(name); // 'Sui'
+```
+
+- 但如果是這樣，var不吃block scope，後面宣告賦值的變數會覆蓋前面
+  - 變數被污染 
+
+```js
+var data = 1;
+
+if (true) {
+  var data = 2;
+}
+
+console.log(data); // 2 😱
+```
+
+👉 因為 `var` **沒有 block scope**
+
+---
+
+:::tip
+
+- > 全域使用 `var` 宣告的變數可以被重新賦值，也可以被重新宣告，後面宣告的值會直接覆蓋前面，因此容易造成全域污染。
+- > 只有 function scope，沒有 block scope，而且在全域會變成全域物件的屬性，容易被覆蓋造成不可預期的副作用。
+
+* ❌ 不要在現代專案用全域 `var`
+* ✅ 用 `let / const`
+* ✅ 模組化（ESM）避免全域變數
+:::
+
+

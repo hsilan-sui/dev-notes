@@ -1,0 +1,82 @@
+---
+title: "【Scope】JS是語法作用域(Lexical scope)"
+sidebar_position: 8
+---
+
+<Highlight color="#1877F2">JS是語法作用域，也就是說，它的作用域在『撰寫好時』就已經決定了</Highlight> 
+
+## 🟧 語法作用域
+
+```js
+function  callName() {
+  var ming = "小明";
+}
+
+callName(); 
+console.log(ming);
+//ReferenceError: ming is not define
+```
+
+- var 變數也吃函式作用域，變數作用域寫好就決定了，當全域要輸出函式內宣告的變數會發生錯誤
+- 也叫做靜態作用域
+
+- 當執行函式該作用域內沒有該變數，才會向外(全域)查找變數，全域也沒有該變數，也會出現`ReferenceError: ming is not define`
+
+## 🟦 作用域是「寫在哪」決定的，不是「在哪呼叫」
+
+```js
+cont x = 10;
+
+function foo() {
+  console.log(x);
+}
+
+function bar() {
+  const x = 20;
+  foo();
+}
+
+bar(); //會是10
+```
+
+:::tip 為什麼是 10？
+
+- 因為 JavaScript 是 詞法作用域（Lexical Scope）
+
+- 作用域在「程式碼寫下來的當下」就決定了
+
+- 不是看「誰呼叫誰」
+:::
+
+## 🟦 作用域鍊（Scope Chain）概念
+
+```js
+const a = 1;
+
+function outer() {
+  const b = 2;
+
+  function inner() {
+    const c = 3;
+    console.log(a, b, c);
+  }
+
+  inner();
+}
+
+outer(); //1 , 2, 3
+
+```
+
+
+:::tip
+當 JS 找不到變數時：
+
+1.先在目前作用域找
+
+2.找不到 → 往外一層找
+
+3.一直找到全域
+
+4. 都找不到 → ReferenceError
+:::

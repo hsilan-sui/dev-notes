@@ -1,0 +1,369 @@
+---
+title: "【Hoisting和TDZ】提升 和 暫時性死區"
+sidebar_position: 9
+---
+
+> Hoisting提升 指的是：每一個執行環境建立時，都會先跑創建階段，JavaScript 先為變數與函式建立記憶體空間（登記名稱），讓它們在程式碼執行前就已存在。
+
+或
+
+> Hoisting 就是：在「創建階段」，JS 幫目前執行環境先準備一張表格，登記它裡面有哪些變數與函式。
+
+## 🟧 執行環境
+
+```
+全域程式開始
+→ 建立 執行環境(Execution Context)
+→ 創建階段(Creation Phase)（Hoisting 發生）
+→ 執行階段(Execution Phase)（逐行執行）
+→ 非同步交給 Web API
+→ Event Loop 拉回 Call Stack
+```
+
+![執行環境](/img/ec_01.png)
+![執行環境](/img/hoisting_01.png)
+![執行環境](/img/hoisting_02.png)
+圖片引用來自[六角學院-JavaScript 核心篇](https://courses.hexschool.com/courses/670037/lectures/11951914)
+
+- <Highlight color="#1877F2">✅ hoisting 發生在「執行環境被建立時的創建階段」</Highlight>
+
+- <Highlight color="#1877F2">✅ 每一個執行環境（全域 / 函式）都有自己的創建階段</Highlight>
+
+- 在創建階段：
+
+| 類型 | 創建階段狀態      |
+| -- | --------- |
+| function 陳述式 | 整個函式都準備好 | 
+| var 變數 | 建立名稱，值是 undefined |
+
+
+
+```js
+function doSomething() {
+  console.log(mom);   // ① undefined 
+  var mom = "媽媽";
+  console.log(mom);   // ② "媽媽"
+}
+
+doSomething(); //當 doSomething 被呼叫時：
+```
+:::tip
+```
+當 doSomething 被呼叫時：
+
+1. JS 先進入 創建階段
+   - 在記憶體中建立變數 mom
+   - mom 的初始值是 undefined
+
+2. 接著進入 執行階段
+   - 程式碼一行一行執行
+   - 當執行到 `var mom = "媽媽";`
+     → mom 立刻被賦值為 "媽媽"
+
+3. 函式執行結束
+   - 函式作用域被銷毀
+   - mom 也隨之消失
+```
+:::
+
+## 🟦 提升
+
+- 先看這個例子：
+
+```js
+var Ming = "小明";
+console.log(Ming); //小明
+```
+
+- 但如果把`console`往前移呢？
+
+```js
+console.log(Ming); //undefined
+var Ming = "小明";
+```
+
+- 再把宣告變數拿掉呢？
+
+```js
+console.log(Ming); //ReferenceError: Ming is not define
+```
+
+- 現象解釋：
+
+```js
+//其實是這樣的：
+var Ming; //創建階段
+Ming = "小明"; //執行階段
+console.log(Ming); //小明
+```
+
+## 🟦  「每次建立執行環境時，都會先跑創建階段」
+
+```
+（程式開始）
+
+1️⃣ 建立「全域執行環境」
+   → 進入全域的「創建階段」
+   → 做 hoisting（掃描）
+
+2️⃣ 全域「執行階段」
+   → 一行一行跑程式碼
+
+   ⬇️ 遇到函式呼叫
+
+3️⃣ 建立「函式執行環境」
+   → 進入函式的「創建階段」
+   → 做 hoisting（只掃函式內）（function first）
+
+4️⃣ 函式「執行階段」
+   → 跑函式內程式碼
+
+```
+
+![執行環境](/img/hoisting_03.png)
+![執行環境](/img/hoisting_04.png)
+![執行環境](/img/hoisting_05.png)
+圖片皆引用來自[六角學院-JavaScript 核心篇](https://courses.hexschool.com/courses/670037/lectures/11951914)
+
+### 0️⃣ 函式陳述式 function statement
+
+```js
+function callName() {
+  console.log("呼叫小明")
+}
+
+callName(); //呼叫小明
+```
+
+- 我們把呼叫函式放到前面，卻也可以執行：
+
+```js
+
+callName(); //呼叫小明
+
+function callName() {
+  console.log("呼叫小明")
+}
+
+```
+
+:::tip 
+原因就是，函式陳述式會在創建階段，就把函式陳述式變數與內容都在記憶體空間都完整準備好了
+
+你提前呼叫，都仍可以執行該函式
+:::
+
+### 1️⃣ 函式表達式 function expression
+
+- 因為函式表達式也是宣告變數，所以在創建階段也只會先在記憶體中註冊變數名稱而已
+  - 創造階段 => `var callName;`
+  - 執行階段 => `callName = fn()`
+
+```js
+var callName = function() {
+  console.log('呼叫小王');
+}
+
+callName(); //呼叫小王
+```
+
+- 那如果把 callName(); 移到函式表達式前面？
+```js
+console.log(callName);//undefined
+
+callName(); //TypeError： callName is not a function
+
+var callName = function() {
+  console.log('呼叫小王');
+}
+```
+
+### 2️⃣ 函式陳述式 v.s 函式表達式
+
+- 情況1:
+```js
+function callName() {
+  console.log('呼叫小王 1');
+}
+
+var callName = function() {
+  console.log('呼叫小王 2');
+}
+
+callName(); //'呼叫小王 2'
+
+//會是'呼叫小王 2'
+```
+
+:::tip 當變數名稱撞名，後面覆蓋前面
+- 1. 創建階段:
+  -  函式陳述式 `fn: function callName() {..,}`
+  -  `var callName;`
+
+- 2. 執行階段:
+  - `當變數名稱撞名，後面覆蓋前面`
+:::
+
+---
+
+- 情況2:
+```js
+
+var callName = function() {
+  console.log('呼叫小王 2');
+}
+
+function callName() {
+  console.log('呼叫小王 1');
+}
+
+callName(); //'呼叫小王 2'
+
+//會是'呼叫小王 2'
+```
+
+:::tip 創建階段，函式優先！！！
+- 1. 創建階段:
+  -  (函式優先)函式陳述式 `fn: function callName() {..,}`
+  -  `var callName;`
+
+- 2. 執行階段:
+  - `當變數名稱撞名，後面覆蓋前面`
+:::
+
+
+---
+
+- 情況3:
+
+```js
+function callName() {
+  console.log('呼叫小王 1');
+}
+
+var callName;
+
+callName(); //'呼叫小王 1'
+
+
+callName = function() {
+  console.log('呼叫小王 2');
+}
+
+```
+
+:::tip 
+- 1. 創建階段:
+  -  函式陳述式 `fn: function callName() {..,}`
+  -  `var callName;`
+
+- 2. 執行階段:
+  - '呼叫小王 1'
+:::
+
+###  4️⃣ 練習題
+
+```js 函式優先
+
+callName(); //undefined
+
+function callName() {
+  console.log(Ming);
+}
+
+var Ming = "小明";
+
+```
+
+---
+
+```js
+
+function callName() {
+  console.log('小明');
+}
+
+callName();  //杰倫
+
+function callName() {
+  console.log('杰倫');
+}
+
+callName(); //杰倫
+
+```
+
+:::tip
+- 創造階段
+  - 函式優先
+  - 但是同名，後面覆蓋前面
+  - 隨處調用的函式都是覆蓋的那個
+  - 輸出會是『杰倫』
+
+:::
+
+---
+
+```js
+whosName();
+
+function whosName() {
+  if(name) {
+    name = "杰倫";
+  }
+}
+var name = '小明';
+console.log(name); //小明
+
+```
+
+:::tip
+- 創造階段 
+  - 函式優先 `function whosName() {...}` 
+  - `var name;`
+
+- 執行階段
+  - `var name = '小明';`
+:::
+
+
+## 🟦 TDZ 暫時性死區(let, const)
+<Highlight color="#C62828">let 和 const 會在創建階段被 hoisting，但在初始化前處於 Temporal Dead Zone，任何存取都會拋出錯誤，這也是它們比 var 安全的原因。</Highlight> !
+
+
+- 對照 var:
+  - 宣告 + 初始化（undefined）在創建階段就完成
+  - 所以沒有 TDZ
+```js
+console.log(y); // undefined
+var y = 5;
+```
+
+
+:::danger let 和cont TDZ
+
+已宣告 ✔
+
+未初始化 ❌
+
+→ TDZ 中（不能用）
+
+:::
+
+```js
+console.log(x); // ❌ TDZ機制 
+
+let x = 5;      // ← 初始化 發生在這一行
+console.log(x); // ✅ 5
+```
+
+### 對照表
+
+| 宣告方式         | 創建階段是否登記 | 初始狀態      | 是否存在 TDZ | 執行前可否使用 | Hoisting 行為說明               |
+| ------------ | -------- | --------- | -------- | ------- | --------------------------- |
+| var          | 有        | undefined | ❌ 無      | ✅ 可以    | 宣告被 hoisting，初始化為 undefined |
+| function 陳述式 | 有        | 整個函式      | ❌ 無      | ✅ 可以    | 函式本體被完整 hoisting            |
+| let          | 有        | 未初始化      | ✅ 有      | ❌ 不行    | 宣告被 hoisting，但受 TDZ 限制      |
+| const        | 有        | 未初始化      | ✅ 有      | ❌ 不行    | 宣告被 hoisting，但受 TDZ 限制      |
+| function 表達式 | 只有變數     | undefined | ❌ 無      | ❌ 不行    | 只有變數被 hoisting，函式不是         |
+
