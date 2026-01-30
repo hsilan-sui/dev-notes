@@ -1,0 +1,671 @@
+---
+title: "【API_ kata】2.了解 request 物件&POST API"
+sidebar_position: 2
+---
+
+
+## 🟧 開場白
+
+
+```js
+
+const http = require("http");
+
+// 請求 與 回覆
+const requestListener = (req, res) => {
+
+  console.log(req); //輸出使用者的請求物件內容 觀察一下
+
+  res.writeHead(200, { "Content-Type": "text/plain" }); // 回應 header
+  res.write("hello"); // 回應內容
+  res.end(); // 結束並送出回應
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+
+
+![網路請求](/img/req_01.png)
+
+:::tip
+```js
+console.log(req.url);
+
+console.log(req.method);
+```
+:::
+
+- 請求與回應也可以用POSTMAN工具測試
+![網路請求](/img/req02.png)
+
+- 我們可以透過使用者發過來的請求中的method和url知道，他現在要對該api做出什麼樣的動作(crud)來跟系統要資料
+
+---
+
+## 🟦 實作
+
+### 0️⃣ 新增首頁測試網址 & GET 與 404 頁面
+
+```js
+
+const http = require("http");
+
+// 請求 與 回覆
+const requestListener = (req, res) => {
+  console.log(req.url);
+  console.log(req.method); //輸出使用者的請求物件內容 觀察一下
+  //針對請求的網址導流 做不同的處理
+  if(req.url == "/" && req.method == "GET") { //進首頁
+    res.writeHead(200, { "Content-Type": "text/plain" }); // 成功 回應 header
+    res.write("index"); // 回應內容
+    res.end(); // 結束並送出回應
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, { "Content-Type": "text/plain" }); // 404 回應 header
+    res.write("not found"); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+- 也可以把headers 收納起來共用
+
+```js
+
+const http = require("http");
+
+// 請求 與 回覆
+const requestListener = (req, res) => {
+
+  const headers = {
+    { "Content-Type": "text/plain" }
+  }
+
+  console.log(req.url);
+  console.log(req.method); //輸出使用者的請求物件內容 觀察一下
+
+  //針對請求的網址導流 做不同的處理
+  if(req.url == "/" && req.method == "GET") { //進首頁
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write("index"); // 回應內容
+    res.end(); // 結束並送出回應
+
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write("not found"); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+![網路請求](/img/req_03.png)
+
+### 1️⃣ 增加針對同一個網址資源做刪除的請求
+
+```js
+
+const http = require("http");
+
+// 請求 與 回覆
+const requestListener = (req, res) => {
+
+  const headers = {
+    { "Content-Type": "text/plain" }
+  }
+
+  console.log(req.url);
+  console.log(req.method); //輸出使用者的請求物件內容 觀察一下
+
+  //針對請求的網址導流 做不同的處理
+  if(req.url == "/" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write("index"); // 回應內容
+    res.end(); // 結束並送出回應
+
+  } else if (req.url == "/" && req.method == "DELETE") { //刪除請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write("刪除成功"); // 回應內容
+    res.end(); // 結束並送出回應
+
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write("not found"); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+### 2️⃣ 調整表頭資訊，設置回傳 JSON 與 cors 資訊
+
+```js
+
+const http = require("http");
+
+// 請求 與 回覆
+const requestListener = (req, res) => {
+
+  const headers = {
+   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
+    'Content-Type': 'application/json' //請求改成"JSON格式"
+}
+
+  //針對請求的網址導流 做不同的處理
+  if(req.url == "/" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": [],
+    })); // 這裡改成JSON格式，但網路請求不會解析物件陣列等格式，只懂字串
+    res.end(); // 結束並送出回應
+
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write(JSON.stringigy({ //改寫JSON內容 404
+      "status": "false",
+      "message": "無此網站路由",
+    })); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+:::tip
+JSON格式，但網路請求(網路封包)不會解析物件陣列等格式，只懂字串，所以我們要把JSON字串化
+:::
+
+![網路請求](/img/req_04.png)
+
+- 404回應
+![網路請求](/img/req_05.png)
+
+---
+
+### 3️⃣ preflight options API 檢查機制
+
+```js
+var requestOptions = {
+  method: 'DELETE',
+  redirect: 'follow'
+};
+
+fetch("https://intense-stream-02049.herokuapp.com/todos", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+```
+
+:::tip
+跨網域請求在某些情況會觸發預檢機制put/delete/patch..
+伺服器說200ok 瀏覽器才會再次做請求
+:::
+
+- ![網路請求](/img/req_06.png)
+- ![網路請求](/img/req_07.png)
+- ![網路請求](/img/req_08.png)
+- ![網路請求](/img/req_09.png)
+
+### 4️⃣ 實作：設定 options API
+
+```js
+
+const http = require("http");
+
+const requestListener = (req, res) => {
+
+  const headers = {
+   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
+    'Content-Type': 'application/json' //請求改成"JSON格式"
+}
+
+  //針對請求的網址導流 做不同的處理
+  if(req.url == "/" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": [],
+    })); 
+    res.end(); // 結束並送出回應
+  } else if (req.method == "OPTIONS"){
+    res.writeHead(200, headers); 
+    res.end(); // 結束並送出回應
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write(JSON.stringigy({ //改寫JSON內容 404
+      "status": "false",
+      "message": "無此網站路由",
+    })); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+---
+
+## 🟦 API 介紹
+
+- ![API](/img/api.png)
+
+- ![API](/img/api_01.png)
+
+### 0️⃣ 實作：取得所有代辦、增加 UUID NPM (GET 所有todos)
+
+```js
+const http = require("http");
+const { v4: uuidv4 } = require('uuid'); //新增模組
+const todos = [ //資料庫
+  {
+    id: uuid4(),
+    title: "今天要面試"
+  },
+  {
+    id: uuid4(),
+    title: "今天要吃晚餐"
+  }
+];
+
+const requestListener = (req, res) => {
+
+  const headers = {
+   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
+    'Content-Type': 'application/json' //請求改成"JSON格式"
+}
+
+  //針對請求的網址導流 做不同的處理
+  if(req.url == "/todos" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": todos,
+    })); 
+    res.end(); // 結束並送出回應
+  } else if (req.method == "OPTIONS"){
+    res.writeHead(200, headers); 
+    res.end(); // 結束並送出回應
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write(JSON.stringigy({ //改寫JSON內容 404
+      "status": "false",
+      "message": "無此網站路由",
+    })); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+### 1️⃣ POST API router 環境建立
+
+```js
+const http = require("http");
+const { v4: uuidv4 } = require('uuid'); //新增模組
+const todos = [ //資料庫
+  {
+    id: uuid4(),
+    title: "今天要面試"
+  },
+  {
+    id: uuid4(),
+    title: "今天要吃晚餐"
+  }
+];
+
+const requestListener = (req, res) => {
+
+  const headers = {
+   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
+    'Content-Type': 'application/json' 
+}
+
+  
+  if(req.url == "/todos" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": todos,
+    })); 
+    res.end(); 
+  } else if (req.url == "/todos" && req.method == "POST"){ //這裡
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": "1234"
+    })); 
+    res.end();
+  } else if (req.method == "OPTIONS"){
+    res.writeHead(200, headers); 
+    res.end(); // 結束並送出回應
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write(JSON.stringigy({ //改寫JSON內容 404
+      "status": "false",
+      "message": "無此網站路由",
+    })); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+### 2️⃣ 如何接收 POST API 的 body 資料？
+
+:::tip
+Node.js 官網接收 buffer 教學
+:::
+
+- ![封包](/img/api_02.png)
+```js
+const http = require('node:http');
+
+const server = http.createServer((req, res) => {
+  // `req` is an http.IncomingMessage, which is a readable stream.
+  // `res` is an http.ServerResponse, which is a writable stream.
+
+  let body = '';
+  // Get the data as utf8 strings.
+  // If an encoding is not set, Buffer objects will be received.
+  req.setEncoding('utf8');
+
+  // Readable streams emit 'data' events once a listener is added.
+  req.on('data', (chunk) => {
+    body += chunk;
+  });
+
+  // The 'end' event indicates that the entire body has been received.
+  req.on('end', () => {
+    try {
+      const data = JSON.parse(body);
+      // Write back something interesting to the user:
+      res.write(typeof data);
+      res.end();
+    } catch (er) {
+      // uh oh! bad json!
+      res.statusCode = 400;
+      return res.end(`error: ${er.message}`);
+    }
+  });
+});
+
+server.listen(1337);
+
+```
+
+```js
+const http = require('node:http');
+
+const server = http.createServer((req, res) => {
+  // `req` is an http.IncomingMessage, which is a readable stream.
+  // `res` is an http.ServerResponse, which is a writable stream.
+
+  let body = '';
+  // Get the data as utf8 strings.
+  // If an encoding is not set, Buffer objects will be received.
+  req.setEncoding('utf8');
+
+  // Readable streams emit 'data' events once a listener is added.
+  req.on('data', (chunk) => {
+    console.log(chunk);//可以輸出chunk看看
+    body += chunk;
+  });
+
+  // The 'end' event indicates that the entire body has been received.
+  req.on('end', () => {
+    console.log(body) //可以輸出整個body看看 /
+    console.log(typeof body) //可以輸出整個body看看  是字串
+  });
+});
+
+server.listen(1337);
+
+```
+
+- data 事件：
+  - 每收到一段資料就觸發
+- chunk：
+  - 是 Buffer
+  - 代表一小段 request body
+- body += chunk：
+  - 把資料拼起來（最後會變成完整字串）
+
+- 對照輸出：buffer就是一塊快的chunk
+- ![封包](/img/api_03.png)
+
+### 3️⃣ 新增 todo POST API
+:::tip
+- end 事件：
+- 表示 request body 已全部接收完成
+
+- 這時才可以：
+  - JSON.parse(body)
+  - 取出 POST 傳來的資料
+:::
+```js
+const http = require("http");
+const { v4: uuidv4 } = require('uuid'); //新增模組
+const todos = [ //資料庫
+  {
+    id: uuid4(),
+    title: "今天要面試"
+  },
+  {
+    id: uuid4(),
+    title: "今天要吃晚餐"
+  }
+];
+
+
+let body = '';
+
+req.on('data', (chunk) => {
+    console.log(chunk);//可以輸出chunk看看
+    body += chunk;
+  });
+
+const requestListener = (req, res) => {
+
+  const headers = {
+   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
+    'Content-Type': 'application/json' 
+}
+
+  
+  if(req.url == "/todos" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": todos,
+    })); 
+    res.end(); 
+  } else if (req.url == "/todos" && req.method == "POST"){ 
+    req.on('end', () => {
+      //我收到的是字串封包 所以要轉成物件格式 才能取出key value
+      const title = JSON.parse(body).title;
+      const todo = {
+        "title": title,
+        "id": uuidv4()
+      }
+      console.log(todo);
+      todos.push(todo);
+      res.writeHead(200, headers); // 成功 回應 header
+      res.write(JSON.stringigy({
+        "status": "success",
+        "data": todos,
+      })); 
+      res.end();
+    });
+    
+  } else if (req.method == "OPTIONS"){
+    res.writeHead(200, headers); 
+    res.end(); // 結束並送出回應
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write(JSON.stringify({ //改寫JSON內容 404
+      "status": "false",
+      "message": "無此網站路由",
+    })); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+### 4️⃣ 新增 POST API 異常行為 try catch
+
+```js
+const http = require("http");
+const { v4: uuidv4 } = require('uuid'); //新增模組
+const todos = [ //資料庫
+  {
+    id: uuid4(),
+    title: "今天要面試"
+  },
+  {
+    id: uuid4(),
+    title: "今天要吃晚餐"
+  }
+];
+
+
+let body = '';
+
+req.on('data', (chunk) => {
+    console.log(chunk);//可以輸出chunk看看
+    body += chunk;
+  });
+
+const requestListener = (req, res) => {
+
+  const headers = {
+   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
+    'Content-Type': 'application/json' 
+}
+
+  
+  if(req.url == "/todos" && req.method == "GET") { //GET請求
+    res.writeHead(200, headers); // 成功 回應 header
+    res.write(JSON.stringigy({
+      "status": "success",
+      "data": todos,
+    })); 
+    res.end(); 
+  } else if (req.url == "/todos" && req.method == "POST"){ 
+    req.on('end', () => {
+      try { //成功寫入
+            //我收到的是字串封包 所以要轉成物件格式 才能取出key value
+          const title = JSON.parse(body).title;
+          if(title !== undefined) {
+            //就把資料寫入
+              const todo = {
+                "title": title,
+                "id": uuidv4()
+              }
+              console.log(todo);
+              todos.push(todo);
+              res.writeHead(200, headers); // 成功 回應 header
+              res.write(JSON.stringigy({
+                "status": "success",
+                "data": todos,
+              })); 
+              res.end();
+          } else { //title不存在無值的話
+            res.writeHead(400, headers); // 失敗 回應 header
+              res.write(JSON.stringigy({
+                "status": "false",
+                "message": "欄位未填寫正確，無此todo id",
+              })); 
+              res.end();
+          }
+
+      } catch(error) {
+        res.writeHead(400, headers); 
+          res.write(JSON.stringigy({
+            "status": "false",
+            "message": "欄位未填寫正確，無此todo id",
+          })); 
+        
+        res.end();
+      }});
+      
+    
+  } else if (req.method == "OPTIONS"){
+    res.writeHead(200, headers); 
+    res.end(); // 結束並送出回應
+  } else { //不是首頁 就導出404回應
+    res.writeHead(404, headers); // 404 回應 header
+    res.write(JSON.stringify({ //改寫JSON內容 404
+      "status": "false",
+      "message": "無此網站路由",
+    })); // 回應內容
+    res.end(); // 結束並送出回應
+  }
+  
+};
+
+// 建立 server
+const server = http.createServer(requestListener);//使用者進入網址就觸發請求
+server.listen(3005);
+
+```
+
+### 5️⃣ 重構 POST API 異常行為
+
+---
+

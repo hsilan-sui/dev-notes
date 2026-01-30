@@ -331,10 +331,40 @@ wait(1)
 
 ### 1️⃣ 改寫 async / await 
 
+```js
+const wait = (seconds) => {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+};
 
+const run = async () => {
+  await wait(1);
+  console.log("過了 1 秒");
+
+  await wait(1);
+  console.log("過了 2 秒");
+
+  await wait(1);
+  console.log("過了 3 秒");
+
+  await wait(1);
+  console.log("過了 4 秒");
+};
+
+run();
+
+```
+
+<iframe height="300" style={{ width: "100%" }} scrolling="no" title="async / await" src="https://codepen.io/sui-hsialn/embed/raLmNjL?default-tab=js" frameborder="no" loading="lazy" allowtransparency="true">
+      See the Pen <a href="https://codepen.io/sui-hsialn/pen/raLmNjL">
+  async / await</a> by Sui Hsilan (<a href="https://codepen.io/sui-hsialn">@sui-hsialn</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+      </iframe>
 
 
 ### 時序圖
+
+![event loop](/img/Event-Loop-in-JavaScript.jpg)
+
 
 ```mermaid
 flowchart TD

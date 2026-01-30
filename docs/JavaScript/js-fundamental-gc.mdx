@@ -1,0 +1,304 @@
+---
+title: "【JS_基礎】Garbage Collection/垃圾回收機制 與 Memory Leaks/記憶體洩漏"
+sidebar_position: 6
+---
+
+## Garbage Collection ｜垃圾回收機制
+
+- <Highlight>JS是一種垃圾回收的語言</Highlight>
+
+:::info
+- 在JS中的垃圾回收機制是使用一種叫『mark 和 sweep algotithm/標記掃瞄演算法』
+- 在 JavaScript 中
+  - Root Set 包含全域物件 window 或 global
+  - 以及目前 Call Stack 中的變數
+  - 還有被執行環境保留的 callback 與閉包參考
+  - GC 會從這些 Root 開始判斷可達性
+- > 先用圖解釋一下 JS 垃圾回收機制
+:::
+
+- > ![JS_GC](/img/g_01.png)
+
+- <Highlight color="#1877F2">會標記出函式還有在使用的物件參考位置</Highlight>
+
+> ![JS_GC](/img/g_02.png)
+
+
+- <Highlight color="#C62828">會掃描沒有在使用的物件參考位置</Highlight> 
+> ![JS_GC](/img/g_03.png)
+
+
+- <Highlight color="#6A1B9A">執行垃圾回收機制</Highlight>
+> ![JS_GC](/img/g_04.png)
+
+---
+
+圖中左邊 Root Set/根集合會是
+- num1 → 610
+- str1 → "一些文字"
+- obj →（一個「記憶體位置」）
+
+```jsx title="用程式碼來解釋：GC"
+
+//分配記憶體位置給num1變數該區域儲存值610
+const num1 = 610;
+
+//分配記憶體位置給str1變數，變數該區域儲存值"一些文字"
+const str1 = "一些文字";
+
+//物件
+let human = {
+  first: "sui",
+  last: "hsilan"
+}
+
+
+human = 5;
+```
+
+:::tip
+重點一句話先記
+
+- JS的primitive原始型別會直接存值，不是存參考
+- 以下num1 與 str1 發生了什麼事（primitive）
+
+- 實際記憶體狀態（概念）
+- Call Stack 裡：
+  - num1 → 610
+  - str1 → "一些文字"
+
+- 👉 值就直接跟著變數走
+- 👉 不需要額外指到 Heap
+
+- 因為：
+  - number
+  - string
+  - boolean
+  - null
+  - undefined
+  - symbol
+- 都是 immutable（不可變）
+- 引擎可以安全地直接放在 Stack
+:::
+
+
+- 細看物件：
+- > 全域變數不是「永生」，只有「目前被參考」才活著
+
+```js
+//物件
+let human = {
+  first: "sui",
+  last: "hsilan"
+}
+
+
+human = 5;
+```
+
+:::tip
+
+🧠 執行前：記憶體狀態
+
+- Root Set（左邊）參照剛剛的圖
+  - 全域變數 human → 指向 Heap 的物件（右側記憶體參考位置）
+
+- Memory Heap（右邊）
+  - 某個物件：
+    - `first → "sui"`
+    - `last → "hsilan"`
+- 👉 此時物件可達
+
+:::
+
+- 🔁 執行 human = 5 發生什麼？
+  - 這一行做了關鍵的一件事：
+    - human 不再指向物件
+    - human 改成存 primitive 值 5
+  - 現在 Root Set 長這樣：
+    - human → 5（primitive）
+  - Heap 呢？
+    - `{ first, last }`
+    - ❌ 沒有任何 Root 指向
+
+:::tip
+- 🧹 GC 怎麼看？
+  - GC 規則還是一樣：
+  - 從 Root Set 走不到 = 不可達
+```js
+  { first: "sui", last: "hsilan" }
+```
+- 👉 在下一輪 Garbage Collection 中會被回收
+:::
+
+
+### 多做GC練習：「不會被 GC」的反例
+
+```js
+let human = {
+  first: "sui",
+}
+
+const backup = human
+human = 5
+
+```
+
+- backup 還指著那個物件
+- Root Set 仍走得到該物件的位置
+- 👉 物件不會被 GC
+
+### 函式裡的物件，只要函式執行完、沒有被外面留住參考，就會變成 GC 候選對象
+
+- <Highlight>「函式結束後，Root 還走不走得到」</Highlight> 
+
+- 情境一：最單純的情況（會被 GC）
+
+```js
+function test() {
+  let human = {
+    first: "sui",
+  }
+}
+
+test()
+
+```
+
+- 執行時發生什麼？
+  - 1️⃣ test 執行中
+    - Call Stack：
+      - test 的執行環境
+      - human → 指向 Heap 的物件
+    - Heap：
+      - `{ first: "sui" }`
+- 👉 此時物件是可達的
+
+  - 2️⃣ test 執行結束
+    - test 的執行環境從 Call Stack 移除
+    - human 這個變數消失
+    - Heap 裡的物件 再也沒有任何 Root 指向
+- 👉 物件變成不可達
+
+- ✅ 結論
+  - ➡️ 該物件 會在之後某一輪 GC 被回收
+
+### ❌ 為什麼有時候「不會被 GC」:閉包
+
+```js
+function outer() {
+  let human = {
+    first: "sui",
+  }
+
+  return function inner() {
+    console.log(human.first)
+  }
+}
+
+const fn = outer()
+
+```
+
+- Root Set 裡有什麼？
+  - 全域變數 fn
+  - fn 指向 inner 函式
+  - inner 函式 關閉式地參考 human
+- 👉 human 仍然走得到
+
+- ✅ 結論
+  - ➡️ 該物件 ❌ 不會被 GC
+  - 即使：outer 已經執行完
+  - outer 的 Stack frame 已經消失
+
+### 承接閉包=> 把參考斷掉，就能 GC
+
+```js
+let fn = outer()
+fn = null
+```
+- 發生什麼？
+  - inner 函式不再被參考
+  - human 也一起變成不可達
+  - 👉 下一輪 GC 全部清掉
+
+:::tip
+- GC 只看「從 Root 走不走得到」
+- 函式結束 ≠ 一定被回收
+- 閉包是最常見的「記憶體留下來的原因」
+
+- 函式內建立的物件
+- 在函式執行期間會被 Call Stack 參考
+- 函式結束後若沒有被外部變數或閉包保留
+- 就會變成不可達
+- 在之後的垃圾回收週期中被回收
+
+- 判斷方式，從全域或正在執行的函式，還走得到它嗎？
+:::
+
+---
+
+## Memory Leaks 記憶體洩漏
+
+- <Highlight>當Memory Heap中變得太大直到極限，就會發生Memory Leaks 記憶體洩漏</Highlight>
+
+### 情況一：全域變數，且是 Memory Leak的情境
+```js
+let cache = [];
+
+function handleRequest(req) {
+  cache.push(req);
+}
+```
+
+- 為什麼是 leak？
+  - cache 是全域 Root
+  - 每次請求都 push
+  - 沒有清除策略
+  - 記憶體無限制成長
+- 👉 這是經典 Memory Leak
+
+### 情況二：❌ 不小心產生的「隱性全域變數」
+
+```js
+function test() {
+  leaked = { data: "boom" } // 忘了宣告
+}
+test();
+
+```
+- leaked 直接掛到 globalThis
+  - 你以為是區域，其實是全域
+  - GC 永遠不敢收
+  - 👉 這是 JS 最惡名昭彰的 leak
+
+
+### 情況三：全域變數，但你有「清掉它」（OK）
+
+```js
+let cache = [];
+
+function handleRequest(req) {
+  cache.push(req);
+}
+
+function clearCache() {
+  cache.length = 0;
+}
+
+```
+- 全域仍是 Root
+  - 但裡面的參考被移除
+  - Heap 物件可回收
+  - 👉 是否 leak，看內容，不看宣告位置
+
+
+## 總結
+
+:::tip
+- 全域變數本身不是 Memory Leak
+- Memory Leak 發生在全域變數持續保留
+- 已經不需要的資料導致記憶體無限制成長
+- 所以真正的問題是
+- 是否有明確的生命週期與清理策略
+:::

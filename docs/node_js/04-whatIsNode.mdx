@@ -1,0 +1,184 @@
+---
+title: "【Node_基礎】JS 與 V8引擎"
+sidebar_position: 4
+---
+
+
+## 🟧 V8引擎
+
+:::info V8引擎
+
+Node.js 為什麼有辦法用JS來撰寫程式碼？
+
+- 幕後功臣就是 V8引擎
+
+- 📦 V8 是一個 C++ 專案
+  - Google 開發
+  - 用 C++ 寫
+- 專門做一件事：
+  - 把 JavaScript 轉成機器碼來跑
+:::
+
+- V8引擎是Google所釋放出來的開源專案
+- V8就是JS引擎可以解析讀取與執行JS程式碼
+
+- > V8 是一個「可嵌入的 JavaScript 引擎」
+-> 👉 誰把它「包進去」，誰就能跑 JavaScript
+
+
+## 🟦 Node.js 裡的 V8 在哪？
+
+- 當我們安裝 Node.js 的時候，
+
+```
+Node.js
+├─ V8（JS 引擎）
+├─ libuv（事件迴圈、非同步 I/O）
+├─ Node Core（fs, http, process, buffer…）
+
+```
+- 👉 V8 是直接編譯在 Node 的執行檔裡
+
+
+---
+
+## 🟦 為什麼「瀏覽器」也有 V8？
+
+- > 瀏覽器 ≠ JavaScript 引擎
+
+### 0️⃣ 瀏覽器的結構
+
+:::info 
+- 以 Chrome 為例：
+
+```
+Chrome
+├─ V8（JavaScript 引擎）
+├─ Blink（HTML / CSS 排版引擎）
+├─ Web APIs（DOM、fetch、setTimeout…）
+├─ Sandbox / Security
+```
+
+- 👉 Chrome 只是「把 V8 當成一個模組用」
+:::
+
+### 1️⃣ 不同瀏覽器，用不同引擎
+
+| 瀏覽器           | JavaScript 引擎      |
+| ------------- | ------------------ |
+| Chrome / Edge | **V8**             |
+| Firefox       | **SpiderMonkey**   |
+| Safari        | **JavaScriptCore** |
+
+- JavaScript 規格一樣
+  - 但「執行引擎」不同
+  - 效能、最佳化策略會不一樣
+
+### 2️⃣ 為什麼 V8 可以「到處用」
+
+> 因為它被設計成：Embed-able Engine（可嵌入引擎）
+
+意思是：
+- 它只負責：
+  - 解析 JS
+  - JIT 編譯
+  - 垃圾回收
+
+:::danger
+- 不負責：
+  - DOM
+  - 檔案系統
+  - 網路
+  - 計時器
+
+- 👉 外層要什麼功能，自己接
+:::
+
+### 3️⃣ 所以才會有這些組合
+
+- > Node.js
+```
+V8 + libuv + Node APIs
+```
+
+
+- > Chrome
+```
+V8 + DOM + Web APIs
+```
+
+- > Deno
+```
+V8 + Rust Core + Web APIs（但沒 DOM）
+```
+
+- > Bun
+```
+JavaScriptCore + Zig
+```
+
+- 👉 同一份 JS，引擎不同，環境不同
+
+
+---
+
+
+## 🟥 在 shell 執行
+
+在shell中打上"node"時，Node 會做一個很簡單但關鍵的判斷：
+
+:::note
+
+❓ 有沒有指定要執行的檔案？
+
+```
+node app.js   ← 有檔案
+node          ← 沒檔案
+```
+:::
+
+- 當執行：
+```
+node index.js
+
+```
+
+### 0️⃣ 情況一：有檔案（最常見）
+
+流程是：
+
+```bash
+shell
+ → 啟動 node 執行檔
+   → 啟動 V8
+     → 讀 index.js
+       → 執行
+       → 結束 process
+```
+
+### 1️⃣ 情況二：沒檔案｜Node REPL（Read → Eval → Print → Loop）
+
+- > Node 一開始的設計目標之一：
+- > 讓 JS 開發者可以像 Python 一樣即時試程式
+
+- > REPL => Node 內建的一個 JavaScript 互動執行器
+
+- Node 會：
+  - 「好，那我就開一個互動式 JavaScript 環境給你」
+
+```
+你輸入一行文字
+ → Node 把它丟給 V8
+   → V8 執行 JavaScript
+     → 把結果丟回來
+       → Node 印出來
+```
+
+- 內建了 REPL，可以：
+```
+1 + 2
+fs.readFileSync(...)
+JSON.stringify(...)
+
+```
+- 不用建檔、不用編譯、不用跑整個專案

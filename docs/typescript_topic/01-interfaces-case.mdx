@@ -1,0 +1,307 @@
+---
+title: "【Interfaces】Interfaces 介面型別"
+sidebar_position: 1
+---
+
+
+## 🟧 開場白
+
+<Highlight>介面(Interfaces)，可以把物件的資料定義為型別，定義完之後資料就可以有條理地去做管理</Highlight> !
+
+
+## 🟦 TypeScript 常用型別
+
+### 0️⃣ 函式（Function）
+
+:::info
+- 在函式上有兩種定義：
+  - 一種是函式陳述式
+  - 一種是函式表達式
+:::
+
+- > 函式陳述式(Function Declaration)
+
+```jsx title="函式陳述式(Function Declaration)"
+function add(a: number, b: number): number {
+  return a + b;
+}
+```
+
+---
+
+- > 函式表達式(Function Expression)
+
+```jsx title="函式表達式(Function Expression)"
+let sum = function (x: number, y: number): number {
+  return x + y;
+};
+```
+
+---
+
+- > 箭頭函式
+
+```jsx title="箭頭函式"
+let sum = (x: number, y: number): number {
+  return x + y;
+};
+```
+
+---
+
+- > 函式 型別註釋(Type Annotations)
+
+```jsx title="函式 型別註釋(Type Annotations)"
+//這裡是函式型別註釋(Type Annotations)寫法 =>代表函式輸出會是number
+
+let sum: (x: number, y: number)=>number = function (x: number, y: number): number {
+  return x + y;
+};
+```
+
+- <Highlight color="#1877F2">但懂的型別推斷才不會把ts寫得越來越複雜</Highlight> !
+
+### 1️⃣  如果函式沒有回傳值：void
+
+<Highlight color="#1877F2">函式沒有回傳值：void</Highlight> 
+
+```jsx title="函式沒有回傳值：void"
+function printMessage(message: string): void {
+  console.log(message);
+}
+```
+
+
+### 2️⃣ 物件（Object）型別註釋(Type Annotations) 與 型別推斷(Type Inference)
+
+![型別註釋](/img/ts_01.png)
+- 圖片引用來自六角後端實戰班
+
+
+```jsx title="物件-型別註釋寫法"
+
+let product: { //型別註釋寫法
+  name: string,
+  price: number,
+  inStock: number
+} = {
+  name: "Mac",
+  price: 999.99,
+  inStock: 150
+}
+
+```
+
+- 但因為ts也有型別推斷，就是根據你的給值會自動推斷該變數的型別
+
+### 3️⃣ 陣列(Array)
+
+```jsx title="陣列(Array)- 型別註釋寫法"
+
+let number: number[] = [1, 2, 3];
+
+number.push(6)
+
+let fruits: string[] = ['apple', 'orange', 'banana'];
+
+let backpack: any[] = ['book', 'apple', 5, true];
+
+// 二維陣列，當週食譜菜單
+let weeklyMenu: string[][] = [
+  ['chicken', 'tomatoes', 'basil'], // 星期一
+  ['beef', 'potatoes', 'green beans'], // 星期二
+]
+```
+
+### 4️⃣ 列舉型別（Enum）
+- JS是沒有這東西的，是TS才有
+
+![列舉型別](/img/ts_03.png)
+- 圖片引用來自六角後端實戰班
+
+```jsx title="列舉型別- 平台管理"
+
+//平台管理
+enum Role {
+  Admin, 
+  Author,
+  ReadOnlyUser
+}
+
+let user = {
+  name: "Alice",
+  role: Role.Admin
+}
+
+console.log(user)
+
+//輸出
+[LOG]: {
+  "name": "Alice",
+  "role": 0
+} 
+```
+
+- 做一個更進階的列舉狀態練習
+
+```jsx title="列舉型別- 定義任務狀態列舉"
+
+//定義一個任務列表
+enum TaskStatus {
+  Todo,  // 代辦事項
+  InProgress, //進行中
+  Done //已完成
+}
+
+//空的任務陣列 => 定義該任務為陣列型 別
+let tasks: {name: string, status: TaskStatus }[] = []
+
+//新增陣列
+function createTask(name: string) {
+  tasks.push({
+    name: name,
+    status: TaskStatus.Todo
+  })
+}
+
+// 新增任務到任務列表
+createTask("學習TS");
+createTask("去超市購物");
+
+//顯示任務
+
+console.log(tasks);
+```
+
+### 5️⃣ 元祖(Tuple)
+
+### 6️⃣ 聯合型別（Union Types）
+
+```jsx title="聯合型別（Union Types）"
+
+let id: string | number;
+
+id = "1234";
+id = 1234;
+
+let names: string | string[];
+names = "Alice";
+names = ["Alice", "Bob"];
+
+function displayPrice(price: number | [number, number]) {
+  if (typeof price === "number") {
+    console.log(`價格：${price}`)
+  } else {
+    console.log(`價格範圍：${price[0]}~${price[1]}`)
+  }
+}
+
+displayPrice(49.99)
+displayPrice([33.55])
+```
+
+### 7️⃣ 型別斷言（Type Assertion）
+
+<Highlight color="#1877F2">用於手動設定值的型別</Highlight>
+- 當你不確定是哪個型別的時候，就可以使用型別斷言（Type Assertion）
+
+```jsx title="型別斷言"
+
+function getSentence(words: string | number): number {
+  //return (<string>words).length
+  return (words as string).length //React jsx
+}
+```
+
+---
+
+## 🟦 介面型別
+
+```jsx title="圖書館範例"
+//interfaces
+//my book  圖書館範例
+
+let myBook = {
+    isbn: "239981777",
+    title: "JS全攻略",
+    author: "TOM",
+    year: 2009
+}
+
+//印出
+function printBook(book: {isbn: string, title: string, author: string, year: number }) {
+    console.log(`書名標題是：${book.title}`)
+}
+
+printBook(myBook);
+```
+
+- <Highlight color="#1877F2">上面函式的參數塞太滿，不好閱讀，所以Interfaces型別是讓程式碼可讀性變高，統一在物件都做好介面型別，未來其他程式碼要載入該物件也是相當好管理</Highlight>
+
+### 0️⃣ 重構圖書館範例，加入介面型別
+
+```jsx title="自訂Book介面型別"
+
+//宣告 Book 介面型別
+interface Book {
+    isbn: string,
+    title: string,
+    author: string,
+    year: number  
+}
+
+let myBook: Book = {
+    isbn: "239981777",
+    title: "JS全攻略",
+    author: "TOM",
+    year: 2009
+}
+
+//印出 這裡參數集中在介面型別 所以這裡可讀性就變高了
+function printBook(book: Book) {
+    console.log(`書名標題是：${book.title}`)
+}
+
+printBook(myBook);
+```
+
+![介面型別](/img/ts_02.png)
+- 圖片引用來自六角後端實戰班
+
+### 1️⃣ 將任務代辦清單加入介面型別
+- 改寫介面型別
+
+```jsx title="將任務代辦清單加入介面型別"
+
+//介面型別
+interface Task {
+  name: string,
+  status: TaskStatus
+}
+
+//定義一個任務列表
+enum TaskStatus {
+  Todo,  // 代辦事項
+  InProgress, //進行中
+  Done //已完成
+}
+
+//空的任務陣列 => 定義該任務為陣列型 別
+let tasks: Task[] = []
+
+//新增陣列
+function createTask(name: string) {
+  tasks.push({
+    name: name,
+    status: TaskStatus.Todo
+  })
+}
+
+// 新增任務到任務列表
+createTask("學習TS");
+createTask("去超市購物");
+
+//顯示任務
+
+console.log(tasks);
+```
