@@ -1,0 +1,165 @@
+---
+title: "【關連式資料庫_psql_01】PostgreSQL基礎語法"
+sidebar_position: 1
+---
+
+
+## 🟧 開場
+
+![psql_02](/img/db_02.png)
+![psql_01](/img/db_01.png)
+
+```sql
+-- 1.創建『Table資料表』
+CREATE TABLE users (
+--2.定義欄位 --定義資料類型
+  name VARCHAR(50),
+  email VARCHAR(100),
+  age INTEGER
+); --記得要分號;結尾
+```
+
+
+```sql
+-- 寫入多筆資料data到『會員資料表』--哪些欄位
+INSERT INTO users (name, email, age)
+-- 寫入資料
+VALUES 
+('張小明', 'aa@gmail.com', 25),
+('菜小明', 'ff@gmail.com', 32);
+```
+
+```sql
+-- 查詢會員資料表的名稱和email資料
+SELECT name, email FROM users;
+
+
+---
+
+SELECT 
+  name AS 姓名,
+  email As 電子郵件,
+  65 - age AS 距離退休年數
+FROM users;
+```
+
+:::info 
+- 資料庫查詢方式是先搜尋FROM users，找出要檢索的資料表，再依據SELECT去檢索『欄位』
+:::
+
+
+## 🟦 SQL基礎語法練習
+
+> [psql練習區](https://pg-sql.com/)
+
+
+```sql
+-- 商品資料表
+CREATE TABLE products (
+    name VARCHAR(100),           -- 商品名稱
+    price INTEGER,              -- 原價
+    discount_price INTEGER,      -- 折扣價
+    stock INTEGER,              -- 庫存數量
+    category VARCHAR(50),        -- 商品類別
+    status VARCHAR(20)          -- 商品狀態（上架、下架）
+);
+
+INSERT INTO products (name, price, discount_price, stock, category, status) VALUES
+   ('iPhone 16', 25000, 23000, 50, '3C', 'active'),
+   ('AirPods', 5000, 5000, 5, '3C', 'inactive'),
+   ('iPad', 18000, 16000, 25, '3C', 'active'),
+   ('充電線', 500, 500, 100, '配件', 'active'),
+   ('手機殼', 300, 250, 30, '配件', 'active'),
+   ('螢幕保護貼', 200, 180, 150, '配件', 'active'),
+   ('手機支架', 400, 400, 0, '配件', 'inactive');
+
+```
+
+
+### 0️⃣ where 條件篩選
+
+
+```sql
+SELECT  -- step 3 找欄位
+	* 
+FROM products -- step 1 找資料表
+WHERE category = '3C'; -- step 2 排序篩選
+```
+
+:::info
+檢索資料的資料庫執行順序
+:::
+
+### 1️⃣ 尋找已經上架的 3c產品
+
+- <Highlight color="#1877F2">上架 => status = 'active';</Highlight>
+- <Highlight color="#1877F2">產品 => category = '3C';</Highlight>
+
+```sql
+SELECT 
+	* 
+FROM products 
+WHERE category = '3C'
+AND status = 'active'; 
+```
+
+
+### 2️⃣ 商品快沒貨，庫存小於50
+
+- <Highlight color="#1877F2">庫存 => stock < 50;</Highlight>
+
+```sql
+SELECT 
+	* 
+FROM products 
+WHERE stock < 50; 
+```
+
+### 3️⃣ 尋找已經下架 或 沒有庫存的商品
+
+- <Highlight color="#1877F2">下架 => status = 'inactive';</Highlight>
+- <Highlight color="#1877F2">庫存 => stock = 0;</Highlight>
+
+```sql
+SELECT 
+	* 
+FROM products 
+WHERE status = 'inactive'
+OR stock = 0; 
+```
+
+### 4️⃣ 要找 配件的類別，大於300禮物
+
+- <Highlight color="#1877F2">類別 => category = '配件';</Highlight>
+- <Highlight color="#1877F2"> 折後價 => discount_price > 300;</Highlight>
+
+```sql
+SELECT 
+	* 
+FROM products 
+WHERE category = '配件'
+AND discount_price > 300; 
+```
+
+### 5️⃣ 我要把iphone 16的品項，價格欄位改成28000
+
+:::info
+- 1. 先找到要<Highlight color="#1877F2">UPDATE</Highlight>的資料表
+- 2. <Highlight color="#1877F2">WHERE</Highlight>指定商品資料表中欄位品項(name)是iPhone 16
+- 3. <Highlight color="#1877F2">SET</Highlight>設定SET該品項的價格為28000;
+:::
+
+```sql
+UPDATE products
+SET price = 28000
+WHERE name = 'iPhone 16';
+```
+
+### 6️⃣ DELETE FROM
+
+
+```sql
+DELETE FROM products
+WHERE name = 'iPhone 16';
+```
+---

@@ -1,0 +1,323 @@
+---
+title: "【JOIN_資料關聯】JOIN 資料關聯"
+sidebar_position: 2
+---
+
+
+## 🟧 JOIN 資料關聯 - 組合資料表關鍵語法
+
+:::tip JOIN
+- JOIN 
+  - 👉 就是把兩個集合「接起來」
+可將兩個資料表(Table)組合在一起
+:::
+
+:::tip INNER 和 OUTER
+INNER / OUTER
+👉 來自「集合的內部 vs 外部」
+:::
+
+> [psql練習區](https://pg-sql.com/)
+
+- 建立資料表（CREATE TABLE）
+
+- >  1️⃣ teams 部門資料表
+```sql
+CREATE TABLE teams (
+  id INT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
+
+```
+
+- > 2️⃣ users 員工資料表
+
+```sql
+CREATE TABLE users (
+  id INT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  salary INT NOT NULL,
+  team_id INT,
+  CONSTRAINT fk_users_team
+    FOREIGN KEY (team_id)
+    REFERENCES teams(id)
+);
+```
+
+:::info
+- team_id 可以是 NULL（代表沒有部門）
+- 外鍵fk關聯到 teams.id (teams資料表的id欄位)
+- 符合你圖中「有些員工沒有部門」的情境
+:::
+
+- 插入資料（INSERT INTO）
+
+- > 1️⃣ 插入 teams 資料
+
+```sql
+INSERT INTO teams (id, name) VALUES
+  (1, '開發部'),
+  (2, '人事部'),
+  (3, '行銷部'),
+  (4, '研發部');
+
+```
+
+- > 2️⃣ 插入 users 資料
+```sql
+INSERT INTO users (id, name, salary, team_id) VALUES
+  (1, '張小明', 45000, 1),
+  (2, '王大明', 48000, 1),
+  (3, '李小華', 52000, 2),
+  (4, '陳小玉', 55000, 2),
+  (5, '林小豪', 47000, 1),
+  (6, '陳小明', 42000, NULL),
+  (7, '王小美', 41000, NULL);
+```
+
+## 🟦 [常用] INNER JOIN (完全比對)
+
+:::tip INNER JOIN
+
+- 概念來源：集合的「交集」
+- 想像兩個集合： users 和 teams
+- 只有 同時屬於 users 與 teams 的資料，才會留下來。
+
+- 為什麼叫 INNER
+- inner = 內部
+- 指的是 兩個集合重疊的內部區域
+-也就是：👉「交集」
+::: 
+
+- 情境:查詢有部門的員工
+  - 匹配：<Highlight>員工＆＆有部門</Highlight>
+
+```sql
+SELECT 
+   users.id AS 員工編號_id,
+   users.name AS 員工姓名_name,
+   users.salary AS 薪資_salary,
+   teams.name AS 部門名稱
+ FROM users
+ INNER JOIN teams ON users.team_id = teams.id;
+```
+
+![psql_03](/img/db_03.png)
+
+> [本圖片引源出自六角學院-Node.js後端工程師專題班課程]
+
+
+![psql_04](/img/db_04.png)
+
+
+### 1️⃣ SQL執行順序(1.先進行JOIN)
+
+```sql
+SELECT  -- 第三步 `[SELECT]顯示欄位`
+   users.id AS 員工編號_id,
+   users.name AS 員工姓名_name,
+   users.salary AS 薪資_salary,
+   teams.name AS 部門名稱
+ FROM users -- 第一步 選取users員工資料表
+ INNER JOIN teams ON users.team_id = teams.id; 
+ -- 第二步 `[JOIN]組合`部門資料表過來 並且是 `有部門的員工資料`(NULL去除)
+```
+
+- 1. 第一步 `FROM users` -> 第一步 選取users員工資料表
+- ![psql_05](/img/db_05.png)
+
+- 2. 第二步 `[JOIN]組合`部門資料表過來 並且是比對`有部門的員工資料`(NULL去除)
+- ![psql_06](/img/db_06.png)
+
+
+- 3. 第三步 `[SELECT]顯示欄位` 『員工編號_id ｜ 員工姓名_name ｜薪資_salary | 部門名稱』
+- 最終呈現
+![psql_07](/img/db_07.png)
+
+---
+
+## 🟦 OUTER JOIN
+
+:::tip OUTER
+- 概念來源：集合的「外圍也算」
+- outer = 外部、外圍
+- 意思是：
+  - 不只要交集
+  - 👉 連「只存在其中一邊」的資料也要
+- 但 SQL 把它拆成方向來看。
+
+
+
+- LEFT JOIN：以左表為主，左表全部要(就算右表接不到)
+- RIGHT JOIN：以右表為主，右表全部要(右表：保證留下＆＆左表：接不到就補 NULL)
+- FULL JOIN (UNION)：左右兩邊的外圍都要
+  - 📌 FULL JOIN = LEFT OUTER + RIGHT OUTER 的聯集
+
+:::
+
+### 1️⃣ LEFT JOIN
+- LEFT JOIN：以左表為主，左表全部要(就算右表接不到是NULL)
+- 情境：
+  - 未分配部門的員工資料處理
+
+![psql_08](/img/db_08.png)
+
+
+
+
+```sql
+SELECT 
+   users.id AS 員工編號_id,
+   users.name AS 員工姓名_name,
+   teams.name AS 部門名稱
+ FROM users
+ LEFT JOIN teams ON users.team_id = teams.id;
+```
+
+- 拆解步驟：
+  -  第一步：` FROM users`會員資料表(左表)
+  -  第二步：` LEFT JOIN teams`部門資料表(右表)
+    -  第2.1步： `ON` 包含 `左表和右表的集合`
+  -  第三步：`SELECT顯示`會員資料表(左表欄位為主，即使右表的欄位沒有關聯是NULL也呈現)
+
+- 最終呈現
+  - ![psql_11](/img/db_11.png)
+
+--- 
+
+### 2️⃣ RIGHT JOIN
+- RIGHT JOIN：以右表為主，右表全部要(右表：保證留下＆＆左表：接不到就補 NULL)
+- 情境：
+  - 查詢空部門的報表
+
+![psql_09](/img/db_09.png)
+
+```sql
+SELECT 
+   teams.name AS 部門名稱,
+   users.name AS 員工姓名_name
+ FROM users
+ RIGHT JOIN teams ON users.team_id = teams.id;
+ 
+```
+
+- 拆解步驟：
+  -  第一步：` FROM users`會員資料表(左表)
+    - ![psql_12](/img/db_12.png)
+  -  第二步：` RIGHT JOIN teams`部門資料表(右表)
+    - ![psql_13](/img/db_13.png)
+    -  第2.1步： `ON` 包含 `左表和右表的集合`
+      - ![psql_14](/img/db_14.png)
+    -  第2.2步： `RIGHT JOIN teams`部門資料表(右表) 有資料全部顯示，左表沒有匹配就呈現NULL
+      - ![psql_15](/img/db_15.png)
+      - ![psql_16](/img/db_16.png)
+  -  第三步：`SELECT顯示`會員資料表(左表欄位為主，即使右表的欄位沒有關聯是NULL也呈現)
+    - `teams.name AS 部門名稱 && users.name AS 員工姓名_name`
+
+- 最終呈現
+  - ![psql_17](/img/db_17.png)
+
+- 還可以再篩選 有成立部門，但目前員工是空的
+
+```sql
+SELECT 
+   teams.name AS 部門名稱,
+   users.name AS 員工姓名_name
+ FROM users
+ RIGHT JOIN teams ON users.team_id = teams.id
+ WHERE users.name IS NULL;  -- 有成立部門，但目前員工是空的
+```
+
+--- 
+
+### 3️⃣ FULL JOIN
+- FULL JOIN (UNION)：左右兩邊的外圍都要
+  - 📌 FULL JOIN = LEFT OUTER + RIGHT OUTER 的聯集
+- 情境：
+  - 部門配置與新進人員總覽
+
+![psql_10](/img/db_10.png)
+
+```sql
+SELECT 
+   teams.name AS 部門名稱,
+   users.name AS 員工姓名_name
+ FROM users
+ FULL JOIN teams ON users.team_id = teams.id;
+```
+
+- ![psql_18](/img/db_18.png)
+
+- 最終呈現 `teams.name AS 部門名稱 && users.name AS 員工姓名_name`
+  - ![psql_19](/img/db_19.png)
+---
+
+
+
+## 🟥 JOIN 搭配 COALESCE 設計
+
+:::info COALESCE
+- 我習慣用英文原意來理解保留字
+- coalesce (動詞)
+  - 意思是：to come together and form one whole
+  - 聚合、合併、融合成一個
+
+- 像是：
+  - 水滴 coalesce 成一大滴
+  - 想法 coalesce 成共識
+
+- SQL 中的語意
+  - COALESCE 會從左到右檢查欄位
+  - 回傳第一個不是 NULL 的值
+  - 假如該「欄位」在這一列是 NULL，就會顯示 COALESCE 設定的預設值
+:::
+
+
+```sql
+SELECT
+  COALESCE(teams.name, '未分配') AS team_name,
+  COALESCE(users.name, '無員工') AS user_name
+FROM users
+FULL JOIN teams
+  ON users.team_id = teams.id;
+```
+- 👉 COALESCE，它只判斷「該欄位的值是不是 NULL」
+
+### 1️⃣ 解釋這搭配:FULL JOIN 先發生什麼事
+
+- 第一層：FULL JOIN 先發生什麼事
+  - FULL JOIN 會產生三種列：
+    - 1️⃣ 有配對成功的(集合)
+      - users 有資料
+      - teams 也有資料
+      - ➡ 兩邊欄位都有值
+    - 2️⃣ 只有 users，沒有 teams
+      - users 存在
+      - teams 那一整排欄位 全部是 NULL
+    - 3️⃣ 只有 teams，沒有 users
+      - teams 存在
+      - users 那一整排欄位 全部是 NULL
+- ⚠️ 這裡才會出現看到的 NULL
+
+### 2️⃣ 第二層：COALESCE 在每一個欄位上運作
+
+```sql
+COALESCE(teams.name, '未分配')
+```
+
+- 意思是：
+  - 如果 teams.name 是 NULL
+  - 👉 顯示「未分配」
+  - 否則顯示原本的部門名稱
+
+
+```sql
+COALESCE(users.name, '無員工')
+```
+
+- 意思是：
+  - 如果 users.name 是 NULL
+  - 👉 顯示「無員工」
+  - 否則顯示員工姓名
+
+> - <Highlight color="#1877F2">COALESCE 這個字本來就有聚合的意思，在 SQL 裡就是把多個可能為 NULL 的欄位，聚合成第一個可用的值</Highlight>
