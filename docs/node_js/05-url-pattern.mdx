@@ -1,0 +1,532 @@
+---
+title: "【網路_url規則】網址路徑規則"
+sidebar_position: 5
+---
+
+
+## 🟧 網址路徑規則
+
+> 一條完整的網址
+```bash
+https://api.example.com:443/v1/events/123?status=published&limit=10
+```
+
+
+
+### 0️⃣ 通訊協定: [http] v.s [https]
+
+- 電話要用電話網路
+- 寄信要用郵政系統
+- 那電腦之間也要先講好「用什麼方式講話」=> protocol
+
+:::tip 協定，溝通規則- HyperText Text Protocol Secure
+- 定義 瀏覽器或 client 跟 server 要怎麼溝通
+- `https://www.youtube.com/`
+- `http://：`明文傳輸
+- `https://：HTTP + SSL/TLS` 加密（現在幾乎必須）
+- 也有
+- `ws / wss：WebSocket`
+- `ftp：檔案傳輸`（較少用了）
+:::
+
+- https 可以防止：
+  - 被偷看資料
+  - 被中間人竄改
+  - 現代瀏覽器、API、OAuth 幾乎都要求 https
+
+- 👉 實務結論
+  - API、登入、token、cookie → 一定 https
+  - http 通常只用在 local 開發
+
+
+### 1️⃣ Domain（網域）
+
+- 我常在主網域 與 子網域(次網域)裡搞混，先從google開始理解
+```bash
+https://www.google.com/
+```
+
+:::tip 如何區分 主網域 v.s 子網域
+- `google.com` => 主網域，通常由域名供應商提供
+  - 如果是個人單位，也可以透過購買『主網域』來提升個人品牌形象
+  - 意思是我可以購買一個主網域後，依據我的網站服務，去增加子網域來區分服務設置
+
+- `www` 次網域，可以掛在主網域下，依據不同服務我可以設置：
+  - mail.google.com => `mail` 次網域
+  - firebase.google.com => `firebase` 次網域
+  - colud.google.com => `cloud` 次網域
+:::
+
+- 在前面網址裡，`api.example.com`這段，其實就是<Highlight>定位我要找哪一台 server（或哪一組服務）</Highlight>
+
+- DNS還會把 domain 解析成 IP位址(設備尋找設備位置)
+- 可以拆成：
+  - 主網域 `example.com：主網域`
+  - 子網域 `api.：子網域（subdomain）`
+
+:::tip
+- 主網域是「我買下來的名字」
+- 子網域是「我在這個名字底下自己分房間」
+:::
+
+- <Highlight>主網域（Main Domain）</Highlight>
+  - 👉 整棟大樓的地址
+  - 我只能有一個主網域（通常要付錢買）：`example.com`
+
+- <Highlight>子網域（Subdomain）</Highlight>
+  - 👉 同一棟樓裡的不同部門
+    - `www.`example.com      → 官網
+    - `api.`example.com      → API 部門
+    - `admin.`example.com    → 後台
+    - `static.`example.com   → 靜態資源
+
+- 全部都屬於 example.com
+
+- 再以我們露營專案的網址來解釋：
+```bash
+https://camping-project-one.vercel.app/
+```
+
+- 分析：
+  - 右側是主網域：`vercel.app`
+  - 左側是子網域:`camping-project-one.`
+    - 我用了Vercel提供的主網域，在下面開了一個「房間」子網域（露營這個專案）
+
+- 總結：Domain 永遠是 右邊最重要
+:::tip
+```bash
+www.api.example.com
+↑   ↑   ↑
+子  子  主
+```
+:::
+
+| 區塊        | 意義   |
+| --------- | ---- |
+| com       | 頂級網域 |
+| example   | 主網域  |
+| api / www | 子網域  |
+
+
+:::note 為什麼要有子網域?
+- 區分服務
+  - CORS 好控
+  - 權限好切
+  - 架構清楚
+
+- 技術隔離
+  - 可以讓：
+    - `api.`site.com → Node.js
+    - `www.`site.com → Next.js
+    - `static.`site.com → CDN
+    - 同一個主網域(site.com)，不同系統
+
+- 安全與 Cookie
+  - Cookie scope 可以設： 
+  - `.domain` = `.site.com`
+  - 👉 子網域共享
+  - 👉 或限制在某個子網域 
+::
+
+| 類型  | 是什麼    | 誰提供    |
+| --- | ------ | ------ |
+| 主網域 | 真正買的名字 | 域名商    |
+| 子網域 | 自己切的分類 | 你 / 平台 |
+
+- 回到我現在的專案：`camping-project-one.vercel.app`
+
+- 如果不在使用vercel.app提供的主網域
+  - 我購買了自己的主網域`camping-project.com`
+
+- 如果上正式線，會變成：
+  - `www.`camping-project.com   → 前端
+  - `api.`camping-project.com     → API
+  - `admin.`camping-project.com   → 後台
+
+:::tip
+- 👉 網址結構不用改
+- 👉 只是「換主網域」
+
+- 總結：主網域是 DNS 註冊的根名稱，子網域是同一個主網域下，用來區分不同服務或角色的命名方式
+:::
+### 2️⃣ Port（連接埠，可省略）
+
+- 指定 server 上哪個服務在接請求  
+  -  例如：`:443`
+  
+:::tip 
+- 常見預設：
+  - http → 80
+  - https → 443
+- 所以通常看不到 port
+:::
+
+- 同一台機器可以跑多個服務
+- 本機開發常見：`http://localhost:3000`
+
+
+### 3️⃣ Path（路徑）
+- 告訴 server：我要哪一個資源
+  - 例如：`/v1/events/123`
+
+- Path 通常用來表示「資源階層」：
+```bash
+/v1           → API 版本
+/events       → 資源集合
+/123          → 單一資源 ID
+```
+- 符合 RESTful 思維
+- 好讀、好快取、好維護
+
+- 應用上：
+```bash
+GET    /events          → 取得所有活動列表
+GET    /events/123      → 取得單一活動
+POST   /events          → 建立活動
+PATCH  /events/123      → 更新活動
+DELETE /events/123      → 刪除活動
+```
+
+
+### 4️⃣ Params 路由規則語法
+- 這個我剛學的時候也很常搞混：
+
+| 名稱            | 是誰定義的 | 在哪      |
+| ------------- | ----- | ------- |
+| URL Path      | 網址標準  | 瀏覽器     |
+| Query Params  | 網址標準  | 瀏覽器     |
+| `:xxx` Params | 框架語法  | Node 後端 |
+
+- 情境：假如我在瀏覽器打上：
+  - `/api/v1/event/sui/2026-02-10/dshejk123`
+  - ⚠️ 注意：網址裡根本沒有 `:`
+
+
+- 當我在後端設計路由時 👇
+```js
+app.get('/event/:host/:date/:id', handler)
+```
+- 這一行: 👉 是在定義一個 「匹配規則」
+
+- 以Node / Express 在做什麼為例：
+  - 1. Express 啟動時:會把這條路由`/event/:host/:date/:id`
+    - 轉成一個「模式」(解析成 req.params)：`/event/{任意字串}/{任意字串}/{任意字串}`
+  - 2. 當請求進來時，請求是：`GET /event/sui/2026-02-10/dshejk123`
+:::tip Express 做的事是：
+
+| 路由規則  | 實際網址       |
+| ----- | ---------- |
+| :host | sui        |
+| :date | 2026-02-10 |
+| :id | dshejk123 |
+
+- 👉 然後幫我組成：
+```js
+req.params = {
+  host: 'sui',
+  date: '2026-02-10',
+  id: 'dshejk123'
+}
+```
+:::
+
+
+- 透過<Highlight color="#1877F2">request.params 物件，後端「從網址路徑解析出來的值」</Highlight> ，後端再去資料庫驗證與比對是否有該host有該host在指定日期舉辦的哪一場活動(id)
+
+- 後端透過 request.params 取得由路由規則解析出的路徑參數，例如活動 ID 或主辦方 ID，
+再依據這些參數向資料庫查詢，驗證該主辦方是否在指定日期下，存在對應的活動紀錄
+
+
+```js
+async function handler(req, res) {
+  const { hostId, eventId } = req.params;
+  const { date } = req.query;
+
+  const event = await db.events.findOne({
+    where: {
+      id: eventId,
+      hostId: hostId,
+      date: date
+    }
+  });
+
+  if (!event) {
+    return res.status(404).json({ message: '活動不存在' });
+  }
+
+  res.json(event);
+}
+
+```
+- 後端用用hostId + eventId + date去確認資料庫裡是否真的有這筆活動
+- 流程是：
+```bash
+前端請求網址
+  ↓
+路由規則匹配成功
+  ↓
+Express 解析路徑 → req.params
+  ↓
+handler 取得 params
+  ↓
+使用 params 作為查詢條件
+  ↓
+資料庫比對是否存在該活動
+  ↓
+回傳結果
+
+```
+
+- params 是 資源識別(用前端提供的識別資訊去查 DB)
+- query 是 條件
+- DB 才是 真實來源
+
+--- 
+
+### 5️⃣ query string (?q=suihsilan)取的網址參數
+
+- <Highlight color="#6A1B9A">req.query 是後端把網址 ? 後面的查詢字串解析成物件的結果，是網址標準的一部分</Highlight>
+
+- 前端實際送出的網址是這樣：
+```
+GET /events/123?status=published&date=2026-02-10
+```
+
+- 關注上述這段：
+```bash
+?status=published&date=2026-02-10
+```
+- 👉 這就是 query string
+
+- 後端收到後做了什麼?
+  - 把這段字串`status=published&date=2026-02-10`
+  - 解析成物件：
+```js
+req.query = {
+  status: 'published',
+  date: '2026-02-10'
+};
+```
+- 👉 前端真的有把這些 key/value 放在網址裡，向後端發送請求
+- 👉 後端只是「接收請求並解析」為物件
+
+
+:::tip req.query 的本質是什麼
+
+- `req.query` => 查詢條件（filters）
+  - 我要用什麼條件來看
+:::
+
+- 常見用法：
+
+- 篩選:
+```bash
+/events?status=published
+```
+
+- 分頁
+```bash
+/events?page=2&limit=10
+```
+
+
+- 排序
+```bash
+/events?sort=startDate
+```
+
+- 搜尋
+```bash
+/events?keyword=露營
+```
+
+- 搭配handler 裡我通常怎麼用？
+```js
+app.get('/events/:id', async (req, res) => {
+  const { id } = req.params;        // 是誰(哪一個資源識別id)
+  const { date, status } = req.query; // 條件
+
+  const event = await db.events.findOne({
+    where: {
+      id,
+      status,
+      date
+    }
+  });
+
+  res.json(event);
+});
+
+
+```
+
+- 👉 params + query 合作
+- 👉 params 定位
+- 👉 query 篩選
+
+
+- 解釋以下：
+  -  `GET /hosts/:hostId/events/:eventId?date=2026-02-10`
+  - hostId 與 eventId是req.params 指定我要找哪一個識別資源
+  - ?是req.query => 查詢條件日期為`2026-02-10`的資料
+
+:::danger
+- params 是資源本身的一部分
+- query 是對資源加條件
+:::
+
+
+## 🟦 一條網址的本質
+
+```bash
+http(s)://主機位置:port/路徑/:哪一個資源id?查詢
+```
+- 其中 主機位置 可以是：
+  - IP
+  - Domain 網域名稱
+  - localhost 本機代稱
+
+### 0️⃣ 127.0.0.1 
+- 永遠指向「自己這台電腦」
+  - IPv4 的 loopback 位址
+  - 作業系統內建
+  - 不經過網路卡，不出門
+
+```
+127.0.0.1 → 你自己本地電腦
+```
+
+- 本機開 server、測試 API
+- 不想讓外部連線
+- 最安全、最快
+
+- 我平常在做 👉 後端在 terminal 開：
+```bash
+node app.js
+```
+
+- 👉 瀏覽器打：
+```
+http://127.0.0.1:3000
+```
+
+- 就是在「我自己跟自己講話」
+
+
+### 1️⃣ localhost(127.0.0.1)
+
+- 127.0.0.1 的人類友善版名字
+
+:::tip
+- 透過 hosts 檔案對應
+- 預設是：
+- `localhost → 127.0.0.1`
+
+```bash
+http://localhost:3000
+http://127.0.0.1:3000
+# 本質是同一個地方
+```
+:::
+
+### 2️⃣ localhost:3001
+
+- 同一台電腦，不同服務
+
+```bash
+# localhost：你自己
+# 3001：另一個 port
+
+localhost:3000 → API
+localhost:3001 → 前端介面
+```
+
+- 一台機器可以跑很多服務
+- 用 port 區分:
+
+| 服務                    | 位址             |
+| --------------------- | -------------- |
+| React / Next 前端       | localhost:3000 |
+| Express / Fastify API | localhost:3001 |
+| Admin 後台              | localhost:3002 |
+| Redis UI              | localhost:8081 |
+
+---
+
+## 🟦 還有哪些常見「主機位置」
+
+### 0️⃣ 0.0.0.0
+- 代表「聽所有網路介面」
+- 後端如果：
+```js
+app.listen(3000, '0.0.0.0')
+
+```
+
+:::tip
+- 允許：
+  - localhost
+  - 區網
+  - Docker container
+  - 外部主機
+
+- 0.0.0.0 不能拿來當瀏覽器網址 => 它只是 server 的「監聽設定」
+:::
+
+--- 
+
+### 1️⃣ 私有 IP（區網）
+```bash
+http://192.168.1.10:3000
+```
+
+- 同一個 Wi-Fi / 區域網內互相連線
+```bash
+192.168.0.5
+192.168.1.10
+10.0.0.23
+```
+
+- 手機連你電腦
+- 另一台電腦測你 API
+- IoT / 樹莓派（你超熟這塊）
+
+### 2️⃣ 公網 IP
+- 整個網際網路都找得到
+```bash
+35.xxx.xxx.xxx
+```
+
+- 雲端主機
+- VPS
+- 部署後的服務
+- 👉 通常會配合 domain，不直接給 IP
+
+### 3️⃣ 網域名稱（domain）
+- 人類可記的「公網 IP 名字」
+```
+api.example.com
+
+```
+- IP 會變
+- domain 不變
+- 可做負載平衡、CDN
+
+### 4️⃣ 對照表
+
+:::tip
+- localhost 是對 127.0.0.1 的名稱映射，
+- port 用來區分同一台機器上的不同服務，
+- 0.0.0.0 代表 server 接受所有網路介面連線。
+:::
+
+| 類型          | 範例          | 用途        |
+| ----------- | ----------- | --------- |
+| Loopback IP | 127.0.0.1   | 本機自己      |
+| 本機別名        | localhost   | 本機自己      |
+| Port        | :3000       | 區分服務      |
+| 監聽全部        | 0.0.0.0     | server 設定 |
+| 私有 IP       | 192.168.x.x | 區網        |
+| 公網 IP       | 35.x.x.x    | 網際網路      |
+| 網域          | api.xxx.com | 對外服務      |
+

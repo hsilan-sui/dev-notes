@@ -1,6 +1,6 @@
 {
   "label": "Linux Sysadmin",
-  "position": 1,
+  "position": 3,
   "link": {
     "type": "generated-index",
     "description": "『DevOps｜Linux Sysadmin』，這堂Bootcamp是我在2026上半年預計要完成的課程，所以本筆記是我上課以及在課程中反覆和AI詢問討論以及實作的過程，雖然會使用linux指令但總是缺乏系統性的理解。其實我在實務專案中已經頻繁使用 Linux 指令與環境，但欠缺的是——如何用「系統管理與自動化」的角度，重新理解這些操作，所以把這堂課排在今年第一！Let's Start!"

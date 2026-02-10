@@ -1,0 +1,316 @@
+---
+title: "【關連式資料庫_psql_02】order by 排序資料 & group by 分組資料"
+sidebar_position: 3
+---
+
+
+## 🟧 ORDER BY 排序資料 & LIMIT 
+
+- <Highlight>👉 ORDER BY = 依照某個條件進行排序</Highlight>
+
+```sql
+SELECT *
+FROM users
+ORDER BY salary; -- 預設為 ASC（由小到大）
+-- ORDER BY salary ASC;
+```
+
+- 升冪 / 降冪
+```sql
+ORDER BY salary ASC;   -- 由小到大
+ORDER BY salary DESC;  -- 由大到小
+```
+
+- 多欄位排序
+```sql
+ORDER BY team_id ASC, salary DESC;
+```
+- 排序邏輯：
+  - 先依 team_id 排序
+  - 同一組內再依 salary 排序
+
+
+- ORDER BY 搭配 JOIN（實務常見）
+```sql
+SELECT
+  users.name,
+  teams.name AS team_name,
+  users.salary
+FROM users
+LEFT JOIN teams
+  ON users.team_id = teams.id
+ORDER BY COALESCE(teams.name, '未分配') ASC, users.salary DESC;
+```
+- 常用於後台列表、報表、管理介面
+
+:::danger 補充重點
+- ORDER BY 會增加排序成本
+- 大量資料時，是否有索引會影響效能
+- 常與 LIMIT 搭配使用（分頁）
+:::
+
+
+
+## 🟦 group by 分組資料
+⚠️ GROUP BY 幾乎一定搭配聚合函式
+
+- GROUP BY 是用來「分組資料列」，讓聚合函式可以對每一組計算結果
+  - 把「很多列資料」變成「每一組一列」
+
+--- 
+
+- > team_id 一樣的資料，歸成同一組
+```sql
+GROUP BY team_id
+```
+
+```sql
+SELECT
+  分組欄位,
+  聚合函式
+FROM table
+GROUP BY 分組欄位;
+```
+
+### 0️⃣ 每個部門有幾個人
+
+- 部門 => 組
+- 幾個人 => 聚合函式
+
+```sql
+SELECT 
+  team_id AS 部門名稱,
+  COUNT(*) AS 員工數量 -- step 3 每一組算一次 COUNT(*)
+FROM users -- step 1 
+GROUP BY team_id; -- step 2  依 team_id 分組
+```
+
+- 👉 解讀方式：
+  - 先把 users 依 team_id 分組
+  - 每一組算一次 COUNT(*)
+  - 一個部門 → 一列結果
+
+### 1️⃣ GROUP BY + JOIN（超常用）
+
+- 每個部門有幾位員工？
+  - 沒有員工的『部門』也要顯示
+  - 部門資料表是主表 
+
+```sql
+SELECT 
+  teams.name AS 部門名稱,
+  COUNT(users.id) AS 員工數量
+FROM teams
+LEFT JOIN users 
+  ON teams.id = users.team_id
+GROUP BY teams.name;
+-- ORDER BY COUNT(users.id);
+```
+
+
+### 2️⃣ 每個部門的薪資總和與平均
+
+```sql
+SELECT
+  team_id, --3
+  SUM(salary) AS total_salary, --4
+  AVG(salary) AS avg_salary --5
+FROM users -- 1
+GROUP BY team_id; --2
+
+```
+
+
+---
+
+## 🟦 子查詢 (Subquery)
+
+### 0️⃣ 🟢 練習 1：薪資高於平均的人
+
+- 找出 薪資高於全體平均薪資 的員工。
+
+:::info
+思考方向（How）
+- 先算出「全體平均薪資」
+- 再用這個值當條件去比對每個員工
+:::
+
+```sql 
+-- 先算出「全體平均薪資」
+SELECT AVG(users.salary)
+FROM users;
+```
+
+```sql 
+-- 再用這個值當條件去比對每個員工
+SELECT *
+  FROM users
+  WHERE salary > (
+    SELECT AVG(users.salary)
+    FROM users
+  );
+```
+
+- 子查詢先算出一個「單一值」
+- 外層 WHERE 拿來比較
+
+### 1️⃣ 練習 2：找出沒有分配部門的員工（用子查詢）
+
+思考方向
+- 先列出「有部門的 team_id」
+- 再找不在這些 id 裡的員工
+
+```sql
+-- 先列出「有部門的 team_id」
+SELECT id FROM teams;
+```
+
+
+:::danger  SQL 無法判斷：NULL 
+- 以下這樣寫不正確：
+```sql
+-- 再找不在這些 id 裡的員工
+SELECT *
+  FROM users
+  WHERE team_id NOT IN (
+  SELECT id FROM teams
+  );
+```
+:::
+
+- 明確排除 NULL（最簡單）
+
+```sql
+SELECT *
+FROM users
+WHERE team_id IS NULL -- 明確排除 NULL
+   OR team_id NOT IN (
+     SELECT id
+     FROM teams
+   );
+
+```
+
+### 2️⃣ 練習 3：找出至少有一位員工的部門
+- 列出 有員工的部門名稱
+
+:::tip
+- 先從 users 找出「有出現過的 team_id」
+- 再回到 teams 表比對
+:::
+
+```sql
+SELECT *
+FROM teams
+WHERE id IN (
+  SELECT DISTINCT team_id
+  FROM users
+  WHERE team_id IS NOT NULL
+);
+
+```
+
+### 3️⃣ 練習 4：每個部門薪資最高的人（簡單版）
+- 題目
+- 找出 薪資等於全公司最高薪資的員工。
+- （注意：不是每部門，只是最高薪，先練基本）
+
+```sql
+SELECT *
+FROM users
+WHERE salary = (
+  SELECT MAX(salary)
+  FROM users
+);
+
+```
+### 4️⃣ 練習 5：部門人數超過平均的部門(難)
+
+- 條件用在「欄位值」   → WHERE
+- 條件用在「聚合結果」 → HAVING
+
+- SQL 的流程是：
+```
+FROM
+→ WHERE       （篩資料列）
+→ GROUP BY    （分組）
+→ HAVING      （篩資料組）
+→ SELECT
+
+```
+
+- 找出 員工人數大於平均部門人數的部門 id。
+
+:::tip
+思考方向
+- 先算每個部門的人數
+- 再算「平均每個部門的人數」
+- 用 HAVING 比較
+:::
+
+```sql
+- 先算每個部門的人數
+SELECT 
+
+- 再算「平均每個部門的人數」
+
+- 用 HAVING 比較
+```
+
+## 🟥 補充
+
+### WHERE ＆ LIKE 補充 
+```sql
+WHERE name LIKE '張%'        -- 姓張
+WHERE name LIKE '%明'        -- 名字結尾是 明
+WHERE name LIKE '%小%'       -- 名字中有 小
+WHERE name LIKE '張_明'      -- 張 + 任一字 + 明
+```
+
+### LIMIT 搭配 OFFSET（分頁）
+- OFFSET 跳過前 20 筆
+- 取接下來 10 筆
+```sql
+LIMIT 10 OFFSET 20;
+```
+
+```sql
+ORDER BY id ASC
+LIMIT 10 OFFSET 0;   -- 第 1 頁
+LIMIT 10 OFFSET 10;  -- 第 2 頁
+LIMIT 10 OFFSET 20;  -- 第 3 頁
+
+```
+
+### 混合使用
+- 三者一起使用（實務最常見）
+
+```sql
+SELECT
+  users.name,
+  teams.name AS team_name,
+  users.salary
+FROM users
+LEFT JOIN teams
+  ON users.team_id = teams.id
+WHERE users.salary >= 45000
+ORDER BY users.salary DESC
+LIMIT 5;
+
+```
+
+:::info
+查詢流程語意：
+- JOIN 組合資料
+- WHERE 篩選條件
+- ORDER BY 排序
+- LIMIT 限制筆數
+:::
+
+- 邏輯執行順序（很重要）
+- FROM
+  - → JOIN
+  - → WHERE
+  - → SELECT
+  - → ORDER BY
+  - → LIMIT

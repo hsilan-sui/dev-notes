@@ -1,0 +1,119 @@
+---
+title: "【Express_Router】Router 進階設定"
+sidebar_position: 6
+---
+
+
+## 🟧 沒有區分路由(Router)的時候
+
+:::tip
+- Router 是「專門管理路徑與處理函式的分類器」
+- 拆路徑是為了讓系統可讀、可維護、可擴充
+:::
+
+### 0️⃣ 沒有 Router 的世界（小專案）
+```bash
+app.get('/events', ...)
+app.get('/events/:id', ...)
+app.post('/events', ...)
+app.get('/orders/:id', ...)
+app.post('/orders', ...)
+```
+- 問題會發生在：
+  - 檔案越來越長
+  - events / orders / users 全混在一起
+  - 新人來看不懂
+  - 找不到路由
+  - 改一個功能怕炸其他
+  - merge conflict 爆炸
+  - 無法授權給不同人維護
+
+### 1️⃣ Router 出現的目的
+- <Highlight>把「同一類資源的路徑」收在一起</Highlight>
+- 是照 資源邊界 拆：
+  - `events`
+  - `orders`
+  - `users`
+  - `payments`
+
+:::tip
+- Router 是一個「子路由表」
+- 專門負責某一類資源的路徑與 handler 對應關係
+:::
+
+- Router 做三件事：
+  - 先吃掉共同前綴
+  - 在自己的範圍內再配對路徑
+  - 把請求交給正確 handler
+
+### 2️⃣ 拆路徑後
+- 可讀性
+```js
+app.use('/events', eventRouter);
+```
+- 所有活動相關都在 eventRouter
+
+
+- 權責清楚
+  - Event 團隊 → eventRouter
+  - Order 團隊 → orderRouter
+
+- 中介層可以局部套用
+```js
+router.use(authMiddleware);
+```
+- 只有「events」相關 API 才需要這個驗證
+
+
+### 3️⃣ 示範：express.js
+```jsx title="app.js"
+const express = require('express');
+const app = express();
+
+app.get('/user/edit-profile', function(req, res) {
+  res.send('profile');
+})
+
+app.get('/user/photo', function(req, res) {
+  res.send('photo');
+})
+
+app.listen(3000);
+```
+
+
+
+--- 
+
+- 我想要把user拆成獨立router
+
+```jsx title="app.js"
+const express = require('express');
+const app = express();
+//引入Router 子路由表
+
+const userRouter = require('.routes/user');
+
+//app.use 是「掛 middleware 或 router 的地方」
+//意思是：符合條件的請求，進來一定會先跑它
+app.use('/user', userRouter)
+
+app.listen(3000);
+```
+
+- 拆成userRouter
+
+```jsx title="/routes/user.js"
+const express = require('express');
+const router = express.Router();
+
+router.get('/edit-profile', function(req, res) {
+  res.send('profile');
+})
+
+router.get('/photo', function(req, res) {
+  res.send('photo');
+})
+
+module.exports = router;
+```
