@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-node_js/url-pattern" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">【網路_url規則】網址路徑規則 | Sui筆記部落</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://hsilan-sui.github.io/dev-notes/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://hsilan-sui.github.io/dev-notes/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://hsilan-sui.github.io/dev-notes/docs/node_js/url-pattern"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="【網路_url規則】網址路徑規則 | Sui筆記部落"><meta data-rh="true" name="description" content="🟧 網址路徑規則"><meta data-rh="true" property="og:description" content="🟧 網址路徑規則"><link data-rh="true" rel="icon" href="/dev-notes/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://hsilan-sui.github.io/dev-notes/docs/node_js/url-pattern"><link data-rh="true" rel="alternate" href="https://hsilan-sui.github.io/dev-notes/docs/node_js/url-pattern" hreflang="en"><link data-rh="true" rel="alternate" href="https://hsilan-sui.github.io/dev-notes/docs/node_js/url-pattern" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"NodeJS","item":"https://hsilan-sui.github.io/dev-notes/docs/category/nodejs"},{"@type":"ListItem","position":2,"name":"【網路_url規則】網址路徑規則","item":"https://hsilan-sui.github.io/dev-notes/docs/node_js/url-pattern"}]}</script><link rel="alternate" type="application/rss+xml" href="/dev-notes/blog/rss.xml" title="Sui筆記部落 RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/dev-notes/blog/atom.xml" title="Sui筆記部落 Atom Feed"><link rel="stylesheet" href="/dev-notes/assets/css/styles.a0c8da91.css">
+<script src="/dev-notes/assets/js/runtime~main.f73a7b13.js" defer="defer"></script>
+<script src="/dev-notes/assets/js/main.c78b77b5.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/dev-notes/img/logo.png"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/dev-notes/"><div class="navbar__logo"><img src="/dev-notes/img/logo.png" alt="Sui_技術筆記" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/dev-notes/img/logo.png" alt="Sui_技術筆記" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Sui_技術共學</b></a><a class="navbar__item navbar__link" href="/dev-notes/docs/intro">程式筆記</a><a class="navbar__item navbar__link" href="/dev-notes/blog">部落格</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/hsilan-sui/hsilan-sui" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--active" href="/dev-notes/docs/category/nodejs"><span title="NodeJS" class="categoryLinkLabel_W154">NodeJS</span></a><button aria-label="Collapse sidebar category &#x27;NodeJS&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/createServer"><span title="【API_ kata_01】透過 createServer 開啟伺服器" class="linkLabel_WmDU">【API_ kata_01】透過 createServer 開啟伺服器</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/post-api"><span title="【API_ kata_02】了解 request 物件&amp;POST API" class="linkLabel_WmDU">【API_ kata_02】了解 request 物件&amp;POST API</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/delete-patch"><span title="【API_ kata_03】DELETE &amp; PATCH" class="linkLabel_WmDU">【API_ kata_03】DELETE &amp; PATCH</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/whatIsNode"><span title="【Node_基礎】JS 與 V8引擎" class="linkLabel_WmDU">【Node_基礎】JS 與 V8引擎</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/dev-notes/docs/node_js/url-pattern"><span title="【網路_url規則】網址路徑規則" class="linkLabel_WmDU">【網路_url規則】網址路徑規則</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/router-pattern"><span title="【Express_Router】Router 進階設定" class="linkLabel_WmDU">【Express_Router】Router 進階設定</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/middleware-design"><span title="【Express_middleware】middleware 異常狀態處理" class="linkLabel_WmDU">【Express_middleware】middleware 異常狀態處理</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev-notes/docs/node_js/markdown-features"><span title="【筆記_副標籤】筆記結構" class="linkLabel_WmDU">【筆記_副標籤】筆記結構</span></a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/cicd筆記"><span title="CI/CD筆記" class="categoryLinkLabel_W154">CI/CD筆記</span></a><button aria-label="Expand sidebar category &#x27;CI/CD筆記&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/資料庫"><span title="資料庫" class="categoryLinkLabel_W154">資料庫</span></a><button aria-label="Expand sidebar category &#x27;資料庫&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/lineoa-porfolio"><span title="LINEOA-PORFOLIO" class="categoryLinkLabel_W154">LINEOA-PORFOLIO</span></a><button aria-label="Expand sidebar category &#x27;LINEOA-PORFOLIO&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/linux-sysadmin"><span title="Linux Sysadmin" class="categoryLinkLabel_W154">Linux Sysadmin</span></a><button aria-label="Expand sidebar category &#x27;Linux Sysadmin&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/tanstack-queryreact-query"><span title="Tanstack Query(React Query)" class="categoryLinkLabel_W154">Tanstack Query(React Query)</span></a><button aria-label="Expand sidebar category &#x27;Tanstack Query(React Query)&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/tutorial---basics"><span title="Tutorial - Basics" class="categoryLinkLabel_W154">Tutorial - Basics</span></a><button aria-label="Expand sidebar category &#x27;Tutorial - Basics&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/react"><span title="react" class="categoryLinkLabel_W154">react</span></a><button aria-label="Expand sidebar category &#x27;react&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/javascript"><span title="JavaScript" class="categoryLinkLabel_W154">JavaScript</span></a><button aria-label="Expand sidebar category &#x27;JavaScript&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/typescript"><span title="TypeScript" class="categoryLinkLabel_W154">TypeScript</span></a><button aria-label="Expand sidebar category &#x27;TypeScript&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/system-design--architecture"><span title="System Design &amp;&amp; Architecture" class="categoryLinkLabel_W154">System Design &amp;&amp; Architecture</span></a><button aria-label="Expand sidebar category &#x27;System Design &amp;&amp; Architecture&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/devops相關"><span title="DevOps相關" class="categoryLinkLabel_W154">DevOps相關</span></a><button aria-label="Expand sidebar category &#x27;DevOps相關&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/dev-notes/docs/category/git"><span title="Git" class="categoryLinkLabel_W154">Git</span></a><button aria-label="Expand sidebar category &#x27;Git&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/dev-notes/docs/backend/ai-backend_01"><span title="backend" class="categoryLinkLabel_W154">backend</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/dev-notes/docs/docker_note/dev-dockerfile"><span title="docker_note" class="categoryLinkLabel_W154">docker_note</span></a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/dev-notes/docs/intro"><span title="筆記總覽" class="linkLabel_WmDU">筆記總覽</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/dev-notes/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/dev-notes/docs/category/nodejs"><span>NodeJS</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">【網路_url規則】網址路徑規則</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>【網路_url規則】網址路徑規則</h1></header><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-網址路徑規則">🟧 網址路徑規則<a href="#-網址路徑規則" class="hash-link" aria-label="Direct link to 🟧 網址路徑規則" title="Direct link to 🟧 網址路徑規則" translate="no">​</a></h2>
+<blockquote>
+<p>一條完整的網址</p>
+</blockquote>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">https://api.example.com:443/v1/events/123?status=published&amp;limit=10</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="0️⃣-通訊協定-http-vs-https">0️⃣ 通訊協定: [http] v.s [https]<a href="#0️⃣-通訊協定-http-vs-https" class="hash-link" aria-label="Direct link to 0️⃣ 通訊協定: [http] v.s [https]" title="Direct link to 0️⃣ 通訊協定: [http] v.s [https]" translate="no">​</a></h3>
+<ul>
+<li class="">電話要用電話網路</li>
+<li class="">寄信要用郵政系統</li>
+<li class="">那電腦之間也要先講好「用什麼方式講話」=&gt; protocol</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>協定，溝通規則- HyperText Text Protocol Secure</div><div class="admonitionContent_BuS1"><ul>
+<li class="">定義 瀏覽器或 client 跟 server 要怎麼溝通</li>
+<li class=""><code>https://www.youtube.com/</code></li>
+<li class=""><code>http://：</code>明文傳輸</li>
+<li class=""><code>https://：HTTP + SSL/TLS</code> 加密（現在幾乎必須）</li>
+<li class="">也有</li>
+<li class=""><code>ws / wss：WebSocket</code></li>
+<li class=""><code>ftp：檔案傳輸</code>（較少用了）</li>
+</ul></div></div>
+<ul>
+<li class="">
+<p>https 可以防止：</p>
+<ul>
+<li class="">被偷看資料</li>
+<li class="">被中間人竄改</li>
+<li class="">現代瀏覽器、API、OAuth 幾乎都要求 https</li>
+</ul>
+</li>
+<li class="">
+<p>👉 實務結論</p>
+<ul>
+<li class="">API、登入、token、cookie → 一定 https</li>
+<li class="">http 通常只用在 local 開發</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1️⃣-domain網域">1️⃣ Domain（網域）<a href="#1️⃣-domain網域" class="hash-link" aria-label="Direct link to 1️⃣ Domain（網域）" title="Direct link to 1️⃣ Domain（網域）" translate="no">​</a></h3>
+<ul>
+<li class="">我常在主網域 與 子網域(次網域)裡搞混，先從google開始理解</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">https://www.google.com/</span><br></span></code></pre></div></div>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>如何區分 主網域 v.s 子網域</div><div class="admonitionContent_BuS1"><ul>
+<li class="">
+<p><code>google.com</code> =&gt; 主網域，通常由域名供應商提供</p>
+<ul>
+<li class="">如果是個人單位，也可以透過購買『主網域』來提升個人品牌形象</li>
+<li class="">意思是我可以購買一個主網域後，依據我的網站服務，去增加子網域來區分服務設置</li>
+</ul>
+</li>
+<li class="">
+<p><code>www</code> 次網域，可以掛在主網域下，依據不同服務我可以設置：</p>
+<ul>
+<li class="">mail.google.com =&gt; <code>mail</code> 次網域</li>
+<li class="">firebase.google.com =&gt; <code>firebase</code> 次網域</li>
+<li class="">colud.google.com =&gt; <code>cloud</code> 次網域</li>
+</ul>
+</li>
+</ul></div></div>
+<ul>
+<li class="">
+<p>在前面網址裡，<code>api.example.com</code>這段，其實就是<span style="background-color:#25c2a0;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">定位我要找哪一台 server（或哪一組服務）</span></p>
+</li>
+<li class="">
+<p>DNS還會把 domain 解析成 IP位址(設備尋找設備位置)</p>
+</li>
+<li class="">
+<p>可以拆成：</p>
+<ul>
+<li class="">主網域 <code>example.com：主網域</code></li>
+<li class="">子網域 <code>api.：子網域（subdomain）</code></li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><ul>
+<li class="">主網域是「我買下來的名字」</li>
+<li class="">子網域是「我在這個名字底下自己分房間」</li>
+</ul></div></div>
+<ul>
+<li class="">
+<span style="background-color:#25c2a0;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">主網域（Main Domain）</span>
+<ul>
+<li class="">👉 整棟大樓的地址</li>
+<li class="">我只能有一個主網域（通常要付錢買）：<code>example.com</code></li>
+</ul>
+</li>
+<li class="">
+<span style="background-color:#25c2a0;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">子網域（Subdomain）</span>
+<ul>
+<li class="">👉 同一棟樓裡的不同部門<!-- -->
+<ul>
+<li class=""><code>www.</code>example.com      → 官網</li>
+<li class=""><code>api.</code>example.com      → API 部門</li>
+<li class=""><code>admin.</code>example.com    → 後台</li>
+<li class=""><code>static.</code>example.com   → 靜態資源</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="">
+<p>全部都屬於 example.com</p>
+</li>
+<li class="">
+<p>再以我們露營專案的網址來解釋：</p>
+</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">https://camping-project-one.vercel.app/</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>分析：</p>
+<ul>
+<li class="">右側是主網域：<code>vercel.app</code></li>
+<li class="">左側是子網域:<code>camping-project-one.</code>
+<ul>
+<li class="">我用了Vercel提供的主網域，在下面開了一個「房間」子網域（露營這個專案）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="">
+<p>總結：Domain 永遠是 右邊最重要</p>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">www.api.example.com</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">↑   ↑   ↑</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">子  子  主</span><br></span></code></pre></div></div></div></div>
+<table><thead><tr><th>區塊</th><th>意義</th></tr></thead><tbody><tr><td>com</td><td>頂級網域</td></tr><tr><td>example</td><td>主網域</td></tr><tr><td>api / www</td><td>子網域</td></tr></tbody></table>
+<div class="theme-admonition theme-admonition-note admonition_xJq3 alert alert--secondary"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg></span>為什麼要有子網域?</div><div class="admonitionContent_BuS1"><ul>
+<li class="">
+<p>區分服務</p>
+<ul>
+<li class="">CORS 好控</li>
+<li class="">權限好切</li>
+<li class="">架構清楚</li>
+</ul>
+</li>
+<li class="">
+<p>技術隔離</p>
+<ul>
+<li class="">可以讓：<!-- -->
+<ul>
+<li class=""><code>api.</code>site.com → Node.js</li>
+<li class=""><code>www.</code>site.com → Next.js</li>
+<li class=""><code>static.</code>site.com → CDN</li>
+<li class="">同一個主網域(site.com)，不同系統</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="">
+<p>安全與 Cookie</p>
+<ul>
+<li class="">Cookie scope 可以設：</li>
+<li class=""><code>.domain</code> = <code>.site.com</code></li>
+<li class="">👉 子網域共享</li>
+<li class="">👉 或限制在某個子網域
+::</li>
+</ul>
+</li>
+</ul><table><thead><tr><th>類型</th><th>是什麼</th><th>誰提供</th></tr></thead><tbody><tr><td>主網域</td><td>真正買的名字</td><td>域名商</td></tr><tr><td>子網域</td><td>自己切的分類</td><td>你 / 平台</td></tr></tbody></table><ul>
+<li class="">
+<p>回到我現在的專案：<code>camping-project-one.vercel.app</code></p>
+</li>
+<li class="">
+<p>如果不在使用vercel.app提供的主網域</p>
+<ul>
+<li class="">我購買了自己的主網域<code>camping-project.com</code></li>
+</ul>
+</li>
+<li class="">
+<p>如果上正式線，會變成：</p>
+<ul>
+<li class=""><code>www.</code>camping-project.com   → 前端</li>
+<li class=""><code>api.</code>camping-project.com     → API</li>
+<li class=""><code>admin.</code>camping-project.com   → 後台</li>
+</ul>
+</li>
+</ul><div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><ul>
+<li class="">
+<p>👉 網址結構不用改</p>
+</li>
+<li class="">
+<p>👉 只是「換主網域」</p>
+</li>
+<li class="">
+<p>總結：主網域是 DNS 註冊的根名稱，子網域是同一個主網域下，用來區分不同服務或角色的命名方式</p>
+</li>
+</ul></div></div></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2️⃣-port連接埠可省略">2️⃣ Port（連接埠，可省略）<a href="#2️⃣-port連接埠可省略" class="hash-link" aria-label="Direct link to 2️⃣ Port（連接埠，可省略）" title="Direct link to 2️⃣ Port（連接埠，可省略）" translate="no">​</a></h3>
+<ul>
+<li class="">指定 server 上哪個服務在接請求<!-- -->
+<ul>
+<li class="">例如：<code>:443</code></li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><ul>
+<li class="">常見預設：<!-- -->
+<ul>
+<li class="">http → 80</li>
+<li class="">https → 443</li>
+</ul>
+</li>
+<li class="">所以通常看不到 port</li>
+</ul></div></div>
+<ul>
+<li class="">同一台機器可以跑多個服務</li>
+<li class="">本機開發常見：<code>http://localhost:3000</code></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="3️⃣-path路徑">3️⃣ Path（路徑）<a href="#3️⃣-path路徑" class="hash-link" aria-label="Direct link to 3️⃣ Path（路徑）" title="Direct link to 3️⃣ Path（路徑）" translate="no">​</a></h3>
+<ul>
+<li class="">
+<p>告訴 server：我要哪一個資源</p>
+<ul>
+<li class="">例如：<code>/v1/events/123</code></li>
+</ul>
+</li>
+<li class="">
+<p>Path 通常用來表示「資源階層」：</p>
+</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">/v1           → API 版本</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">/events       → 資源集合</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">/123          → 單一資源 ID</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>符合 RESTful 思維</p>
+</li>
+<li class="">
+<p>好讀、好快取、好維護</p>
+</li>
+<li class="">
+<p>應用上：</p>
+</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">GET    /events          → 取得所有活動列表</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">GET    /events/123      → 取得單一活動</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">POST   /events          → 建立活動</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">PATCH  /events/123      → 更新活動</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">DELETE /events/123      → 刪除活動</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4️⃣-params-路由規則語法">4️⃣ Params 路由規則語法<a href="#4️⃣-params-路由規則語法" class="hash-link" aria-label="Direct link to 4️⃣ Params 路由規則語法" title="Direct link to 4️⃣ Params 路由規則語法" translate="no">​</a></h3>
+<ul>
+<li class="">這個我剛學的時候也很常搞混：</li>
+</ul>
+<table><thead><tr><th>名稱</th><th>是誰定義的</th><th>在哪</th></tr></thead><tbody><tr><td>URL Path</td><td>網址標準</td><td>瀏覽器</td></tr><tr><td>Query Params</td><td>網址標準</td><td>瀏覽器</td></tr><tr><td><code>:xxx</code> Params</td><td>框架語法</td><td>Node 後端</td></tr></tbody></table>
+<ul>
+<li class="">
+<p>情境：假如我在瀏覽器打上：</p>
+<ul>
+<li class=""><code>/api/v1/event/sui/2026-02-10/dshejk123</code></li>
+<li class="">⚠️ 注意：網址裡根本沒有 <code>:</code></li>
+</ul>
+</li>
+<li class="">
+<p>當我在後端設計路由時 👇</p>
+</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">app</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">get</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;/event/:host/:date/:id&#x27;</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> handler</span><span class="token punctuation" style="color:#393A34">)</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>這一行: 👉 是在定義一個 「匹配規則」</p>
+</li>
+<li class="">
+<p>以Node / Express 在做什麼為例：</p>
+<ul>
+<li class="">
+<ol>
+<li class="">Express 啟動時:會把這條路由<code>/event/:host/:date/:id</code></li>
+</ol>
+<ul>
+<li class="">轉成一個「模式」(解析成 req.params)：<code>/event/{任意字串}/{任意字串}/{任意字串}</code></li>
+</ul>
+</li>
+<li class="">
+<ol start="2">
+<li class="">當請求進來時，請求是：<code>GET /event/sui/2026-02-10/dshejk123</code></li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>Express 做的事是：</div><div class="admonitionContent_BuS1"><table><thead><tr><th>路由規則</th><th>實際網址</th></tr></thead><tbody><tr><td>:host</td><td>sui</td></tr><tr><td>:date</td><td>2026-02-10</td></tr><tr><td>:id</td><td>dshejk123</td></tr></tbody></table><ul>
+<li class="">👉 然後幫我組成：</li>
+</ul><div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">req</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">params</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">host</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;sui&#x27;</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">date</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;2026-02-10&#x27;</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">id</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;dshejk123&#x27;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><br></span></code></pre></div></div></div></div>
+<ul>
+<li class="">
+<p>透過<span style="background-color:#1877F2;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">request.params 物件，後端「從網址路徑解析出來的值」</span> ，後端再去資料庫驗證與比對是否有該host有該host在指定日期舉辦的哪一場活動(id)</p>
+</li>
+<li class="">
+<p>後端透過 request.params 取得由路由規則解析出的路徑參數，例如活動 ID 或主辦方 ID，
+再依據這些參數向資料庫查詢，驗證該主辦方是否在指定日期下，存在對應的活動紀錄</p>
+</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">async</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">function</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">handler</span><span class="token punctuation" style="color:#393A34">(</span><span class="token parameter">req</span><span class="token parameter punctuation" style="color:#393A34">,</span><span class="token parameter"> res</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> hostId</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> eventId </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> req</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">params</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> date </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> req</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">query</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> event </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token keyword control-flow" style="color:#00009f">await</span><span class="token plain"> db</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">events</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">findOne</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token literal-property property" style="color:#36acaa">where</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      </span><span class="token literal-property property" style="color:#36acaa">id</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> eventId</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      </span><span class="token literal-property property" style="color:#36acaa">hostId</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> hostId</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      </span><span class="token literal-property property" style="color:#36acaa">date</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> date</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword control-flow" style="color:#00009f">if</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token operator" style="color:#393A34">!</span><span class="token plain">event</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token keyword control-flow" style="color:#00009f">return</span><span class="token plain"> res</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">status</span><span class="token punctuation" style="color:#393A34">(</span><span class="token number" style="color:#36acaa">404</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">json</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> </span><span class="token literal-property property" style="color:#36acaa">message</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;活動不存在&#x27;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  res</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">json</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">event</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span></code></pre></div></div>
+<ul>
+<li class="">後端用用hostId + eventId + date去確認資料庫裡是否真的有這筆活動</li>
+<li class="">流程是：</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">前端請求網址</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  ↓</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">路由規則匹配成功</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  ↓</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Express 解析路徑 → req.params</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  ↓</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">handler 取得 params</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  ↓</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">使用 params 作為查詢條件</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  ↓</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">資料庫比對是否存在該活動</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  ↓</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">回傳結果</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span></code></pre></div></div>
+<ul>
+<li class="">params 是 資源識別(用前端提供的識別資訊去查 DB)</li>
+<li class="">query 是 條件</li>
+<li class="">DB 才是 真實來源</li>
+</ul>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="5️⃣-query-string-qsuihsilan取的網址參數">5️⃣ query string (?q=suihsilan)取的網址參數<a href="#5️⃣-query-string-qsuihsilan取的網址參數" class="hash-link" aria-label="Direct link to 5️⃣ query string (?q=suihsilan)取的網址參數" title="Direct link to 5️⃣ query string (?q=suihsilan)取的網址參數" translate="no">​</a></h3>
+<ul>
+<li class="">
+<span style="background-color:#6A1B9A;border-radius:10px;color:#fff;padding:4px 8px;font-weight:bold;cursor:pointer">req.query 是後端把網址 ? 後面的查詢字串解析成物件的結果，是網址標準的一部分</span>
+</li>
+<li class="">
+<p>前端實際送出的網址是這樣：</p>
+</li>
+</ul>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">GET /events/123?status=published&amp;date=2026-02-10</span><br></span></code></pre></div></div>
+<ul>
+<li class="">關注上述這段：</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">?status=published&amp;date=2026-02-10</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>👉 這就是 query string</p>
+</li>
+<li class="">
+<p>後端收到後做了什麼?</p>
+<ul>
+<li class="">把這段字串<code>status=published&amp;date=2026-02-10</code></li>
+<li class="">解析成物件：</li>
+</ul>
+</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">req</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">query</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">status</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;published&#x27;</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token literal-property property" style="color:#36acaa">date</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;2026-02-10&#x27;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<ul>
+<li class="">👉 前端真的有把這些 key/value 放在網址裡，向後端發送請求</li>
+<li class="">👉 後端只是「接收請求並解析」為物件</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>req.query 的本質是什麼</div><div class="admonitionContent_BuS1"><ul>
+<li class=""><code>req.query</code> =&gt; 查詢條件（filters）<!-- -->
+<ul>
+<li class="">我要用什麼條件來看</li>
+</ul>
+</li>
+</ul></div></div>
+<ul>
+<li class="">
+<p>常見用法：</p>
+</li>
+<li class="">
+<p>篩選:</p>
+</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">/events?status=published</span><br></span></code></pre></div></div>
+<ul>
+<li class="">分頁</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">/events?page=2&amp;limit=10</span><br></span></code></pre></div></div>
+<ul>
+<li class="">排序</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">/events?sort=startDate</span><br></span></code></pre></div></div>
+<ul>
+<li class="">搜尋</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">/events?keyword=露營</span><br></span></code></pre></div></div>
+<ul>
+<li class="">搭配handler 裡我通常怎麼用？</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">app</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">get</span><span class="token punctuation" style="color:#393A34">(</span><span class="token string" style="color:#e3116c">&#x27;/events/:id&#x27;</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">async</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token parameter">req</span><span class="token parameter punctuation" style="color:#393A34">,</span><span class="token parameter"> res</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token arrow operator" style="color:#393A34">=&gt;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> id </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> req</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">params</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain">        </span><span class="token comment" style="color:#999988;font-style:italic">// 是誰(哪一個資源識別id)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> date</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> status </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> req</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">query</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"> </span><span class="token comment" style="color:#999988;font-style:italic">// 條件</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword" style="color:#00009f">const</span><span class="token plain"> event </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token keyword control-flow" style="color:#00009f">await</span><span class="token plain"> db</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">events</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">findOne</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token literal-property property" style="color:#36acaa">where</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      id</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      status</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      date</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  res</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">json</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">event</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>👉 params + query 合作</p>
+</li>
+<li class="">
+<p>👉 params 定位</p>
+</li>
+<li class="">
+<p>👉 query 篩選</p>
+</li>
+<li class="">
+<p>解釋以下：</p>
+<ul>
+<li class=""><code>GET /hosts/:hostId/events/:eventId?date=2026-02-10</code></li>
+<li class="">hostId 與 eventId是req.params 指定我要找哪一個識別資源</li>
+<li class="">?是req.query =&gt; 查詢條件日期為<code>2026-02-10</code>的資料</li>
+</ul>
+</li>
+</ul>
+<div class="theme-admonition theme-admonition-danger admonition_xJq3 alert alert--danger"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path></svg></span>danger</div><div class="admonitionContent_BuS1"><ul>
+<li class="">params 是資源本身的一部分</li>
+<li class="">query 是對資源加條件</li>
+</ul></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-一條網址的本質">🟦 一條網址的本質<a href="#-一條網址的本質" class="hash-link" aria-label="Direct link to 🟦 一條網址的本質" title="Direct link to 🟦 一條網址的本質" translate="no">​</a></h2>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">http(s)://主機位置:port/路徑/:哪一個資源id?查詢</span><br></span></code></pre></div></div>
+<ul>
+<li class="">其中 主機位置 可以是：<!-- -->
+<ul>
+<li class="">IP</li>
+<li class="">Domain 網域名稱</li>
+<li class="">localhost 本機代稱</li>
+</ul>
+</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="0️⃣-127001">0️⃣ 127.0.0.1<a href="#0️⃣-127001" class="hash-link" aria-label="Direct link to 0️⃣ 127.0.0.1" title="Direct link to 0️⃣ 127.0.0.1" translate="no">​</a></h3>
+<ul>
+<li class="">永遠指向「自己這台電腦」<!-- -->
+<ul>
+<li class="">IPv4 的 loopback 位址</li>
+<li class="">作業系統內建</li>
+<li class="">不經過網路卡，不出門</li>
+</ul>
+</li>
+</ul>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">127.0.0.1 → 你自己本地電腦</span><br></span></code></pre></div></div>
+<ul>
+<li class="">
+<p>本機開 server、測試 API</p>
+</li>
+<li class="">
+<p>不想讓外部連線</p>
+</li>
+<li class="">
+<p>最安全、最快</p>
+</li>
+<li class="">
+<p>我平常在做 👉 後端在 terminal 開：</p>
+</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">node app.js</span><br></span></code></pre></div></div>
+<ul>
+<li class="">👉 瀏覽器打：</li>
+</ul>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">http://127.0.0.1:3000</span><br></span></code></pre></div></div>
+<ul>
+<li class="">就是在「我自己跟自己講話」</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1️⃣-localhost127001">1️⃣ localhost(127.0.0.1)<a href="#1️⃣-localhost127001" class="hash-link" aria-label="Direct link to 1️⃣ localhost(127.0.0.1)" title="Direct link to 1️⃣ localhost(127.0.0.1)" translate="no">​</a></h3>
+<ul>
+<li class="">127.0.0.1 的人類友善版名字</li>
+</ul>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><ul>
+<li class="">透過 hosts 檔案對應</li>
+<li class="">預設是：</li>
+<li class=""><code>localhost → 127.0.0.1</code></li>
+</ul><div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">http://localhost:3000</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">http://127.0.0.1:3000</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># 本質是同一個地方</span><br></span></code></pre></div></div></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2️⃣-localhost3001">2️⃣ localhost:3001<a href="#2️⃣-localhost3001" class="hash-link" aria-label="Direct link to 2️⃣ localhost:3001" title="Direct link to 2️⃣ localhost:3001" translate="no">​</a></h3>
+<ul>
+<li class="">同一台電腦，不同服務</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain"># localhost：你自己</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># 3001：另一個 port</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">localhost:3000 → API</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">localhost:3001 → 前端介面</span><br></span></code></pre></div></div>
+<ul>
+<li class="">一台機器可以跑很多服務</li>
+<li class="">用 port 區分:</li>
+</ul>
+<table><thead><tr><th>服務</th><th>位址</th></tr></thead><tbody><tr><td>React / Next 前端</td><td>localhost:3000</td></tr><tr><td>Express / Fastify API</td><td>localhost:3001</td></tr><tr><td>Admin 後台</td><td>localhost:3002</td></tr><tr><td>Redis UI</td><td>localhost:8081</td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-還有哪些常見主機位置">🟦 還有哪些常見「主機位置」<a href="#-還有哪些常見主機位置" class="hash-link" aria-label="Direct link to 🟦 還有哪些常見「主機位置」" title="Direct link to 🟦 還有哪些常見「主機位置」" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="0️⃣-0000">0️⃣ 0.0.0.0<a href="#0️⃣-0000" class="hash-link" aria-label="Direct link to 0️⃣ 0.0.0.0" title="Direct link to 0️⃣ 0.0.0.0" translate="no">​</a></h3>
+<ul>
+<li class="">代表「聽所有網路介面」</li>
+<li class="">後端如果：</li>
+</ul>
+<div class="language-js codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-js codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">app</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">listen</span><span class="token punctuation" style="color:#393A34">(</span><span class="token number" style="color:#36acaa">3000</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&#x27;0.0.0.0&#x27;</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span></code></pre></div></div>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><ul>
+<li class="">
+<p>允許：</p>
+<ul>
+<li class="">localhost</li>
+<li class="">區網</li>
+<li class="">Docker container</li>
+<li class="">外部主機</li>
+</ul>
+</li>
+<li class="">
+<p>0.0.0.0 不能拿來當瀏覽器網址 =&gt; 它只是 server 的「監聽設定」</p>
+</li>
+</ul></div></div>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1️⃣-私有-ip區網">1️⃣ 私有 IP（區網）<a href="#1️⃣-私有-ip區網" class="hash-link" aria-label="Direct link to 1️⃣ 私有 IP（區網）" title="Direct link to 1️⃣ 私有 IP（區網）" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">http://192.168.1.10:3000</span><br></span></code></pre></div></div>
+<ul>
+<li class="">同一個 Wi-Fi / 區域網內互相連線</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">192.168.0.5</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">192.168.1.10</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">10.0.0.23</span><br></span></code></pre></div></div>
+<ul>
+<li class="">手機連你電腦</li>
+<li class="">另一台電腦測你 API</li>
+<li class="">IoT / 樹莓派（你超熟這塊）</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2️⃣-公網-ip">2️⃣ 公網 IP<a href="#2️⃣-公網-ip" class="hash-link" aria-label="Direct link to 2️⃣ 公網 IP" title="Direct link to 2️⃣ 公網 IP" translate="no">​</a></h3>
+<ul>
+<li class="">整個網際網路都找得到</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">35.xxx.xxx.xxx</span><br></span></code></pre></div></div>
+<ul>
+<li class="">雲端主機</li>
+<li class="">VPS</li>
+<li class="">部署後的服務</li>
+<li class="">👉 通常會配合 domain，不直接給 IP</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="3️⃣-網域名稱domain">3️⃣ 網域名稱（domain）<a href="#3️⃣-網域名稱domain" class="hash-link" aria-label="Direct link to 3️⃣ 網域名稱（domain）" title="Direct link to 3️⃣ 網域名稱（domain）" translate="no">​</a></h3>
+<ul>
+<li class="">人類可記的「公網 IP 名字」</li>
+</ul>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">api.example.com</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span></code></pre></div></div>
+<ul>
+<li class="">IP 會變</li>
+<li class="">domain 不變</li>
+<li class="">可做負載平衡、CDN</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4️⃣-對照表">4️⃣ 對照表<a href="#4️⃣-對照表" class="hash-link" aria-label="Direct link to 4️⃣ 對照表" title="Direct link to 4️⃣ 對照表" translate="no">​</a></h3>
+<div class="theme-admonition theme-admonition-tip admonition_xJq3 alert alert--success"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>tip</div><div class="admonitionContent_BuS1"><ul>
+<li class="">localhost 是對 127.0.0.1 的名稱映射，</li>
+<li class="">port 用來區分同一台機器上的不同服務，</li>
+<li class="">0.0.0.0 代表 server 接受所有網路介面連線。</li>
+</ul></div></div>
+<table><thead><tr><th>類型</th><th>範例</th><th>用途</th></tr></thead><tbody><tr><td>Loopback IP</td><td>127.0.0.1</td><td>本機自己</td></tr><tr><td>本機別名</td><td>localhost</td><td>本機自己</td></tr><tr><td>Port</td><td>:3000</td><td>區分服務</td></tr><tr><td>監聽全部</td><td>0.0.0.0</td><td>server 設定</td></tr><tr><td>私有 IP</td><td>192.168.x.x</td><td>區網</td></tr><tr><td>公網 IP</td><td>35.x.x.x</td><td>網際網路</td></tr><tr><td>網域</td><td>api.xxx.com</td><td>對外服務</td></tr></tbody></table></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/node_js/05-url-pattern.mdx" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/dev-notes/docs/node_js/whatIsNode"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">【Node_基礎】JS 與 V8引擎</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/dev-notes/docs/node_js/router-pattern"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">【Express_Router】Router 進階設定</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#-網址路徑規則" class="table-of-contents__link toc-highlight">🟧 網址路徑規則</a><ul><li><a href="#0️⃣-通訊協定-http-vs-https" class="table-of-contents__link toc-highlight">0️⃣ 通訊協定: [http] v.s [https]</a></li><li><a href="#1️⃣-domain網域" class="table-of-contents__link toc-highlight">1️⃣ Domain（網域）</a></li><li><a href="#2️⃣-port連接埠可省略" class="table-of-contents__link toc-highlight">2️⃣ Port（連接埠，可省略）</a></li><li><a href="#3️⃣-path路徑" class="table-of-contents__link toc-highlight">3️⃣ Path（路徑）</a></li><li><a href="#4️⃣-params-路由規則語法" class="table-of-contents__link toc-highlight">4️⃣ Params 路由規則語法</a></li><li><a href="#5️⃣-query-string-qsuihsilan取的網址參數" class="table-of-contents__link toc-highlight">5️⃣ query string (?q=suihsilan)取的網址參數</a></li></ul></li><li><a href="#-一條網址的本質" class="table-of-contents__link toc-highlight">🟦 一條網址的本質</a><ul><li><a href="#0️⃣-127001" class="table-of-contents__link toc-highlight">0️⃣ 127.0.0.1</a></li><li><a href="#1️⃣-localhost127001" class="table-of-contents__link toc-highlight">1️⃣ localhost(127.0.0.1)</a></li><li><a href="#2️⃣-localhost3001" class="table-of-contents__link toc-highlight">2️⃣ localhost:3001</a></li></ul></li><li><a href="#-還有哪些常見主機位置" class="table-of-contents__link toc-highlight">🟦 還有哪些常見「主機位置」</a><ul><li><a href="#0️⃣-0000" class="table-of-contents__link toc-highlight">0️⃣ 0.0.0.0</a></li><li><a href="#1️⃣-私有-ip區網" class="table-of-contents__link toc-highlight">1️⃣ 私有 IP（區網）</a></li><li><a href="#2️⃣-公網-ip" class="table-of-contents__link toc-highlight">2️⃣ 公網 IP</a></li><li><a href="#3️⃣-網域名稱domain" class="table-of-contents__link toc-highlight">3️⃣ 網域名稱（domain）</a></li><li><a href="#4️⃣-對照表" class="table-of-contents__link toc-highlight">4️⃣ 對照表</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/dev-notes/docs/intro">Tutorial</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://stackoverflow.com/questions/tagged/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">Stack Overflow<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://discordapp.com/invite/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">Discord<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://x.com/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">X<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/dev-notes/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/facebook/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 My Project, Inc. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
