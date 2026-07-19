@@ -6,32 +6,256 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #bd3f1b;
+  --ifm-color-primary-dark: #aa3818;
+  --ifm-color-primary-darker: #a03617;
+  --ifm-color-primary-darkest: #842d13;
+  --ifm-color-primary-light: #cf4920;
+  --ifm-color-primary-lighter: #d85733;
+  --ifm-color-primary-lightest: #e57b5c;
   --ifm-code-font-size: 95%;
-  /* 淺色背景下-自訂高亮樣式 */
   --docusaurus-highlighted-code-line-bg: rgb(208, 237, 181);
+  --ifm-background-color: #fffdf8;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-font-color-base: #223041;
+  --ifm-font-color-secondary: #4f6175;
+  --ifm-navbar-background-color: rgba(255, 250, 243, 0.88);
+  --ifm-heading-color: #1d2733;
+  --ifm-menu-color: #314051;
+  --ifm-menu-color-active: #9d3516;
+  --ifm-menu-color-background-active: rgba(189, 63, 27, 0.1);
+  --ifm-toc-link-color: #4f6175;
+  --ifm-link-color: #9d3516;
+  --ifm-blockquote-color: #415264;
+  --ifm-card-background-color: #ffffff;
+  --ifm-code-background: #f6eee8;
+  --ifm-pre-background: #1f2937;
+  --ifm-pre-color: #f8fafc;
+  --ifm-table-stripe-background: rgba(29, 39, 51, 0.03);
+  --ifm-hr-background-color: rgba(34, 48, 65, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fffdf8;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme="dark"] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  /* 暗色背景下-自訂高亮樣式 */
-  --docusaurus-highlighted-code-line-bg: rgba(
-    0,
-    255,
-    128,
-    0.1
-  ); /* 柔和透明綠 */
+[data-theme='dark'] {
+  --ifm-color-primary: #ff9c72;
+  --ifm-color-primary-dark: #ff8551;
+  --ifm-color-primary-darker: #ff7940;
+  --ifm-color-primary-darkest: #fc5f13;
+  --ifm-color-primary-light: #ffb394;
+  --ifm-color-primary-lighter: #ffbfaa;
+  --ifm-color-primary-lightest: #ffe2d6;
+  --ifm-background-color: #111827;
+  --ifm-background-surface-color: #182230;
+  --ifm-navbar-background-color: rgba(17, 24, 39, 0.92);
+  --ifm-font-color-base: #edf2f7;
+  --ifm-font-color-secondary: #c6d2de;
+  --ifm-heading-color: #fff7f2;
+  --ifm-menu-color: #d9e3ec;
+  --ifm-menu-color-active: #ffb394;
+  --ifm-menu-color-background-active: rgba(255, 156, 114, 0.12);
+  --ifm-toc-link-color: #b7c6d6;
+  --ifm-link-color: #ffb394;
+  --ifm-blockquote-color: #d4dee8;
+  --ifm-card-background-color: #182230;
+  --ifm-code-background: rgba(255, 255, 255, 0.08);
+  --ifm-pre-background: #0b1220;
+  --ifm-pre-color: #edf2f7;
+  --ifm-table-stripe-background: rgba(255, 255, 255, 0.04);
+  --ifm-hr-background-color: rgba(255, 255, 255, 0.12);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 255, 128, 0.1);
+}
+
+[data-theme='dark'] body {
+  background: #111827;
+}
+
+.navbar {
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(34, 48, 65, 0.08);
+}
+
+[data-theme='dark'] .navbar {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.theme-doc-markdown,
+.theme-doc-markdown p,
+.theme-doc-markdown li {
+  color: var(--ifm-font-color-base);
+}
+
+.theme-doc-markdown a {
+  font-weight: 600;
+  color: var(--ifm-link-color);
+}
+
+.theme-doc-markdown blockquote {
+  color: var(--ifm-blockquote-color);
+  border-left: 4px solid var(--ifm-color-primary);
+  background: rgba(189, 63, 27, 0.04);
+}
+
+[data-theme='dark'] .theme-doc-markdown blockquote {
+  background: rgba(255, 156, 114, 0.08);
+}
+
+.menu__link,
+.table-of-contents__link {
+  color: var(--ifm-menu-color);
+}
+
+.menu__link:hover,
+.table-of-contents__link:hover {
+  color: var(--ifm-color-primary);
+}
+
+.pagination-nav__link,
+.card {
+  background: var(--ifm-card-background-color);
+}
+
+.theme-mermaid {
+  background: transparent;
+}
+
+.theme-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.theme-mermaid .label,
+.theme-mermaid text,
+.theme-mermaid span,
+.theme-mermaid foreignObject {
+  color: #1f2937 !important;
+  fill: #1f2937 !important;
+}
+
+.theme-mermaid .nodeLabel,
+.theme-mermaid .nodeLabel *,
+.theme-mermaid .edgeLabel,
+.theme-mermaid .edgeLabel *,
+.theme-mermaid .cluster-label,
+.theme-mermaid .cluster-label *,
+.theme-mermaid .label foreignObject div,
+.theme-mermaid .label foreignObject span,
+.theme-mermaid .label foreignObject p {
+  color: #1f2937 !important;
+  fill: #1f2937 !important;
+}
+
+.theme-mermaid .node rect,
+.theme-mermaid .node circle,
+.theme-mermaid .node ellipse,
+.theme-mermaid .node polygon,
+.theme-mermaid .node path,
+.theme-mermaid .actor,
+.theme-mermaid .messageBox,
+.theme-mermaid .labelBox,
+.theme-mermaid .cluster rect {
+  fill: #fffaf3 !important;
+  stroke: #9d3516 !important;
+  stroke-width: 1.5px !important;
+}
+
+.theme-mermaid .cluster rect {
+  fill: #f6eee8 !important;
+}
+
+.theme-mermaid .edgePath path,
+.theme-mermaid .flowchart-link,
+.theme-mermaid .relationshipLine,
+.theme-mermaid .messageLine0,
+.theme-mermaid .messageLine1 {
+  stroke: #475569 !important;
+  stroke-width: 1.8px !important;
+}
+
+.theme-mermaid .arrowheadPath,
+.theme-mermaid .marker {
+  fill: #475569 !important;
+  stroke: #475569 !important;
+}
+
+.theme-mermaid .note,
+.theme-mermaid .note rect,
+.theme-mermaid .noteText {
+  fill: #fff4cc !important;
+  stroke: #b7791f !important;
+  color: #5b3a00 !important;
+}
+
+[data-theme='dark'] .theme-mermaid .label,
+[data-theme='dark'] .theme-mermaid text,
+[data-theme='dark'] .theme-mermaid span,
+[data-theme='dark'] .theme-mermaid foreignObject {
+  color: #f8fafc !important;
+  fill: #f8fafc !important;
+}
+
+[data-theme='dark'] .theme-mermaid .nodeLabel,
+[data-theme='dark'] .theme-mermaid .nodeLabel *,
+[data-theme='dark'] .theme-mermaid .edgeLabel,
+[data-theme='dark'] .theme-mermaid .edgeLabel *,
+[data-theme='dark'] .theme-mermaid .cluster-label,
+[data-theme='dark'] .theme-mermaid .cluster-label *,
+[data-theme='dark'] .theme-mermaid .label foreignObject div,
+[data-theme='dark'] .theme-mermaid .label foreignObject span,
+[data-theme='dark'] .theme-mermaid .label foreignObject p {
+  color: #f8fafc !important;
+  fill: #f8fafc !important;
+}
+
+[data-theme='dark'] .theme-mermaid .edgeLabel rect,
+[data-theme='dark'] .theme-mermaid .labelBox {
+  fill: #182230 !important;
+  opacity: 1 !important;
+  stroke: #ffb394 !important;
+}
+
+[data-theme='dark'] .theme-mermaid .node rect,
+[data-theme='dark'] .theme-mermaid .node circle,
+[data-theme='dark'] .theme-mermaid .node ellipse,
+[data-theme='dark'] .theme-mermaid .node polygon,
+[data-theme='dark'] .theme-mermaid .node path,
+[data-theme='dark'] .theme-mermaid .actor,
+[data-theme='dark'] .theme-mermaid .messageBox,
+[data-theme='dark'] .theme-mermaid .labelBox,
+[data-theme='dark'] .theme-mermaid .cluster rect {
+  fill: #1f2937 !important;
+  stroke: #ffb394 !important;
+}
+
+[data-theme='dark'] .theme-mermaid .cluster rect {
+  fill: #182230 !important;
+}
+
+[data-theme='dark'] .theme-mermaid .edgePath path,
+[data-theme='dark'] .theme-mermaid .flowchart-link,
+[data-theme='dark'] .theme-mermaid .relationshipLine,
+[data-theme='dark'] .theme-mermaid .messageLine0,
+[data-theme='dark'] .theme-mermaid .messageLine1 {
+  stroke: #cbd5e1 !important;
+}
+
+[data-theme='dark'] .theme-mermaid .arrowheadPath,
+[data-theme='dark'] .theme-mermaid .marker {
+  fill: #cbd5e1 !important;
+  stroke: #cbd5e1 !important;
+}
+
+[data-theme='dark'] .theme-mermaid .note,
+[data-theme='dark'] .theme-mermaid .note rect,
+[data-theme='dark'] .theme-mermaid .noteText {
+  fill: #3f2f12 !important;
+  stroke: #f6ad55 !important;
+  color: #fff3d6 !important;
 }

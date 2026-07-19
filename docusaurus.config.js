@@ -13,8 +13,8 @@ const config = {
   /**
    * 第一區：網站基本資訊與部署設定
    */
-  title: "Sui筆記部落", //網站標題（會出現在 <title>）
-  tagline: "這裡紀錄日記與技術學習的軌跡", //副標，出現在首頁
+  title: "Sui｜Backend × Automation × AI", //網站標題（會出現在 <title>）
+  tagline: "把技術筆記、作品脈絡與可 demo 專案整合成求職主站", //副標，出現在首頁
   favicon: "img/favicon.ico", // 網站小圖示 icon（建議 32x32）
 
   // Set the production url of your site here
@@ -41,8 +41,8 @@ const config = {
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: "en",
-    locales: ["en"],
+    defaultLocale: "zh-Hant",
+    locales: ["zh-Hant"],
   },
   themes: ["@docusaurus/theme-mermaid"],
   markdown: {
@@ -97,23 +97,28 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: "img/docusaurus-social-card.jpg",
+      image: "img/me.png",
       navbar: {
-        title: "Sui_技術共學", //導覽列左上角標題
+        title: "Sui Works", //導覽列左上角標題
         logo: {
-          alt: "Sui_技術筆記",
+          alt: "Sui Works",
           src: "img/logo.png", // Logo 圖檔
         },
         items: [
           //導覽列按鈕
           {
-            to: '/docs/intro',
-            label: '程式筆記',
+            to: '/docs/job-hunt-portfolio',
+            label: '求職入口',
             position: 'left',
           },
-          { to: "/blog", label: "部落格", position: "left" },
           {
-            href: "https://github.com/hsilan-sui/hsilan-sui",
+            to: '/docs/LINEOA-PORFOLIO/overview',
+            label: '代表專案',
+            position: 'left',
+          },
+          { to: '/docs/intro', label: '技術筆記', position: 'left' },
+          {
+            href: "https://github.com/hsilan-sui/sui-dev-notes",
             label: "GitHub",
             position: "right",
           },
@@ -123,46 +128,46 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
+            title: "Portfolio",
             items: [
               {
-                label: "Tutorial",
+                label: "求職入口",
+                to: "/docs/job-hunt-portfolio",
+              },
+              {
+                label: "LINE OA 互動作品集",
+                to: "/docs/LINEOA-PORFOLIO/overview",
+              },
+            ],
+          },
+          {
+            title: "Notes",
+            items: [
+              {
+                label: "筆記總覽",
                 to: "/docs/intro",
               },
-            ],
-          },
-          {
-            title: "Community",
-            items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
-              {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
-                label: "X",
-                href: "https://x.com/docusaurus",
+                label: "AI 客服微服務",
+                to: "/docs/backend/ai-chat-service",
               },
             ],
           },
           {
-            title: "More",
+            title: "Contact",
             items: [
               {
-                label: "Blog",
-                to: "/blog",
+                label: "GitHub Repository",
+                href: "https://github.com/hsilan-sui/sui-dev-notes",
               },
               {
-                label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
+                label: "LINE OA",
+                href: "https://line.me/R/ti/p/@998enzsc",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Sui Hsilan. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,

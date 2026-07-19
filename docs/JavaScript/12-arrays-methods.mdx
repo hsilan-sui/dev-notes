@@ -1,0 +1,918 @@
+---
+title: "【JS觀念筆記_Array】陣列操作的基本方法"
+sidebar_position: 12
+---
+
+## 本篇觀念要點
+
+<Highlight>Array 建立完成之後，可以透過內建的 Array Method，新增、移除、尋找與判斷資料。</Highlight>
+
+1. [Array Method 是什麼](#array-method)
+2. [push：尾端新增元素](#array-push)
+3. [unshift：前端新增元素](#array-unshift)
+4. [pop：移除最後一個元素](#array-pop)
+5. [shift：移除第一個元素](#array-shift)
+6. [indexOf：尋找元素位置](#array-indexof)
+7. [includes：判斷元素是否存在](#array-includes)
+
+:::info 這堂課的主線
+Array 已經建立 → 新增資料 → 移除資料 → 尋找位置 → 判斷資料是否存在
+:::
+
+---
+
+## Array Method 是什麼 {#array-method}
+
+Array Method 是 JavaScript 內建、可以直接使用在 Array 上的操作方法。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+friends.push("Jay");
+```
+
+這裡的 `push()` 就是一個 Array Method。
+
+基本形式：
+
+```js
+array.method();
+```
+
+例如：
+
+```js
+friends.push("Jay");
+friends.pop();
+friends.includes("Steven");
+```
+
+`.` 可以先理解成：
+
+> 對這個 Array 使用某個功能。
+
+Array 不只是用來存放資料，實際操作資料時，我們還會需要：
+
+- 新增資料
+- 移除資料
+- 尋找資料
+- 判斷資料是否存在
+
+JavaScript 已經提供常用的 Array Method，不需要每次都自己重新設計操作方式。
+
+<Highlight>看到 Array 的操作需求時，可以先思考 JavaScript 是否已經提供對應的內建方法。</Highlight>
+
+---
+
+## push：尾端新增元素 {#array-push}
+
+`push()` 會把一個或多個元素加入 Array 的最後面。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+friends.push("Jay");
+
+console.log(friends);
+```
+
+結果：
+
+```js
+[
+  "Michael",
+  "Steven",
+  "Peter",
+  "Jay"
+]
+```
+
+常見需求：
+
+- 把資料加到最後
+- 新增一筆資料
+- 加入購物車商品
+- 加入新的待辦事項
+- 把迴圈結果收集到新 Array
+
+```js title="新增購物車商品"
+cart.push(product);
+```
+
+```js title="新增聊天室訊息"
+messages.push(newMessage);
+```
+
+```js title="新增待辦事項"
+todos.push(newTodo);
+```
+
+### push 的回傳值
+
+`push()` 會修改原本的 Array，並回傳新的 Array 長度。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+const newLength = friends.push("Jay");
+
+console.log(newLength); // 4
+```
+
+:::danger 常見錯誤：誤會 push 的回傳值
+```js
+const result = friends.push("Jay");
+```
+
+`result` 是新的 Array 長度，不是 `"Jay"`，也不是新的 Array。
+
+```js
+console.log(result); // 4
+```
+:::
+
+---
+
+## unshift：前端新增元素 {#array-unshift}
+
+`unshift()` 會把一個或多個元素加入 Array 的最前面。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+friends.unshift("John");
+
+console.log(friends);
+```
+
+結果：
+
+```js
+[
+  "John",
+  "Michael",
+  "Steven",
+  "Peter"
+]
+```
+
+常見需求：
+
+- 把資料加到最前面
+- 插入第一筆資料
+- 把新資料放在清單最上方
+- 將重要資料放到最前面
+
+```js title="把最新通知放到最前面"
+notifications.unshift(newNotification);
+```
+
+```js title="把新文章放在列表最前面"
+posts.unshift(newPost);
+```
+
+### unshift 的回傳值
+
+`unshift()` 和 `push()` 一樣，會回傳新的 Array 長度。
+
+```js
+const newLength = friends.unshift("John");
+
+console.log(newLength);
+```
+
+:::warning push 和 unshift 的差別
+```text
+push     → 尾端新增
+unshift  → 前端新增
+```
+
+兩個方法都會修改原本的 Array，也都會回傳新的 Array 長度。
+:::
+
+---
+
+## pop：移除最後一個元素 {#array-pop}
+
+`pop()` 會移除 Array 最後一個元素。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+friends.pop();
+
+console.log(friends);
+```
+
+結果：
+
+```js
+[
+  "Michael",
+  "Steven"
+]
+```
+
+### 為什麼 pop 不需要參數？
+
+因為 `pop()` 的工作已經固定：
+
+> 移除 Array 最後一個元素。
+
+因此不需要再指定要移除哪一個元素。
+
+```js
+friends.pop(); // ✔
+```
+
+不是：
+
+```js
+friends.pop("Peter"); // ❌ 參數不會決定移除誰
+```
+
+### pop 的回傳值
+
+`pop()` 會回傳被移除的元素。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+const removedFriend = friends.pop();
+
+console.log(removedFriend); // "Peter"
+console.log(friends); // ["Michael", "Steven"]
+```
+
+常見需求：
+
+- 移除最後一筆資料
+- 取出最後加入的元素
+- 刪除清單尾端資料
+- 復原最後一個操作
+
+```js title="移除購物車最後一項商品"
+const removedItem = cart.pop();
+```
+
+```js title="取出最後一個操作紀錄"
+const lastAction = history.pop();
+```
+
+:::warning pop 會同時做兩件事
+1. 修改原本的 Array
+2. 回傳被移除的最後一個元素
+:::
+
+---
+
+## shift：移除第一個元素 {#array-shift}
+
+`shift()` 會移除 Array 第一個元素。
+
+```js
+const friends = [
+  "John",
+  "Michael",
+  "Steven"
+];
+
+friends.shift();
+
+console.log(friends);
+```
+
+結果：
+
+```js
+[
+  "Michael",
+  "Steven"
+]
+```
+
+### shift 的回傳值
+
+`shift()` 會回傳被移除的第一個元素。
+
+```js
+const friends = [
+  "John",
+  "Michael",
+  "Steven"
+];
+
+const removedFriend = friends.shift();
+
+console.log(removedFriend); // "John"
+console.log(friends); // ["Michael", "Steven"]
+```
+
+常見需求：
+
+- 移除第一筆資料
+- 取出排隊中的第一個任務
+- 刪除最舊資料
+- 依序處理清單最前面的內容
+
+```js title="取出排隊中的第一個工作"
+const nextJob = jobs.shift();
+```
+
+```js title="移除最舊通知"
+const oldestNotification = notifications.shift();
+```
+
+:::danger 常見錯誤：混淆 shift 與 unshift
+```text
+unshift  → 前面新增
+shift    → 前面移除
+```
+
+可以把 `unshift` 裡面的 `un` 想成把 `shift` 的移除動作反過來，變成新增。
+:::
+
+---
+
+## 四個新增與移除方法怎麼選
+
+| 需求 | 方法 | 回傳值 |
+|---|---|---|
+| 尾端新增 | `push()` | 新的 Array 長度 |
+| 前端新增 | `unshift()` | 新的 Array 長度 |
+| 移除最後一個 | `pop()` | 被移除的元素 |
+| 移除第一個 | `shift()` | 被移除的元素 |
+
+可以分成兩組記憶：
+
+### 尾端操作
+
+```text
+push  → 尾端新增
+pop   → 尾端移除
+```
+
+### 前端操作
+
+```text
+unshift  → 前端新增
+shift    → 前端移除
+```
+
+<Highlight>新增方法回傳新的長度；移除方法回傳被移除的元素。</Highlight>
+
+---
+
+## indexOf：尋找元素位置 {#array-indexof}
+
+`indexOf()` 用來尋找某個元素位於 Array 的哪一個 Index。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+const index = friends.indexOf("Steven");
+
+console.log(index); // 1
+```
+
+因為 Array 的 Index 從 `0` 開始：
+
+```text
+Michael → Index 0
+Steven  → Index 1
+Peter   → Index 2
+```
+
+### 找不到元素時
+
+當 `indexOf()` 找不到指定元素時，會回傳 `-1`。
+
+```js
+const index = friends.indexOf("Bob");
+
+console.log(index); // -1
+```
+
+因此：
+
+```text
+0 以上 → 找到元素
+-1     → 找不到元素
+```
+
+常見需求：
+
+- 找出元素在哪個位置
+- 取得某個資料的 Index
+- 找到位置後修改資料
+- 找到位置後進行後續操作
+
+```js title="尋找標籤的位置"
+const index = tags.indexOf("JavaScript");
+```
+
+```js title="找到好友位置後修改資料"
+const index = friends.indexOf("Steven");
+
+friends[index] = "Steve";
+```
+
+:::danger 不要直接把 indexOf 放進 if
+下面的寫法可能產生錯誤判斷：
+
+```js
+if (friends.indexOf("Michael")) {
+  console.log("找到");
+}
+```
+
+如果 `"Michael"` 位於 Index `0`，`indexOf()` 會回傳 `0`。
+
+但是 `0` 在條件判斷中會被視為 `false`，因此程式不會進入 `if`。
+:::
+
+正確寫法是明確判斷是否不等於 `-1`：
+
+```js
+if (friends.indexOf("Michael") !== -1) {
+  console.log("找到");
+}
+```
+
+不過，當需求只是判斷「有沒有」時，使用 `includes()` 會更直覺。
+
+---
+
+## includes：判斷元素是否存在 {#array-includes}
+
+`includes()` 用來判斷 Array 裡是否包含某個元素。
+
+它只會回傳 Boolean：
+
+```text
+true
+false
+```
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+friends.includes("Steven"); // true
+friends.includes("Bob");    // false
+```
+
+常見需求：
+
+- 某個元素有沒有存在
+- 是否包含指定資料
+- 資料是否已經加入
+- 值是否存在於允許清單
+- 是否包含某個權限
+
+```js title="判斷使用者是否有管理員權限"
+roles.includes("admin");
+```
+
+```js title="判斷商品是否已加入收藏"
+favorites.includes(productId);
+```
+
+```js title="判斷狀態是否允許"
+allowedStatus.includes(status);
+```
+
+### includes 搭配 if
+
+因為 `includes()` 會直接回傳 `true` 或 `false`，所以很適合放進 `if`。
+
+```js
+if (friends.includes("Steven")) {
+  console.log("You have a friend called Steven");
+}
+```
+
+這段程式的意思是：
+
+```text
+如果 friends 裡包含 Steven
+    ↓
+執行大括號裡的程式
+```
+
+<Highlight>只想知道資料有沒有存在時，優先想到 includes。</Highlight>
+
+---
+
+## includes 會區分資料型別
+
+`includes()` 判斷元素時，會區分資料型別。
+
+數字：
+
+```js
+23
+```
+
+字串：
+
+```js
+"23"
+```
+
+兩者看起來相似，但不是同一個值。
+
+```js
+const values = [23];
+
+values.includes(23);   // true
+values.includes("23"); // false
+```
+
+:::warning includes 使用嚴格比較
+```js
+[23].includes("23"); // false
+```
+
+因為：
+
+```text
+23    → Number
+"23"  → String
+```
+
+資料型別不同，所以判斷結果是 `false`。
+:::
+
+同樣地，英文字母大小寫也會影響結果：
+
+```js
+const friends = ["Steven"];
+
+friends.includes("Steven"); // true
+friends.includes("steven"); // false
+```
+
+---
+
+## indexOf 和 includes 怎麼選
+
+| 需求 | 方法 | 回傳值 |
+|---|---|---|
+| 想知道元素在哪裡 | `indexOf()` | Index 或 `-1` |
+| 只想知道元素有沒有存在 | `includes()` | `true` 或 `false` |
+
+### 想知道位置
+
+```js
+const index = friends.indexOf("Steven");
+```
+
+問題是：
+
+> Steven 位於哪一個 Index？
+
+### 只想知道有沒有
+
+```js
+const exists = friends.includes("Steven");
+```
+
+問題是：
+
+> Friends 裡有沒有 Steven？
+
+:::tip 需求判斷
+看到「第幾個位置、Index、位置」：
+
+```js
+indexOf()
+```
+
+看到「有沒有、是否存在、是否包含」：
+
+```js
+includes()
+```
+:::
+
+---
+
+## 哪些方法會修改原本的 Array
+
+以下四個方法都會直接修改原本的 Array：
+
+```text
+push
+unshift
+pop
+shift
+```
+
+例如：
+
+```js
+const friends = [
+  "Michael",
+  "Steven"
+];
+
+friends.push("Jay");
+
+console.log(friends);
+```
+
+結果：
+
+```js
+[
+  "Michael",
+  "Steven",
+  "Jay"
+]
+```
+
+原本的 `friends` 已經被修改。
+
+而下面兩個方法主要用來查詢資料，不會修改原本的 Array：
+
+```text
+indexOf
+includes
+```
+
+```js
+const friends = [
+  "Michael",
+  "Steven"
+];
+
+friends.indexOf("Steven");
+friends.includes("Michael");
+
+console.log(friends);
+```
+
+`friends` 仍然是：
+
+```js
+[
+  "Michael",
+  "Steven"
+]
+```
+
+| 方法 | 是否修改原 Array |
+|---|---|
+| `push()` | 會 |
+| `unshift()` | 會 |
+| `pop()` | 會 |
+| `shift()` | 會 |
+| `indexOf()` | 不會 |
+| `includes()` | 不會 |
+
+---
+
+## 根據需求選擇 Array Method
+
+```text
+新增資料
+├── 加到最後
+│   └── push
+└── 加到最前面
+    └── unshift
+
+移除資料
+├── 移除最後一個
+│   └── pop
+└── 移除第一個
+    └── shift
+
+查詢資料
+├── 想知道元素位置
+│   └── indexOf
+└── 只想知道是否存在
+    └── includes
+```
+
+### 需求範例一
+
+> 將新的商品加入購物車尾端。
+
+```js
+cart.push(newProduct);
+```
+
+### 需求範例二
+
+> 將最新通知放在通知列表最前面。
+
+```js
+notifications.unshift(newNotification);
+```
+
+### 需求範例三
+
+> 取出排隊中的第一個任務。
+
+```js
+const nextTask = tasks.shift();
+```
+
+### 需求範例四
+
+> 判斷使用者是否擁有 admin 權限。
+
+```js
+const isAdmin = roles.includes("admin");
+```
+
+### 需求範例五
+
+> 找到 Steven 位於好友清單的哪一個位置。
+
+```js
+const index = friends.indexOf("Steven");
+```
+
+---
+
+## 常見錯誤整理
+
+### 1. 把 shift 和 unshift 搞混
+
+```text
+unshift  → 前面新增
+shift    → 前面移除
+```
+
+---
+
+### 2. 誤會 push 的回傳值
+
+```js
+const result = friends.push("Jay");
+```
+
+`result` 是新的 Array 長度。
+
+不是：
+
+```js
+"Jay"
+```
+
+也不是：
+
+```js
+["Michael", "Steven", "Jay"]
+```
+
+---
+
+### 3. 誤會 pop 的回傳值
+
+```js
+const result = friends.pop();
+```
+
+`result` 是被移除的最後一個元素。
+
+---
+
+### 4. 忘記新增與移除方法會修改原 Array
+
+```js
+friends.push("Jay");
+```
+
+執行後，原本的 `friends` 內容會直接改變。
+
+---
+
+### 5. 直接把 indexOf 放進條件判斷
+
+```js
+if (friends.indexOf("Michael")) {
+  console.log("找到");
+}
+```
+
+如果元素在 Index `0`，條件會被判斷為 `false`。
+
+應改成：
+
+```js
+if (friends.indexOf("Michael") !== -1) {
+  console.log("找到");
+}
+```
+
+單純判斷是否存在時，也可以直接使用：
+
+```js
+if (friends.includes("Michael")) {
+  console.log("找到");
+}
+```
+
+---
+
+### 6. 忘記 includes 會區分型別
+
+```js
+[23].includes("23"); // false
+```
+
+因為 Number `23` 和 String `"23"` 不同。
+
+---
+
+## Cheat Sheet
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+// 尾端新增
+const pushLength = friends.push("Jay");
+
+// 前端新增
+const unshiftLength = friends.unshift("John");
+
+// 移除最後一個
+const lastFriend = friends.pop();
+
+// 移除第一個
+const firstFriend = friends.shift();
+
+// 尋找元素位置
+const index = friends.indexOf("Steven");
+
+// 判斷元素是否存在
+const exists = friends.includes("Steven");
+```
+
+| 方法 | 功能 | 回傳值 |
+|---|---|---|
+| `push()` | 尾端新增 | 新長度 |
+| `unshift()` | 前端新增 | 新長度 |
+| `pop()` | 移除最後一個 | 被移除的元素 |
+| `shift()` | 移除第一個 | 被移除的元素 |
+| `indexOf()` | 尋找元素位置 | Index 或 `-1` |
+| `includes()` | 判斷元素是否存在 | `true` 或 `false` |
+
+---
+
+## 結尾：核心觀念整理
+
+Array 建立完成之後，可以透過內建方法操作裡面的資料。
+
+- `push()`：在尾端新增元素
+- `unshift()`：在前端新增元素
+- `pop()`：移除最後一個元素
+- `shift()`：移除第一個元素
+- `indexOf()`：尋找元素的位置
+- `includes()`：判斷元素是否存在
+- `push()`、`unshift()` 回傳新的 Array 長度
+- `pop()`、`shift()` 回傳被移除的元素
+- `indexOf()` 找不到時回傳 `-1`
+- `includes()` 回傳 `true` 或 `false`
+- `push()`、`unshift()`、`pop()`、`shift()` 都會修改原本的 Array
+
+<Highlight>新增用 push 與 unshift；移除用 pop 與 shift；找位置用 indexOf；判斷有沒有用 includes。</Highlight>
+:::

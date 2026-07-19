@@ -1,0 +1,165 @@
+---
+title: "【JS觀念筆記_Array】陣列基礎 7 個核心觀念"
+sidebar_position: 11
+---
+
+## 本篇觀念要點
+
+<Highlight>Array 是**存放多筆資料的容器**：多筆資料時，先想到 Array，而不是很多個變數。</Highlight>
+
+1. [為什麼需要 Array](#why-array)
+2. [如何建立 Array](#create-array)
+3. [如何取得元素（Index）](#array-index)
+4. [length：陣列長度](#array-length)
+5. [取得最後一個元素](#array-last-item)
+6. [修改 Array](#modify-array)
+7. [const 與 Array 的關係](#const-array)
+
+:::info 這堂課的主線
+很多變數 → 不好管理 → 需要資料結構 → Array → 建立 → 讀取 → 修改
+:::
+
+---
+
+## 為什麼需要 Array {#why-array}
+
+假設有 100 個朋友，總不能開 100 個變數：
+
+```js title="不好管理的寫法"
+const friend1 = "Michael";
+const friend2 = "Steven";
+const friend3 = "Peter";
+// ... friend100
+```
+
+改用 Array，把同類型資料放進同一個容器：
+
+```js title="用 Array 管理同一批資料"
+const friends = ["Michael", "Steven", "Peter"];
+```
+
+常見場景：購物車 `cart`、留言 `comments`、商品 `products`，甚至 API 回傳的 `[{}, {}, {}]` 也是 Array。
+
+---
+
+## 如何建立 Array {#create-array}
+
+```js title="最常用（99% 情況都用這個）"
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+```js title="另一種寫法（知道即可，實務很少用）"
+const years = new Array(1991, 1984, 2008);
+```
+
+:::danger 常見錯誤
+```js
+"Michael,"  // ❌ 逗號跑進字串裡了
+"Michael",  // ✔ 逗號才是元素分隔符
+```
+:::
+
+---
+
+## 如何取得元素（Index） {#array-index}
+
+Array 使用 Index 存取資料，**第一個是 0，不是 1**（Zero-based Index）。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+friends[0] // "Michael"
+friends[2] // "Peter"
+```
+
+例如：第三個商品 → `products[2]`；第一個留言 → `comments[0]`。
+
+<Highlight>Index 是 Array 最重要的概念，後面幾乎所有 Array Method 都建立在 Index 上。</Highlight>
+
+---
+
+## length：陣列長度 {#array-length}
+
+`length` 是**元素數量**，不是最後一個 Index。
+
+```js
+friends.length // 3
+```
+
+:::warning 常見誤解
+最後一個 Index 是 2，但 `length` 是 3。兩者不是同一件事。
+:::
+
+---
+
+## 取得最後一個元素 {#array-last-item}
+
+不用自己數，利用 `length` 反推：
+
+```js
+friends[friends.length - 1]
+```
+
+`length` 是 3，最後一個 Index 是 2，所以是 `length - 1`。常見於：聊天室取最後一則訊息、購物車取最後加入的商品、API 取最新一筆資料。
+
+<Highlight>不要寫死 friends[2]，要寫 friends[friends.length - 1]，因為資料量會變。</Highlight>
+
+---
+
+## 修改 Array {#modify-array}
+
+利用 Index 直接修改元素：
+
+```js
+friends[2] = "Jay";
+```
+
+例如：`users[0] = "Sui"`（改名稱）、`cart[1] = newItem`（購物車更新商品）。
+
+:::danger 修改元素可以，重新指定整個陣列不行
+```js
+friends[2] = "Jay";       // ✔ 修改元素
+friends = ["Bob"];        // ❌ 重新指定，const 不允許
+```
+:::
+
+---
+
+## const 與 Array 的關係 {#const-array}
+
+不能改的是「變數指向的 Array」，不是裡面的元素：
+
+```js
+friends[0] = "Jay";     // ✔ 可以：只是改內容
+friends = ["Bob"];      // ❌ 不行：重新指向新陣列
+```
+
+規則先記起來就好：
+- `const` Array **可以**修改內容
+- `const` Array **不能**重新指向另一個 Array
+
+:::note 陣列其實是物件（Reference Type）
+Array 本質上是一種物件（Object）。用 `const` 宣告的變數，存的不是資料本身，而是資料在記憶體中的**參考位置**。
+
+- `friends[0] = "Jay"` → 透過參考位置去修改物件內容，變數指向的記憶體位置沒有變，所以 const 允許
+- `friends = ["Bob"]` → 讓變數改指向一塊全新的記憶體位置，所以 const 不允許
+
+這就是為什麼 Array、Object 被稱為 **Reference Type（參考型別）**，跟 number、string 這種 **Primitive Type（原始型別）** 的行為不一樣。
+:::
+
+
+---
+
+## 結尾：核心觀念整理
+當需求是「管理一群資料」時，不要再想到很多個變數，而是先想到 Array。
+- Zero-based Index：第一個是 `[0]`
+- `length` = 元素數量，不是最後 Index
+- 取最後一個元素：`arr[arr.length - 1]`
+- `const` 陣列：能改內容，不能重新指定整個陣列
