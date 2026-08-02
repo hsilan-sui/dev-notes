@@ -1,0 +1,724 @@
+---
+title: "【SQL觀念筆記_HAVING】分組之後再篩選資料"
+sidebar_position: 7
+---
+
+## 本篇觀念要點
+
+<Highlight>WHERE 是篩選原始資料列，HAVING 是在 GROUP BY 分組完成之後，篩選群組。</Highlight>
+
+1. [HAVING 是什麼](#what-is-having)
+2. [WHERE 和 HAVING 的差別](#where-vs-having)
+3. [SQL 實際執行順序](#execution-order)
+4. [HAVING 搭配 COUNT](#having-count)
+5. [實際例子：主管至少有 5 位直屬員工](#manager-example)
+6. [常見錯誤](#common-mistakes)
+7. [HAVING 心智模型](#mental-model)
+
+:::info 這堂課的主線
+
+原始資料  
+→ `WHERE` 篩選資料列  
+→ `GROUP BY` 分組  
+→ `HAVING` 篩選群組  
+→ `SELECT` 決定最後顯示內容  
+→ `ORDER BY` 排序
+
+:::
+
+---
+
+## HAVING 是什麼？ {#what-is-having}
+
+當我們使用：
+
+```sql
+GROUP BY
+````
+
+之後，資料已經不再只是「一筆一筆的 Row」。
+
+資料開始變成：
+
+> 一組一組的資料。
+
+例如下： John和Mary為主管，以下都各自的直屬員工
+
+```text
+John
+├── Amy
+├── Dan
+├── James
+├── Anne
+└── Ron
+
+Mary
+├── Bob
+└── Alex
+```
+
+假設我們想找：
+
+> 哪些主管至少有 5 位直屬員工？
+
+這時候我們不是要篩選某一位員工。
+
+而是要篩選：
+
+> 哪一個「主管群組」符合條件。
+
+因此要使用：
+
+```sql
+HAVING
+```
+
+---
+
+## WHERE 和 HAVING 的差別 {#where-vs-having}
+
+這兩個都可以理解成：
+
+> 篩選資料。
+
+但是它們篩選的時間不同。
+
+| 語法       | 篩選什麼       | 發生時間          |
+| -------- | ---------- | ------------- |
+| `WHERE`  | 原始資料列 Row  | `GROUP BY` 之前 |
+| `HAVING` | 分組後的 Group | `GROUP BY` 之後 |
+
+### WHERE
+
+例如：
+
+```sql
+WHERE salary > 50000
+```
+
+意思是：
+
+> 先把薪資超過 50000 的員工留下。
+
+這時候處理的是：
+
+```text
+一筆員工資料
+一筆員工資料
+一筆員工資料
+```
+
+---
+
+### HAVING
+
+例如：
+
+```sql
+HAVING COUNT(employee_id) >= 5
+```
+
+意思是：
+
+> 分組之後，只留下人數至少 5 人的群組。
+
+這時候處理的是：
+
+```text
+John 這一組 → 5 人
+
+Mary 這一組 → 2 人
+```
+
+最後留下：
+
+```text
+John
+```
+
+---
+
+## SQL 實際執行順序 {#execution-order}
+
+我們平常寫 SQL 時：
+
+```sql
+SELECT
+FROM
+WHERE
+GROUP BY
+HAVING
+ORDER BY
+```
+
+但是 SQL 實際理解資料時，順序並不是從 `SELECT` 開始。
+
+可以先記成：
+
+```text
+FROM
+ ↓
+WHERE
+ ↓
+GROUP BY
+ ↓
+HAVING
+ ↓
+SELECT
+ ↓
+ORDER BY
+```
+
+也就是：
+
+### ① FROM
+
+先決定：
+
+> 資料從哪裡來？
+
+```sql
+FROM Employee
+```
+
+---
+
+### ② WHERE
+
+接著先篩選原始資料：
+
+```sql
+WHERE salary > 50000
+```
+
+---
+
+### ③ GROUP BY
+
+把資料分組：
+
+```sql
+GROUP BY department
+```
+
+例如：
+
+```text
+IT
+├── Amy
+├── John
+└── Bob
+
+HR
+├── Mary
+└── Alex
+```
+
+---
+
+### ④ HAVING
+
+再篩選這些群組：
+
+```sql
+HAVING COUNT(*) >= 3
+```
+
+得到：
+
+```text
+IT → 3 人 ✅
+HR → 2 人 ❌
+```
+
+所以留下：
+
+```text
+IT
+```
+
+---
+
+### ⑤ SELECT
+
+決定最後要顯示哪些欄位：
+
+```sql
+SELECT department, COUNT(*)
+```
+
+---
+
+### ⑥ ORDER BY
+
+最後才排序：
+
+```sql
+ORDER BY department;
+```
+
+---
+
+## HAVING 搭配 COUNT {#having-count}
+
+`HAVING` 本身不是函式。
+
+所以不是：
+
+```sql
+HAVING()
+```
+
+而是：
+
+```sql
+HAVING 條件
+```
+
+例如：
+
+```sql
+HAVING COUNT(*) >= 5
+```
+
+這裡：
+
+```sql
+COUNT()
+```
+
+才是函式。
+
+`HAVING` 是用來判斷：
+
+> 這個 Group 要不要留下。
+
+---
+
+### 常見搭配
+
+`HAVING` 不只是搭配 `COUNT()`。
+
+也可以搭配其他 Aggregate Function：
+
+```sql
+HAVING COUNT(*) >= 5
+```
+
+找至少 5 筆資料的群組。
+
+```sql
+HAVING AVG(salary) > 50000
+```
+
+找平均薪資超過 50000 的群組。
+
+```sql
+HAVING SUM(amount) > 10000
+```
+
+找總金額超過 10000 的群組。
+
+```sql
+HAVING MAX(salary) > 100000
+```
+
+找最高薪資超過 100000 的群組。
+
+---
+
+## 實際例子：主管至少有 5 位直屬員工 {#manager-example}
+
+LeetCode 570：
+
+> 找出至少有 5 位 Direct Reports 的主管。
+
+Employee 表是這樣：
+
+```text
+|  id | name  | managerId |
+| --: | ----- | --------: |
+| 101 | John  |      NULL |
+| 102 | Dan   |       101 |
+| 103 | James |       101 |
+| 104 | Amy   |       101 |
+| 105 | Anne  |       101 |
+| 106 | Ron   |       101 |
+
+```
+
+因為：
+
+```text
+managerId
+```
+
+會指向同一張 Employee 表的：
+
+```text
+id
+```
+
+所以可以使用 Self Join。
+
+```sql
+SELECT a.name
+FROM Employee AS a
+JOIN Employee AS b
+    ON b.managerId = a.id
+GROUP BY a.id, a.name
+HAVING COUNT(b.id) >= 5;
+```
+
+---
+
+### Step 1：Self Join
+
+```sql
+FROM Employee AS a
+JOIN Employee AS b
+    ON b.managerId = a.id
+```
+
+角色：
+
+```text
+a = 主管
+b = 直屬員工
+```
+
+先不要急著看 SELECT。我們把 JOIN 中間結果完整攤開：：
+```sql
+FROM Employee AS a
+JOIN Employee AS b
+  ON b.managerId = a.id
+```
+
+| a.id | a.name | b.id | b.name | b.managerId |
+| ---: | ------ | ---: | -----: | ----------: |
+|  101 | John   |  102 |    Dan |         101 |
+|  101 | John   |  103 |  James |         101 |
+|  101 | John   |  104 |    Amy |         101 |
+|  101 | John   |  105 |   Anne |         101 |
+|  101 | John   |  106 |    Ron |         101 |
+
+
+---
+
+### Step 2：GROUP BY
+
+```sql
+GROUP BY a.id, a.name
+```
+
+把同一個主管收成一組：
+
+```text
+John
+├── Dan
+├── James
+├── Amy
+├── Anne
+└── Ron
+```
+
+---
+
+### Step 3：COUNT
+
+```sql
+COUNT(b.id)
+```
+
+得到：
+
+```text
+John → 5
+```
+
+---
+
+### Step 4：HAVING
+
+```sql
+HAVING COUNT(b.id) >= 5
+```
+
+判斷：
+
+```text
+John → 5 >= 5 → TRUE
+```
+
+因此 John 被留下。
+
+---
+
+## WHERE 為什麼不能直接取代 HAVING？ {#why-not-where}
+
+假設我們寫：
+
+```sql
+WHERE COUNT(b.id) >= 5
+```
+
+這個思路不對。
+
+原因是：
+
+當 SQL 執行到：
+
+```text
+WHERE
+```
+
+時：
+
+```text
+GROUP BY
+```
+
+還沒有發生。
+
+因此現在根本還沒有：
+
+```text
+John → 5 人
+```
+
+這種分組統計結果。
+
+執行順序：
+
+```text
+FROM
+ ↓
+WHERE        ← 此時還沒有 COUNT 群組結果
+ ↓
+GROUP BY
+ ↓
+HAVING       ← 此時已經可以 COUNT
+```
+
+所以：
+
+```sql
+HAVING COUNT(b.id) >= 5
+```
+
+才符合資料處理流程。
+
+---
+
+## 常見錯誤 {#common-mistakes}
+
+### 錯誤 1：把 HAVING 當函式
+
+錯誤：
+
+```sql
+HAVING(COUNT(*) >= 5)
+```
+
+建議理解成：
+
+```sql
+HAVING COUNT(*) >= 5
+```
+
+`HAVING` 是 SQL Clause。
+
+`COUNT()` 才是函式。
+
+---
+
+### 錯誤 2：看到條件就全部寫 WHERE
+
+例如題目：
+
+> 找平均薪資超過 50000 的部門。
+
+錯誤思考：
+
+```sql
+WHERE AVG(salary) > 50000
+```
+
+應該先：
+
+```sql
+GROUP BY department
+```
+
+再：
+
+```sql
+HAVING AVG(salary) > 50000
+```
+
+完整：
+
+```sql
+SELECT department, AVG(salary)
+FROM Employee
+GROUP BY department
+HAVING AVG(salary) > 50000;
+```
+
+---
+
+### 錯誤 3：還沒建立 Group 就想篩選 Group
+
+看到：
+
+```text
+每個部門
+每個主管
+每個學生
+每個商品
+```
+
+這種題目時，可以先警覺：
+
+> 題目可能正在要求 GROUP BY。
+
+接著如果題目又出現：
+
+```text
+至少 5 個
+平均大於
+總和超過
+最多
+最少
+```
+
+通常就要開始思考：
+
+```sql
+HAVING
+```
+
+---
+
+## HAVING 心智模型 {#mental-model}
+
+可以把 SQL 想成工廠流水線：
+
+```text
+FROM
+取得資料
+   ↓
+WHERE
+先淘汰不需要的 Row
+   ↓
+GROUP BY
+把剩下資料裝成一箱一箱
+   ↓
+HAVING
+判斷哪些「箱子」要留下
+   ↓
+SELECT
+決定最後顯示什麼
+   ↓
+ORDER BY
+排列結果
+```
+
+最重要的一句：
+
+> `WHERE` 篩 Row，`HAVING` 篩 Group。
+
+---
+
+## 面試快速判斷
+
+看到：
+
+```text
+薪資 > 50000
+```
+
+問自己：
+
+> 是在判斷某一筆員工資料嗎？
+
+是：
+
+```sql
+WHERE salary > 50000
+```
+
+---
+
+看到：
+
+```text
+平均薪資 > 50000
+```
+
+問自己：
+
+> 是不是要先把很多員工分成一組，才能算平均？
+
+是：
+
+```sql
+GROUP BY department
+HAVING AVG(salary) > 50000
+```
+
+---
+
+看到：
+
+```text
+至少有 5 位員工的主管
+```
+
+問自己：
+
+> 是不是要先把主管底下的員工收成一組，才能知道有幾個？
+
+是：
+
+```sql
+GROUP BY manager
+HAVING COUNT(employee) >= 5
+```
+
+---
+
+## 最後整理
+
+```text
+WHERE
+│
+├── GROUP BY 前
+├── 篩選 Row
+└── 單筆資料條件
+
+HAVING
+│
+├── GROUP BY 後
+├── 篩選 Group
+└── 常搭配 COUNT / AVG / SUM / MAX / MIN
+```
+
+最終記憶：
+
+```sql
+FROM
+WHERE
+GROUP BY
+HAVING
+SELECT
+ORDER BY
+```
+
+:::tip 一句話記住
+
+**WHERE 決定哪些資料可以進入分組；HAVING 決定哪些分好的組可以留下。**
+
+:::
+
+````

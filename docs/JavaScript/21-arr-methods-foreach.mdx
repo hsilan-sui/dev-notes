@@ -1,0 +1,342 @@
+---
+title: "【JS觀念筆記_Array資料處理】forEach | 遍歷（Iteration）"
+sidebar_position: 21
+---
+
+## 本篇觀念要點
+
+<Highlight>
+
+Array 高階函式最大的價值不是少寫幾行程式，而是讓程式更容易表達「我要如何處理一批資料」。
+
+</Highlight>
+
+1. [什麼是 Array 高階函式](#what-is-array-methods)
+2. [資料轉換思維 Data Transformation](#data-transformation)
+3. [forEach 基本概念](#foreach)
+4. [forEach Callback Function](#callback)
+5. [forEach 三個參數](#arguments)
+6. [forEach 與 for...of 的差異](#foreach-vs-forof)
+7. [什麼時候使用 forEach](#when)
+
+---
+
+## 什麼是 Array 高階函式 {#what-is-array-methods}
+
+Array 不只是存放資料。
+
+它本身也提供許多**內建方法 (Methods)**，幫助我們快速處理整批資料。
+
+常見的高階函式有(map、filter、reduce會在下一篇介紹)：
+
+| 方法 | 功能 |
+|------|------|
+| forEach | 依序處理每個元素 |
+| map | 將每個元素轉換成新的值 |
+| filter | 篩選符合條件的元素 |
+| reduce | 將整個 Array 聚合成一個值 |
+
+---
+
+## 資料轉換思維 Data Transformation {#data-transformation}
+
+這四個方法，其實都是在回答：
+
+> **我要如何處理整個 Array？**
+
+例如：
+
+原始資料
+
+```js
+[3, 1, 4, 3, 2]
+```
+
+### map
+
+每一筆資料都轉換
+
+```js
+current * 2
+```
+
+結果
+
+```js
+[6, 2, 8, 6, 4]
+```
+
+---
+
+### filter
+
+只留下符合條件
+
+```js
+current > 2
+```
+
+結果
+
+```js
+[3, 4, 3]
+```
+
+---
+
+### reduce
+
+把很多筆資料變成一個結果(單一值)
+
+```js
+acc + current
+```
+
+結果
+
+```js
+13
+```
+
+:::tip 
+
+- map：全部轉換
+- filter：挑符合條件
+- reduce：全部濃縮成一個結果
+
+:::
+
+---
+
+# forEach {#foreach}
+
+forEach 是最基本的 Array 高階函式。
+
+它會：
+
+> **依序走訪 Array 的每一個元素，並執行一次 Callback Function。**
+
+例如：
+
+```js
+movements.forEach(function (mov) {
+  console.log(mov);
+});
+```
+
+流程：
+
+```
+第一個元素
+    ↓
+執行 callback
+
+第二個元素
+    ↓
+執行 callback
+
+第三個元素
+    ↓
+執行 callback
+
+...
+```
+
+整個 Array 都會執行完成。
+
+---
+
+## Callback Function {#callback}
+
+forEach 第一個參數一定是：
+
+> **Callback Function**
+
+```js
+movements.forEach(function () {});
+```
+
+也就是：
+
+```text
+forEach 負責走訪 Array
+
+Callback Function 負責告訴 forEach：
+
+「每一次走訪，我要做什麼？」
+```
+
+所以：
+
+```js
+movements.forEach(function (mov) {
+  console.log(mov);
+});
+```
+
+真正的意思就是：
+
+```
+forEach：
+
+第一筆資料來了
+↓
+
+呼叫 callback
+
+第二筆資料來了
+↓
+
+再呼叫 callback
+
+一直重複...
+```
+
+---
+
+## forEach Callback 三個參數 {#arguments}
+
+Callback 最常用有三個參數：
+
+```js
+movements.forEach(function (currentElement, currentIndex, entireArray) {
+
+});
+```
+
+參數順序非常重要：
+
+| 參數 | 說明 |
+|------|------|
+| currentElement | 目前元素 |
+| currentIndex | 目前索引 |
+| entireArray | 整個 Array |
+
+例如：
+
+```js
+movements.forEach(function (mov, i, arr) {
+  console.log(mov);
+  console.log(i);
+});
+```
+
+通常：
+
+- 第一個最常使用
+- 第二個偶爾使用
+- 第三個很少使用
+
+---
+
+## forEach 與 for...of 的差異 {#foreach-vs-forof}
+
+兩者都可以遍歷 Array。
+
+### for...of
+
+```js
+for (const movement of movements) {
+  console.log(movement);
+}
+```
+
+優點：
+
+✅ 可以使用
+
+```js
+break;
+continue;
+```
+
+所以：
+
+**可以提前停止 Loop。**
+
+---
+
+### forEach
+
+```js
+movements.forEach(function (mov) {
+  console.log(mov);
+});
+```
+
+優點：
+
+- 程式碼簡潔
+- 可讀性高
+- 很適合搭配 map、filter、reduce
+
+但是：
+
+❌ 無法使用
+
+```js
+break;
+continue;
+```
+
+代表：
+
+**forEach 一旦開始，就一定會走完整個 Array。**
+
+---
+
+## 什麼時候使用 forEach {#when}
+
+適合：
+
+- 印出資料
+- 更新畫面
+- 發送通知
+- 對每筆資料做相同處理
+
+例如：
+
+```js
+movements.forEach(function (mov) {
+  console.log(mov);
+});
+```
+
+如果你的目的是：
+
+> 「我要建立新的 Array」
+
+那通常應該考慮：
+
+```text
+map
+```
+
+如果你的目的是：
+
+> 「我要挑資料」
+
+通常就是：
+
+```text
+filter
+```
+
+---
+
+## 本篇重點整理
+
+| 方法 | 回傳值 | 用途 |
+|------|---------|------|
+| forEach | 無 (undefined) | 逐筆執行動作 |
+| map | 新 Array | 轉換資料 |
+| filter | 新 Array | 篩選資料 |
+| reduce | 一個值 | 聚合資料 |
+
+---
+
+## 一句話總結
+
+> **forEach 是「逐筆處理」，map 是「逐筆轉換」，filter 是「逐筆篩選」，reduce 是「逐步累積」。它們共同建立了 JavaScript 處理資料最重要的思維。**
+````
+

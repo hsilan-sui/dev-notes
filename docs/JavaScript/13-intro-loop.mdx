@@ -1,0 +1,1140 @@
+---
+title: "【JS觀念筆記_Loop】For Loop 6 個核心觀念"
+sidebar_position: 13
+---
+
+## 本篇觀念要點
+
+<Highlight>Loop 的核心不是背語法，而是把重複工作交給程式執行，避免自己複製貼上相同程式碼。</Highlight>
+
+1. [為什麼需要 Loop](#why-loop)
+2. [For Loop 的基本結構](#for-loop-structure)
+3. [For Loop 的三個部分](#for-loop-parts)
+4. [Counter 計數器](#loop-counter)
+5. [Condition 如何控制停止](#loop-condition)
+6. [動態使用 Counter](#use-counter)
+
+:::info 這堂課的主線
+重複工作 → 不要複製貼上 → 建立計數器 → 檢查條件 → 執行程式 → 更新計數器 → 再次檢查
+:::
+---
+
+## 為什麼需要 Loop {#why-loop}
+
+Loop 中文稱為「迴圈」，用途是：
+
+> 重複執行同一段程式。
+
+假設要印出 10 次運動次數，沒有 Loop 時可能會寫成：
+
+```js title="重複寫相同程式"
+console.log("Lifting weights repetition 1");
+console.log("Lifting weights repetition 2");
+console.log("Lifting weights repetition 3");
+console.log("Lifting weights repetition 4");
+console.log("Lifting weights repetition 5");
+console.log("Lifting weights repetition 6");
+console.log("Lifting weights repetition 7");
+console.log("Lifting weights repetition 8");
+console.log("Lifting weights repetition 9");
+console.log("Lifting weights repetition 10");
+```
+
+這種寫法有幾個問題：
+
+* 相同程式碼出現很多次
+* 修改時要改很多個地方
+* 次數增加時很難維護
+* 容易複製錯誤
+
+改用 Loop：
+
+```js title="使用 For Loop 重複執行"
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(`Lifting weights repetition ${rep}`);
+}
+```
+
+只需要寫一次，程式就會自動執行 10 次。
+
+<Highlight>當需求中出現「重複、每一次、執行多次」時，可以先想到 Loop。</Highlight>
+
+常見場景：
+
+* 寄送多封 Email
+* 建立多個商品卡片
+* 處理多筆 API 資料
+* 顯示多則留言
+* 計算一組資料
+* 重複執行某項操作
+
+---
+
+## DRY：不要重複自己
+
+程式設計中有一個常見原則：
+
+> DRY：Don't Repeat Yourself
+
+意思是：
+
+> 不要重複寫相同的程式碼。
+
+沒有 Loop：
+
+```js
+sendEmail();
+sendEmail();
+sendEmail();
+sendEmail();
+sendEmail();
+```
+
+使用 Loop：
+
+```js
+for (let email = 1; email <= 5; email++) {
+  sendEmail();
+}
+```
+
+兩種寫法都可能執行五次，但 Loop 更容易閱讀與修改。
+
+例如，原本要執行五次，後來改成一百次：
+
+```js
+for (let email = 1; email <= 100; email++) {
+  sendEmail();
+}
+```
+
+只需要修改條件中的數字。
+
+:::tip Loop 解決的不是只有「少寫幾行」
+Loop 更重要的價值是讓重複工作的規則集中在同一個地方，避免修改遺漏與程式碼不一致。
+:::
+
+---
+
+## For Loop 的基本結構 {#for-loop-structure}
+
+`for` 是 JavaScript 最基本的迴圈之一。
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+For Loop 可以先拆成兩個區域：
+
+```js
+for (
+  // 控制迴圈的規則
+) {
+  // 每次要執行的程式
+}
+```
+
+小括號裡控制：
+
+* 從哪裡開始
+* 什麼情況繼續
+* 每次如何更新
+
+大括號裡放：
+
+* 每一輪要重複執行的程式
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+可以理解為：
+
+```text
+從 1 開始
+只要還沒有超過 10
+每次增加 1
+重複執行大括號裡的程式
+```
+
+---
+
+## For Loop 的三個部分 {#for-loop-parts}
+
+For Loop 的小括號裡通常有三個部分：
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+拆開來看：
+
+```js
+let rep = 1; // Initialization
+rep <= 10;   // Condition
+rep++;       // Update
+```
+
+執行順序可以先記成：
+
+```text
+開始位置 → 判斷條件 → 執行程式 → 更新數值
+```
+
+| 部分             | 程式碼           | 功能         |
+| -------------- | ------------- | ---------- |
+| Initialization | `let rep = 1` | 決定從哪裡開始    |
+| Condition      | `rep <= 10`   | 決定是否繼續     |
+| Update         | `rep++`       | 每一輪結束後更新數值 |
+
+---
+
+### 第一部分：Initialization
+
+Initialization 是初始化，決定迴圈從哪一個數值開始。
+
+```js
+let rep = 1;
+```
+
+意思是：
+
+> 建立變數 `rep`，並且從 `1` 開始。
+
+例如要輸出：
+
+```text
+1
+2
+3
+4
+5
+```
+
+起點可以設定為：
+
+```js
+let rep = 1;
+```
+
+如果需求要從 `0` 開始：
+
+```js
+let rep = 0;
+```
+
+:::note 初始化只會執行一次
+`let rep = 1` 只會在整個 For Loop 開始時執行一次，不會每一輪都重新把 `rep` 變回 `1`。
+:::
+
+---
+
+### 第二部分：Condition
+
+Condition 是條件，用來判斷迴圈是否繼續。
+
+```js
+rep <= 10
+```
+
+意思是：
+
+> 只要 `rep` 小於或等於 `10`，就繼續執行。
+
+<Highlight>只要 Condition 是 true，Loop 就繼續；當 Condition 變成 false，Loop 就停止。</Highlight>
+
+例如：
+
+```text
+rep 是 1 → true，繼續
+rep 是 2 → true，繼續
+rep 是 3 → true，繼續
+...
+rep 是 10 → true，繼續
+rep 是 11 → false，停止
+```
+
+Condition 不是只檢查一次。
+
+每一輪開始之前，都會重新檢查。
+
+---
+
+### 第三部分：Update
+
+Update 是每一輪結束後，要如何改變 Counter。
+
+```js
+rep++
+```
+
+意思是：
+
+> 將 `rep` 增加 `1`。
+
+它等同於：
+
+```js
+rep = rep + 1;
+```
+
+也可以寫成：
+
+```js
+rep += 1;
+```
+
+這三種寫法在這裡具有相同效果：
+
+```js
+rep++;
+rep += 1;
+rep = rep + 1;
+```
+
+`rep++` 最精簡，也最常出現在基本 For Loop 中。
+
+---
+
+## Counter 計數器 {#loop-counter}
+
+Counter 是控制迴圈次數的變數。
+
+```js
+let rep = 1;
+```
+
+這裡的 `rep` 就是 Counter。
+
+它會隨著每一輪執行而改變：
+
+```text
+第一輪：rep 是 1
+第二輪：rep 是 2
+第三輪：rep 是 3
+第四輪：rep 是 4
+```
+
+Counter 的作用不只是計算執行幾次。
+
+它也會讓程式知道：
+
+> 現在正在執行第幾輪。
+
+例如：
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(rep);
+}
+```
+
+結果：
+
+```text
+1
+2
+3
+```
+
+### Counter 名稱不是固定的
+
+Counter 不一定要叫 `rep`。
+
+常見名稱還包括：
+
+```js
+i
+index
+count
+round
+step
+```
+
+例如：
+
+```js
+for (let count = 1; count <= 5; count++) {
+  console.log(count);
+}
+```
+
+或：
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log(i);
+}
+```
+
+名稱可以根據用途決定。
+
+:::tip Counter 名稱怎麼選
+一般數字練習可以使用 `rep` 或 `count`。
+
+未來用 Loop 處理 Array 時，常會看到 `i`，因為它通常代表 Index。
+:::
+
+### 為什麼 Counter 使用 let？
+
+因為 Counter 每一輪都會改變。
+
+```js
+rep++;
+```
+
+如果使用 `const`：
+
+```js
+const rep = 1;
+```
+
+就不能再對它加 `1`。
+
+因此 Loop 中會持續改變的 Counter，通常使用 `let`。
+
+---
+
+## Condition 如何控制停止 {#loop-condition}
+
+Loop 不會自己知道什麼時候應該停止。
+
+必須透過 Condition 告訴它：
+
+> 什麼情況下可以繼續執行。
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(rep);
+}
+```
+
+每一輪的流程是：
+
+```text
+檢查 rep 是否小於或等於 10
+    ↓
+如果是 true
+    ↓
+執行程式
+    ↓
+rep 增加 1
+    ↓
+再次檢查條件
+```
+
+當 `rep` 變成 `11`：
+
+```js
+11 <= 10
+```
+
+結果為：
+
+```text
+false
+```
+
+Loop 結束。
+
+---
+
+### Condition 與 Update 必須互相配合
+
+Condition：
+
+```js
+rep <= 10
+```
+
+Update：
+
+```js
+rep++
+```
+
+兩者互相配合，讓 `rep` 最後能夠超過 `10`，使 Condition 變成 `false`。
+
+```text
+rep 從 1 開始
+    ↓
+每次增加 1
+    ↓
+最後變成 11
+    ↓
+條件不成立
+    ↓
+Loop 停止
+```
+
+---
+
+### Infinite Loop
+
+Infinite Loop 中文稱為「無限迴圈」。
+
+意思是：
+
+> Condition 永遠不會變成 false，導致程式一直執行。
+
+例如忘記更新 Counter：
+
+```js
+for (let rep = 1; rep <= 10;) {
+  console.log(rep);
+}
+```
+
+這裡的 `rep` 永遠都是 `1`。
+
+條件永遠是：
+
+```js
+1 <= 10
+```
+
+結果永遠為：
+
+```text
+true
+```
+
+因此 Loop 不會停止。
+
+:::danger 無限迴圈
+執行 Loop 前要確認：
+
+* Counter 是否會更新
+* 更新方向是否正確
+* Condition 最後是否有機會變成 `false`
+  :::
+
+另一個常見錯誤：
+
+```js
+for (let rep = 1; rep <= 10; rep--) {
+  console.log(rep);
+}
+```
+
+這裡 Condition 要求 `rep` 最後大於 `10` 才能停止，但 Update 卻一直減少：
+
+```text
+1
+0
+-1
+-2
+-3
+```
+
+因此 Condition 仍然一直成立。
+
+---
+
+## 動態使用 Counter {#use-counter}
+
+Counter 不只是控制迴圈，也可以在每一輪的程式中使用。
+
+不要把數字寫死：
+
+```js
+console.log("Repetition 1");
+```
+
+改成使用 Counter：
+
+```js
+console.log(`Repetition ${rep}`);
+```
+
+完整寫法：
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+結果：
+
+```text
+Repetition 1
+Repetition 2
+Repetition 3
+```
+
+原因是每一輪的 `rep` 都不同：
+
+```text
+第一輪：rep 是 1
+第二輪：rep 是 2
+第三輪：rep 是 3
+```
+
+Template Literal 會把當下的 `rep` 放進字串中：
+
+```js
+`Repetition ${rep}`
+```
+
+<Highlight>Loop 最大的用途之一，就是在每一輪利用不同的 Counter 執行不同內容。</Highlight>
+
+---
+
+### 建立連續編號
+
+```js
+for (let number = 1; number <= 5; number++) {
+  console.log(`Product ${number}`);
+}
+```
+
+結果：
+
+```text
+Product 1
+Product 2
+Product 3
+Product 4
+Product 5
+```
+
+---
+
+### 計算數值
+
+```js
+for (let number = 1; number <= 5; number++) {
+  console.log(number * 2);
+}
+```
+
+結果：
+
+```text
+2
+4
+6
+8
+10
+```
+
+每一輪都會使用不同的 `number` 進行計算。
+
+---
+
+### 顯示執行進度
+
+```js
+for (let step = 1; step <= 3; step++) {
+  console.log(`正在執行第 ${step} 個步驟`);
+}
+```
+
+結果：
+
+```text
+正在執行第 1 個步驟
+正在執行第 2 個步驟
+正在執行第 3 個步驟
+```
+
+---
+
+## For Loop 的完整執行流程
+
+以下程式：
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+實際執行流程如下。
+
+### 開始前
+
+執行 Initialization：
+
+```js
+let rep = 1;
+```
+
+---
+
+### 第一輪
+
+檢查 Condition：
+
+```js
+1 <= 3
+```
+
+結果：
+
+```text
+true
+```
+
+執行：
+
+```js
+console.log("Repetition 1");
+```
+
+接著執行 Update：
+
+```js
+rep++;
+```
+
+`rep` 變成 `2`。
+
+---
+
+### 第二輪
+
+重新檢查 Condition：
+
+```js
+2 <= 3
+```
+
+結果：
+
+```text
+true
+```
+
+執行：
+
+```js
+console.log("Repetition 2");
+```
+
+接著 `rep` 變成 `3`。
+
+---
+
+### 第三輪
+
+重新檢查 Condition：
+
+```js
+3 <= 3
+```
+
+結果：
+
+```text
+true
+```
+
+執行：
+
+```js
+console.log("Repetition 3");
+```
+
+接著 `rep` 變成 `4`。
+
+---
+
+### 準備進入第四輪
+
+重新檢查 Condition：
+
+```js
+4 <= 3
+```
+
+結果：
+
+```text
+false
+```
+
+Loop 結束。
+
+---
+
+## For Loop 流程圖
+
+```text
+開始
+  ↓
+執行 Initialization
+建立 Counter
+  ↓
+檢查 Condition
+  ↓
+條件成立嗎
+  ├── 否 → 結束 Loop
+  │
+  └── 是
+       ↓
+     執行大括號內的程式
+       ↓
+     執行 Update
+       ↓
+     回到 Condition
+```
+
+可以濃縮成：
+
+```text
+初始化
+  ↓
+判斷
+  ↓
+執行
+  ↓
+更新
+  ↓
+回到判斷
+```
+
+:::warning 執行順序
+Update 不是在執行大括號之前發生。
+
+正確順序是：
+
+```text
+判斷 → 執行程式 → 更新 Counter
+```
+
+:::
+
+---
+
+## 常見錯誤
+
+### 1. 把賦值與比較搞混
+
+賦值：
+
+```js
+rep = 10;
+```
+
+意思是把 `10` 放進 `rep`。
+
+比較：
+
+```js
+rep <= 10
+```
+
+意思是判斷 `rep` 是否小於或等於 `10`。
+
+For Loop 的 Condition 必須是一個可以得到 `true` 或 `false` 的判斷式。
+
+---
+
+### 2. 忘記 Update
+
+```js
+for (let rep = 1; rep <= 10;) {
+  console.log(rep);
+}
+```
+
+`rep` 永遠不會改變，可能形成 Infinite Loop。
+
+正確寫法：
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(rep);
+}
+```
+
+---
+
+### 3. Update 的方向寫反
+
+```js
+for (let rep = 1; rep <= 10; rep--) {
+  console.log(rep);
+}
+```
+
+`rep` 會一直變小，無法讓 `rep <= 10` 變成 `false`。
+
+正確方向：
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(rep);
+}
+```
+
+---
+
+### 4. 以為 Condition 只判斷一次
+
+Condition 不是只在開始時執行一次。
+
+```js
+rep <= 10
+```
+
+每一輪開始之前，都會重新判斷。
+
+---
+
+### 5. 把結束數字少算一次
+
+```js
+for (let rep = 1; rep < 10; rep++) {
+  console.log(rep);
+}
+```
+
+這段只會輸出 `1` 到 `9`。
+
+如果要包含 `10`：
+
+```js
+for (let rep = 1; rep <= 10; rep++) {
+  console.log(rep);
+}
+```
+
+比較：
+
+```text
+rep < 10   → 1 到 9
+rep <= 10  → 1 到 10
+```
+
+---
+
+### 6. 沒有在大括號中使用 Counter
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log("Repetition");
+}
+```
+
+結果雖然會輸出三次，但無法知道現在是第幾次。
+
+改成：
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+---
+
+### 7. 在 Loop 外使用 Counter
+
+如果使用 `let` 在 For Loop 中宣告 Counter：
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(rep);
+}
+```
+
+通常不能在 Loop 外直接使用：
+
+```js
+console.log(rep); // ReferenceError
+```
+
+因為 `rep` 的作用範圍在 For Loop 中。
+
+目前先記住：
+
+> 在 `for` 裡宣告的 Counter，主要在這個 Loop 裡使用。
+
+---
+
+## 看到需求時怎麼判斷
+
+當需求中出現以下描述，可以開始思考 Loop：
+
+* 重複執行
+* 執行指定次數
+* 從 1 數到某個數字
+* 為資料建立連續編號
+* 每一次都做相同工作
+* 處理很多筆資料
+* 一筆一筆執行
+
+### 執行五次
+
+```js
+for (let count = 1; count <= 5; count++) {
+  console.log(count);
+}
+```
+
+### 從零開始執行五次
+
+```js
+for (let count = 0; count < 5; count++) {
+  console.log(count);
+}
+```
+
+結果：
+
+```text
+0
+1
+2
+3
+4
+```
+
+雖然最後一個數字是 `4`，但總共仍然執行五次。
+
+:::note 為什麼有時從 0 開始
+JavaScript Array 的第一個 Index 是 `0`。
+
+下一堂將 Loop 與 Array 結合時，Counter 通常會從 `0` 開始，才能對應 Array 的 Index。
+:::
+
+---
+
+## Cheat Sheet
+
+```js title="基本 For Loop"
+for (let count = 1; count <= 5; count++) {
+  console.log(count);
+}
+```
+
+```js title="搭配 Template Literal"
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+```js title="從零開始"
+for (let i = 0; i < 5; i++) {
+  console.log(i);
+}
+```
+
+| 部分             | 寫法            | 意思           |
+| -------------- | ------------- | ------------ |
+| Initialization | `let rep = 1` | 從 1 開始       |
+| Condition      | `rep <= 10`   | 小於或等於 10 就繼續 |
+| Update         | `rep++`       | 每一輪增加 1      |
+| Loop Body      | `{ ... }`     | 每一輪要執行的程式    |
+
+---
+
+## 與 Array 的關係
+
+前面學習的 Array 是用來存放多筆資料：
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+Loop 則是用來重複處理資料。
+
+兩者組合後，就能：
+
+```text
+Array 存放多筆資料
+        ↓
+Loop 一筆一筆讀取
+        ↓
+對每一筆資料執行操作
+```
+
+例如：
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+for (let i = 0; i < friends.length; i++) {
+  console.log(friends[i]);
+}
+```
+
+這段程式會依序輸出 Array 裡的每一個朋友。
+
+這是下一篇筆記的主要內容，目前先看懂它的結構即可：
+
+```text
+Counter 從 0 開始
+    ↓
+對應 Array 的 Index
+    ↓
+每一輪取得不同元素
+```
+
+---
+
+## 與 Array Methods 的關係
+
+之後會學到：
+
+```js
+map()
+filter()
+reduce()
+```
+
+這些方法也會一筆一筆處理 Array 裡的元素。
+
+可以先簡單理解為：
+
+> Array Methods 將常見的迴圈處理方式包裝成更明確的方法。
+
+但學習基本 For Loop 仍然很重要，因為它能幫助理解：
+
+* 資料如何逐筆被處理
+* Index 如何改變
+* 迴圈何時開始與停止
+* Array Methods 背後的處理概念
+
+目前不需要急著使用 `map()`、`filter()` 或 `reduce()`。
+
+先把 For Loop 的執行順序建立清楚。
+
+---
+
+## 結尾：核心觀念整理
+
+Loop 的目的，是把重複工作交給程式執行。
+
+* For Loop 包含 Initialization、Condition、Update
+* Initialization 決定從哪裡開始
+* Condition 為 `true` 時，Loop 繼續
+* Condition 為 `false` 時，Loop 停止
+* Update 會在每一輪執行完成後發生
+* Counter 用來記錄目前是第幾輪
+* Counter 通常使用 `let`，因為數值會改變
+* Counter 可以放入 Template Literal 或參與計算
+* Update 與 Condition 必須互相配合
+* Condition 永遠不會變成 `false` 時，可能形成 Infinite Loop
+* Loop 能避免重複撰寫相同程式碼，符合 DRY 原則
+
+<Highlight>For Loop 的核心流程是：初始化一次，反覆判斷，條件成立就執行，執行後更新 Counter，再回到條件判斷。</Highlight>
+
+

@@ -1,0 +1,1018 @@
+---
+title: "【JS 觀念筆記】for 迴圈與 Array 遍歷"
+sidebar_position: 16
+---
+
+## 本篇觀念要點
+
+<Highlight>Loop 是把重複工作交給程式執行；搭配 Array 時，可以依照資料的順序，一筆一筆讀取與處理元素。</Highlight>
+
+1. [為什麼需要 Loop](#why-loop)
+2. [For Loop 基本結構](#for-loop)
+3. [使用 For Loop 遍歷 Array](#loop-array)
+4. [建立新的結果 Array](#result-array)
+5. [倒著遍歷 Array](#reverse-loop)
+6. [巢狀迴圈](#nested-loop)
+7. [While Loop](#while-loop)
+8. [For 與 While 怎麼選](#for-vs-while)
+9. [常見錯誤](#common-errors)
+
+:::info 這篇的學習主線
+重複工作 → 建立 Counter → 檢查條件 → 執行程式 → 更新 Counter → 搭配 Array 逐筆處理資料
+---
+
+## 為什麼需要 Loop {#why-loop}
+
+Loop 中文稱為「迴圈」，用途是：
+
+> 重複執行同一段程式。
+
+沒有 Loop 時：
+
+```js title="重複撰寫相同程式"
+console.log("Repetition 1");
+console.log("Repetition 2");
+console.log("Repetition 3");
+```
+
+使用 Loop：
+
+```js title="使用 For Loop"
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(`Repetition ${rep}`);
+}
+```
+
+結果：
+
+```text
+Repetition 1
+Repetition 2
+Repetition 3
+```
+
+Loop 可以避免重複程式碼，也符合 DRY 原則：
+
+```text
+Don't Repeat Yourself
+不要重複自己
+```
+
+<Highlight>看到「重複執行、每一筆、全部資料、逐筆處理」時，可以先想到 Loop。</Highlight>
+
+---
+
+## For Loop 基本結構 {#for-loop}
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(rep);
+}
+```
+
+For Loop 包含三個部分：
+
+```js
+let rep = 1; // Initialization
+rep <= 3;    // Condition
+rep++;       // Update
+```
+
+| 部分             | 功能         |
+| -------------- | ---------- |
+| Initialization | 決定從哪裡開始    |
+| Condition      | 決定是否繼續執行   |
+| Update         | 每一輪結束後如何更新 |
+
+可以理解成：
+
+```text
+從 1 開始
+只要 rep 小於或等於 3
+每一輪增加 1
+```
+
+### 執行順序
+
+```text
+初始化
+  ↓
+檢查條件
+  ↓
+執行程式
+  ↓
+更新 Counter
+  ↓
+回到條件
+```
+
+<Highlight>For Loop 的核心流程是：初始化一次，反覆判斷，條件成立就執行，執行後更新 Counter。</Highlight>
+
+---
+
+## Counter 計數器
+
+Counter 是控制迴圈進度的變數。
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(rep);
+}
+```
+
+每一輪：
+
+```text
+第一輪 → rep 是 1
+第二輪 → rep 是 2
+第三輪 → rep 是 3
+```
+
+Counter 不一定要叫 `rep`，也可以根據用途命名：
+
+```js
+i
+count
+index
+step
+exercise
+```
+
+Counter 通常使用 `let`，因為它每一輪都會改變。
+
+```js
+rep++;
+```
+
+### 宣告與賦值
+
+```js
+let rep = 1;
+```
+
+可以拆成：
+
+```js
+let rep;
+rep = 1;
+```
+
+其中：
+
+```text
+let rep  → 宣告變數
+rep = 1  → 將 1 賦值給變數
+```
+
+合在一起就是：
+
+> 宣告一個叫做 `rep` 的變數，並設定初始值為 `1`。
+
+---
+
+## 使用 For Loop 遍歷 Array {#loop-array}
+
+Array 是用來存放與管理多筆資料的**有順序資料結構**。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+Loop 可以依照 Array 的順序，一筆一筆取得資料：
+
+```js
+for (let i = 0; i < friends.length; i++) {
+  console.log(friends[i]);
+}
+```
+
+### 基本結構
+
+```js
+for (let i = 0; i < array.length; i++) {
+  const currentElement = array[i];
+
+  console.log(currentElement);
+}
+```
+
+| 程式碼                | 意思            |
+| ------------------ | ------------- |
+| `let i = 0`        | 從第一個 Index 開始 |
+| `i < array.length` | 還有有效元素時繼續     |
+| `i++`              | 前往下一個 Index   |
+| `array[i]`         | 取得目前元素        |
+
+### 為什麼從 0 開始？
+
+因為 Array 使用 Zero-based Index：
+
+```text
+第一個元素 → Index 0
+第二個元素 → Index 1
+第三個元素 → Index 2
+```
+
+所以遍歷 Array 時通常寫：
+
+```js
+let i = 0;
+```
+
+### 為什麼使用小於 length？
+
+假設：
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+它的：
+
+```text
+length 是 3
+有效 Index 是 0、1、2
+```
+
+所以條件要寫：
+
+```js
+i < friends.length
+```
+
+不能寫：
+
+```js
+i <= friends.length
+```
+
+否則最後會讀取：
+
+```js
+friends[3];
+```
+
+結果是：
+
+```text
+undefined
+```
+
+:::warning 核心規則
+`length` 是元素數量，最後一個 Index 是 `length - 1`。
+
+所以遍歷 Array 時通常使用：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+:::
+
+---
+
+## Counter、Index 與目前元素
+
+遍歷 Array 時，Counter `i` 同時代表目前的 Index。
+
+```js
+for (let i = 0; i < friends.length; i++) {
+  console.log(friends[i]);
+}
+```
+
+每一輪：
+
+```text
+i 是 0 → friends[0]
+i 是 1 → friends[1]
+i 是 2 → friends[2]
+```
+
+可以理解成：
+
+```text
+Counter
+   ↓
+目前 Index
+   ↓
+目前元素
+```
+
+<Highlight>Array 是有順序的資料結構，Loop 透過 Index 依序取得並處理每一筆資料。</Highlight>
+
+---
+
+## 建立新的結果 Array {#result-array}
+
+Loop 不只可以讀取資料，也可以根據原始 Array 建立新的結果 Array。
+
+例如，把每個數字乘以二：
+
+```js
+const numbers = [1, 2, 3];
+const doubledNumbers = [];
+
+for (let i = 0; i < numbers.length; i++) {
+  doubledNumbers.push(numbers[i] * 2);
+}
+
+console.log(doubledNumbers);
+// [2, 4, 6]
+```
+
+資料處理流程：
+
+```text
+取得目前元素
+  ↓
+進行轉換或計算
+  ↓
+保存到新的 Array
+```
+
+### 結果 Array 為什麼放在 Loop 外？
+
+正確：
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i]);
+}
+```
+
+`result` 只建立一次，每一輪都能繼續累積資料。
+
+錯誤：
+
+```js
+for (let i = 0; i < source.length; i++) {
+  const result = [];
+  result.push(source[i]);
+}
+```
+
+這樣每一輪都會建立新的空 Array，前一輪的資料無法保留。
+
+### 填入結果的兩種方式
+
+使用相同 Index：
+
+```js
+result[i] = source[i] * 2;
+```
+
+使用 `push()`：
+
+```js
+result.push(source[i] * 2);
+```
+
+| 寫法                   | 意思          |
+| -------------------- | ----------- |
+| `result[i] = value`  | 放到指定 Index  |
+| `result.push(value)` | 加到 Array 尾端 |
+
+單純依序收集結果時，`push()` 通常比較直覺。
+
+---
+
+## 倒著遍歷 Array {#reverse-loop}
+
+正常遍歷是從第一個元素走到最後一個元素：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+倒著遍歷則從最後一個元素走回第一個元素：
+
+```js
+for (let i = array.length - 1; i >= 0; i--) {
+  console.log(array[i]);
+}
+```
+
+假設：
+
+```js
+const letters = ["A", "B", "C", "D"];
+```
+
+執行順序：
+
+```text
+Index 3 → D
+Index 2 → C
+Index 1 → B
+Index 0 → A
+```
+
+### 三個改變
+
+| 部分 | 正向遍歷               | 反向遍歷               |
+| -- | ------------------ | ------------------ |
+| 起點 | `0`                | `array.length - 1` |
+| 條件 | `i < array.length` | `i >= 0`           |
+| 更新 | `i++`              | `i--`              |
+
+### 為什麼使用 length - 1？
+
+不要把最後一個 Index 寫死：
+
+```js
+let i = 3;
+```
+
+應該根據 Array 長度自動計算：
+
+```js
+let i = array.length - 1;
+```
+
+這樣 Array 的資料數量改變時，程式仍然能正確執行。
+
+### 為什麼是大於等於 0？
+
+```js
+i >= 0
+```
+
+才能包含 Index `0`。
+
+如果寫：
+
+```js
+i > 0
+```
+
+會漏掉第一個元素。
+
+---
+
+## 巢狀迴圈 {#nested-loop}
+
+Nested Loop 是：
+
+> 一個 Loop 裡面再放另一個 Loop。
+
+```js
+for (...) {
+  for (...) {
+    // 執行內容
+  }
+}
+```
+
+例如有三個運動動作，每個動作做五下：
+
+```js
+for (let exercise = 1; exercise <= 3; exercise++) {
+  console.log(`Exercise ${exercise}`);
+
+  for (let rep = 1; rep <= 5; rep++) {
+    console.log(`Rep ${rep}`);
+  }
+}
+```
+
+執行順序：
+
+```text
+Exercise 1
+  Rep 1
+  Rep 2
+  Rep 3
+  Rep 4
+  Rep 5
+
+Exercise 2
+  Rep 1
+  Rep 2
+  Rep 3
+  Rep 4
+  Rep 5
+```
+
+### 外層與內層的工作
+
+```text
+外層 Loop → 控制第幾個 Exercise
+內層 Loop → 控制目前 Exercise 的第幾個 Rep
+```
+
+<Highlight>內層 Loop 會完整執行完，才會回到外層 Loop 的下一輪。</Highlight>
+
+### 外層變數可以在內層使用
+
+```js
+for (let exercise = 1; exercise <= 3; exercise++) {
+  for (let rep = 1; rep <= 5; rep++) {
+    console.log(exercise, rep);
+  }
+}
+```
+
+內層可以使用 `exercise`，因為它仍然位於外層變數的作用範圍內。
+
+但是 `rep` 只能在內層使用：
+
+```js
+console.log(rep); // ReferenceError
+```
+
+如果放到內層 Loop 外，就無法存取。
+
+---
+
+## While Loop {#while-loop}
+
+`while loop` 的意思是：
+
+> 只要條件成立，就持續執行程式。
+
+基本語法：
+
+```js
+while (condition) {
+  // 條件成立時持續執行
+}
+```
+
+例如：
+
+```js
+let rep = 1;
+
+while (rep <= 3) {
+  console.log(rep);
+  rep++;
+}
+```
+
+和 For Loop 相比：
+
+```js
+for (let rep = 1; rep <= 3; rep++) {
+  console.log(rep);
+}
+```
+
+兩者都有：
+
+```text
+初始值
+條件
+更新
+```
+
+差別是 While Loop 的括號裡只放條件。
+
+```js
+let rep = 1; // 初始值寫在外面
+
+while (rep <= 3) {
+  console.log(rep);
+  rep++; // 更新寫在裡面
+}
+```
+
+---
+
+## While 的適用情境
+
+While Loop 適合：
+
+> 不知道會執行幾次，但知道什麼條件下應該繼續。
+
+例如：
+
+```text
+只要還沒有骰到 6，就繼續擲骰子。
+```
+
+```js
+let dice = Math.trunc(Math.random() * 6) + 1;
+
+while (dice !== 6) {
+  console.log(`You rolled a ${dice}`);
+
+  dice = Math.trunc(Math.random() * 6) + 1;
+}
+```
+
+這裡不知道會執行幾次：
+
+```text
+可能一次
+可能三次
+也可能十次
+```
+
+只知道停止條件是：
+
+```text
+骰子等於 6
+```
+
+### While 可能一次都不執行
+
+While 會先檢查條件：
+
+```js
+while (dice !== 6)
+```
+
+如果一開始 `dice` 就是 `6`：
+
+```text
+6 不等於 6 → false
+```
+
+Loop 一次都不會執行。
+
+---
+
+## For 與 While 怎麼選 {#for-vs-while}
+
+| 比較      | For Loop  | While Loop |
+| ------- | --------- | ---------- |
+| 適合情境    | 知道執行次數    | 不知道執行次數    |
+| Counter | 通常會使用     | 不一定需要      |
+| 初始值     | 寫在 For 括號 | 通常寫在外面     |
+| 條件      | 寫在括號      | 寫在括號       |
+| 更新      | 寫在 For 括號 | 寫在 Loop 內  |
+| 常見用途    | 遍歷 Array  | 等待條件發生     |
+
+### 知道要跑幾次
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+例如：
+
+```text
+遍歷 Array
+執行十次
+建立五個編號
+```
+
+### 不知道要跑幾次
+
+```js
+while (dice !== 6) {
+  // 繼續擲骰子
+}
+```
+
+例如：
+
+```text
+直到骰到 6
+直到輸入正確
+直到佇列清空
+直到某個狀態改變
+```
+
+<Highlight>知道要執行幾次，通常使用 For；不知道次數，只知道停止條件，通常使用 While。</Highlight>
+
+---
+
+## Infinite Loop 無限迴圈
+
+如果 Condition 永遠不會變成 `false`，就會形成無限迴圈。
+
+錯誤：
+
+```js
+let rep = 1;
+
+while (rep <= 3) {
+  console.log(rep);
+}
+```
+
+因為沒有更新：
+
+```js
+rep++;
+```
+
+`rep` 永遠都是 `1`，條件永遠成立。
+
+另一個錯誤：
+
+```js
+for (let rep = 1; rep <= 10; rep--) {
+  console.log(rep);
+}
+```
+
+Condition 希望 `rep` 最後大於 `10`，但 `rep--` 卻讓數字一直變小。
+
+:::danger 執行 Loop 前要確認
+
+* Counter 或條件資料是否會更新
+* 更新方向是否正確
+* Condition 最後是否有機會變成 `false`
+  :::
+
+---
+
+## 常見錯誤 {#common-errors}
+
+### 1. 遍歷 Array 從 1 開始
+
+```js
+for (let i = 1; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+會漏掉：
+
+```js
+array[0];
+```
+
+正確：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+---
+
+### 2. 使用小於等於 length
+
+```js
+i <= array.length
+```
+
+會多執行一次，最後取得：
+
+```text
+undefined
+```
+
+正確：
+
+```js
+i < array.length
+```
+
+---
+
+### 3. 把 Index 寫死
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[0]);
+}
+```
+
+會一直取得第一個元素。
+
+正確：
+
+```js
+console.log(array[i]);
+```
+
+---
+
+### 4. 把 Array 長度寫死
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log(array[i]);
+}
+```
+
+應使用：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+---
+
+### 5. 在 Loop 裡建立結果 Array
+
+```js
+for (let i = 0; i < source.length; i++) {
+  const result = [];
+}
+```
+
+每一輪都會重新建立 Array。
+
+正確：
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i]);
+}
+```
+
+---
+
+### 6. 計算結果但沒有保存
+
+```js
+for (let i = 0; i < source.length; i++) {
+  source[i] * 2;
+}
+```
+
+正確：
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i] * 2);
+}
+```
+
+---
+
+### 7. 忘記更新 While 條件
+
+```js
+let i = 1;
+
+while (i <= 5) {
+  console.log(i);
+}
+```
+
+正確：
+
+```js
+let i = 1;
+
+while (i <= 5) {
+  console.log(i);
+  i++;
+}
+```
+
+---
+
+## Codewars 常見解題模式
+
+看到：
+
+```text
+Return a new array
+For each element
+Transform every value
+Double each number
+Store the results
+```
+
+可以先想到：
+
+```js
+function transformArray(input) {
+  const result = [];
+
+  for (let i = 0; i < input.length; i++) {
+    result.push(
+      // 使用 input[i] 計算結果
+    );
+  }
+
+  return result;
+}
+```
+
+解題流程：
+
+```text
+建立結果 Array
+  ↓
+遍歷輸入 Array
+  ↓
+取得目前元素
+  ↓
+進行計算或轉換
+  ↓
+把結果 push 進新 Array
+  ↓
+回傳結果
+```
+
+---
+
+## Cheat Sheet
+
+### 基本 For Loop
+
+```js
+for (let count = 1; count <= 5; count++) {
+  console.log(count);
+}
+```
+
+### 遍歷 Array
+
+```js
+for (let i = 0; i < array.length; i++) {
+  const currentElement = array[i];
+
+  console.log(currentElement);
+}
+```
+
+### 建立結果 Array
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i] * 2);
+}
+```
+
+### 倒著遍歷
+
+```js
+for (let i = array.length - 1; i >= 0; i--) {
+  console.log(array[i]);
+}
+```
+
+### 巢狀迴圈
+
+```js
+for (let outer = 1; outer <= 3; outer++) {
+  for (let inner = 1; inner <= 5; inner++) {
+    console.log(outer, inner);
+  }
+}
+```
+
+### While Loop
+
+```js
+let count = 1;
+
+while (count <= 5) {
+  console.log(count);
+  count++;
+}
+```
+
+---
+
+## 結尾：核心觀念整理
+
+Loop 的目的，是把重複工作交給程式執行。
+
+* For Loop 包含 Initialization、Condition、Update
+* Counter 記錄目前執行到第幾輪
+* Condition 為 `true` 時繼續，為 `false` 時停止
+* Array 是有順序的資料結構
+* Loop 可以透過 Index 依序處理 Array 裡的資料
+* 遍歷 Array 通常從 `0` 開始
+* 條件通常使用 `i < array.length`
+* 使用 `array[i]` 取得目前元素
+* 結果 Array 要建立在 Loop 外
+* Reverse Loop 從 `length - 1` 開始並使用 `i--`
+* Nested Loop 會先完整跑完內層，再回到外層
+* 已知執行次數通常使用 For Loop
+* 未知次數、只知道停止條件時通常使用 While Loop
+* Condition 必須有機會變成 `false`，否則會形成無限迴圈
+
+<Highlight>Array 負責存放有順序的多筆資料；Loop 負責依照順序，一筆一筆取得、處理與保存資料。</Highlight>
+
+**Loop 重複執行工作 → Counter 控制次數 → 搭配 Array 處理有順序的資料 → Reverse 倒敘陣列方向 → Nested 處理兩層結構 → While 根據條件持續執行**
+
+---
+
+

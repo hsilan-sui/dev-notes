@@ -1,0 +1,309 @@
+---
+title: "【JS觀念筆記_Object】物件取值：點記法與中括號記法"
+sidebar_position: 17
+---
+
+## 本篇觀念要點
+
+<Highlight>陣列是依照索引排列的有順序資料結構；物件則是使用「屬性名稱」描述資料</Highlight>
+
+1. [陣列與物件的差別](#array-vs-object)
+2. [點記法](#dot-notation)
+3. [中括號記法](#bracket-notation)
+4. [中括號的動態取值](#dynamic-property)
+5. [常見錯誤](#common-mistakes)
+
+---
+
+## 陣列與物件的差別 {#array-vs-object}
+
+### 陣列：有順序的資料
+
+陣列裡的資料有固定順序，使用 **索引 Index** 取得元素。
+
+```js
+const friends = ['Michael', 'Peter', 'Steven'];
+
+friends[0]; // 'Michael'
+friends[1]; // 'Peter'
+````
+
+可以理解成：
+
+```text
+索引 0 → Michael
+索引 1 → Peter
+索引 2 → Steven
+```
+
+所以陣列在意的是：
+
+> **這筆資料排在第幾個位置？**
+
+---
+
+### 物件：用屬性名稱描述資料
+
+物件不使用索引來代表資料，而是使用 **屬性名稱 Property Name**。
+
+```js
+const jonas = {
+  firstName: 'Jonas',
+  lastName: 'Schmedtmann',
+  age: 46,
+  job: 'teacher'
+};
+```
+
+可以理解成：
+
+```text
+firstName → Jonas
+lastName  → Schmedtmann
+age       → 46
+job       → teacher
+```
+
+所以物件在意的是：
+
+> **我要取得哪一個屬性？**
+
+---
+
+## 點記法 {#dot-notation}
+
+點記法 Dot Notation 適合：
+
+> **已經知道固定的屬性名稱。**
+
+```js
+jonas.firstName;
+jonas.age;
+jonas.job;
+```
+
+例如：
+
+```js
+jonas.firstName;
+```
+
+結果：
+
+```text
+Jonas
+```
+
+點記法通常是最常見、也最容易閱讀的寫法。
+
+---
+
+## 中括號記法 {#bracket-notation}
+
+中括號記法 Bracket Notation 也可以取得物件資料：
+
+```js
+jonas['firstName'];
+```
+
+結果和下面完全一樣：
+
+```js
+jonas.firstName;
+```
+
+但是中括號有一個更重要的能力：
+
+<Highlight>中括號裡可以放「變數」或「運算結果」，讓屬性名稱在執行時才決定。</Highlight>
+
+---
+
+## 中括號的動態取值 {#dynamic-property}
+
+### 1. 使用變數
+
+```js
+const prop = 'age';
+
+jonas[prop];
+```
+
+JavaScript 會先取得：
+
+```text
+prop
+↓
+'age'
+```
+
+所以等同於：
+
+```js
+jonas['age'];
+```
+
+最後得到：
+
+```text
+46
+```
+
+---
+
+### 2. 使用字串拼接
+
+```js
+const key = 'Name';
+
+jonas['first' + key];
+```
+
+JavaScript 會先計算：
+
+```text
+'first' + 'Name'
+↓
+'firstName'
+```
+
+再變成：
+
+```js
+jonas['firstName'];
+```
+
+最後取得：
+
+```text
+Jonas
+```
+
+---
+
+### 3. 根據使用者輸入取值
+
+```js
+const interestedIn = prompt(
+  'Choose firstName, age, job'
+);
+
+console.log(jonas[interestedIn]);
+```
+
+如果使用者輸入：
+
+```text
+job
+```
+
+那麼：
+
+```js
+jonas[interestedIn];
+```
+
+就相當於：
+
+```js
+jonas['job'];
+```
+
+最後得到：
+
+```text
+teacher
+```
+
+:::info 中括號記法的核心
+當屬性名稱不是寫死，而是來自：
+
+* 變數
+* 字串拼接
+* 使用者輸入
+* API 回傳資料
+* 動態欄位
+
+就很常使用中括號記法。
+:::
+
+---
+
+## 點記法 vs 中括號記法
+
+| 寫法                     | 使用時機       |
+| ---------------------- | ---------- |
+| `jonas.firstName`      | 屬性名稱固定     |
+| `jonas['firstName']`   | 使用字串指定屬性   |
+| `jonas[prop]`          | 屬性名稱存在變數裡  |
+| `jonas['first' + key]` | 屬性名稱需要動態組合 |
+
+---
+
+## 常見錯誤 {#common-mistakes}
+
+假設：
+
+```js
+const prop = 'age';
+```
+
+### ❌ 錯誤
+
+```js
+jonas.prop;
+```
+
+JavaScript 會真的去找名稱叫做：
+
+```text
+prop
+```
+
+的屬性。
+
+如果物件裡沒有這個屬性：
+
+```js
+jonas.prop;
+```
+
+結果就是：
+
+```js
+undefined;
+```
+
+---
+
+### ✅ 正確
+
+```js
+jonas[prop];
+```
+
+執行流程：
+
+```text
+prop
+↓
+'age'
+↓
+jonas['age']
+↓
+46
+```
+
+---
+
+## 陣列 vs 物件快速比較
+
+| 資料結構 | 取值方式          | 核心概念   |
+| ---- | ------------- | ------ |
+| 陣列   | `array[0]`    | 使用索引   |
+| 物件   | `object.name` | 使用固定屬性 |
+| 物件   | `object[key]` | 使用動態屬性 |
+
+<Highlight>陣列問的是「第幾個資料？」物件問的是「哪一個屬性？」</Highlight>
+
+---
+

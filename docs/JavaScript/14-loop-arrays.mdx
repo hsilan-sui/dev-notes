@@ -1,0 +1,626 @@
+---
+title: "【JS觀念筆記_Loop】使用 For Loop 遍歷 Array"
+sidebar_position: 14
+---
+
+## 本篇觀念要點
+
+<Highlight>Array 負責存放多筆資料，Loop 負責把 Array 裡的資料一筆一筆取出並處理。</Highlight>
+
+1. [為什麼需要遍歷 Array](#why-loop-array)
+2. [遍歷 Array 的基本結構](#loop-array-structure)
+3. [Counter、Index 與目前元素](#current-element)
+4. [根據原 Array 建立新 Array](#create-result-array)
+5. [常見錯誤](#common-mistakes)
+
+:::info 這堂課的主線
+
+原始 Array → 從 Index 0 開始 → 取得目前元素 → 處理元素 → 將結果保存到新 Array
+:::
+---
+
+## 為什麼需要遍歷 Array {#why-loop-array}
+
+遍歷 Array，就是：
+
+> 從第一個元素開始，一筆一筆處理到最後一個元素。
+
+```js title="原始 Array"
+const jonas = [
+  "Jonas",
+  "Schmedtmann",
+  46,
+  "teacher",
+  ["Michael", "Peter", "Steven"],
+  true,
+];
+```
+
+如果不用 Loop：
+
+```js title="重複取得每個元素"
+console.log(jonas[0]);
+console.log(jonas[1]);
+console.log(jonas[2]);
+console.log(jonas[3]);
+console.log(jonas[4]);
+console.log(jonas[5]);
+```
+
+資料一多，就會出現大量重複程式碼。
+
+改用 Loop：
+
+```js title="使用 Loop 遍歷 Array"
+for (let i = 0; i < jonas.length; i++) {
+  console.log(jonas[i]);
+}
+```
+
+不論 Array 有 6 筆、100 筆，或是 API 回傳不固定數量的資料，都可以使用同一個結構。
+
+<Highlight>看到「每一筆、全部資料、逐筆處理」，可以先想到 Loop 加 Array。</Highlight>
+
+---
+
+## 遍歷 Array 的基本結構 {#loop-array-structure}
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+| 程式碼                | 意思            |
+| ------------------ | ------------- |
+| `let i = 0`        | 從第一個 Index 開始 |
+| `i < array.length` | 還有有效元素時繼續     |
+| `i++`              | 前往下一個 Index   |
+| `array[i]`         | 取得目前元素        |
+
+### 為什麼從 0 開始？
+
+因為 Array 使用 Zero-based Index：
+
+```text
+第一個元素 → Index 0
+第二個元素 → Index 1
+第三個元素 → Index 2
+```
+
+所以 Counter 必須從：
+
+```js
+let i = 0;
+```
+
+開始。
+
+### 為什麼是小於 length？
+
+假設 Array 有 3 個元素：
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+它的長度與 Index 是：
+
+```text
+length 是 3
+
+有效 Index：
+0
+1
+2
+```
+
+最後一個有效 Index 是：
+
+```js
+friends.length - 1;
+```
+
+所以條件要寫：
+
+```js
+i < friends.length
+```
+
+不能寫：
+
+```js
+i <= friends.length
+```
+
+否則最後會讀取：
+
+```js
+friends[3];
+```
+
+結果是：
+
+```text
+undefined
+```
+
+:::warning 核心規則
+
+`length` 是元素數量，最後一個 Index 是 `length - 1`。
+
+因此遍歷 Array 時通常使用：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  // 處理 array[i]
+}
+```
+
+:::
+
+---
+
+## Counter、Index 與目前元素 {#current-element}
+
+遍歷 Array 時，Counter `i` 同時也是目前元素的 Index。
+
+```js
+for (let i = 0; i < jonas.length; i++) {
+  console.log(jonas[i]);
+}
+```
+
+每一輪的變化：
+
+```text
+i 是 0 → 取得 jonas[0]
+i 是 1 → 取得 jonas[1]
+i 是 2 → 取得 jonas[2]
+```
+
+所以這堂最重要的關係是：
+
+```text
+Counter
+    ↓
+目前 Index
+    ↓
+目前元素
+```
+
+<Highlight>在遍歷 Array 時，i 代表目前正在處理哪一個資料位置。</Highlight>
+
+為了讓程式更容易閱讀，也可以先把目前元素存進變數：
+
+```js
+for (let i = 0; i < jonas.length; i++) {
+  const currentElement = jonas[i];
+
+  console.log(currentElement);
+}
+```
+
+### 同時查看值與資料型別
+
+```js
+for (let i = 0; i < jonas.length; i++) {
+  console.log(
+    jonas[i],
+    typeof jonas[i]
+  );
+}
+```
+
+可能得到：
+
+```text
+Jonas string
+Schmedtmann string
+46 number
+teacher string
+Michael Peter Steven object
+true boolean
+```
+
+:::note 為什麼 Array 顯示 object？
+
+```js
+typeof [];
+```
+
+結果是：
+
+```text
+object
+```
+
+因為 Array 在 JavaScript 中屬於一種特殊的 Object。
+
+目前先記住結果即可。
+
+:::
+
+---
+
+## 根據原 Array 建立新 Array {#create-result-array}
+
+除了讀取資料，也可以根據原 Array 建立新的結果 Array。
+
+例如，將每個元素的型別保存起來：
+
+```js
+const types = [];
+
+for (let i = 0; i < jonas.length; i++) {
+  types.push(typeof jonas[i]);
+}
+
+console.log(types);
+```
+
+結果：
+
+```js
+[
+  "string",
+  "string",
+  "number",
+  "string",
+  "object",
+  "boolean"
+]
+```
+
+資料處理流程：
+
+```text
+取得目前元素
+    ↓
+進行轉換或計算
+    ↓
+把結果加入新 Array
+```
+
+### 為什麼空 Array 要放在 Loop 外？
+
+正確：
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i]);
+}
+```
+
+`result` 只建立一次，因此每一輪的結果都能累積進去。
+
+錯誤：
+
+```js
+for (let i = 0; i < source.length; i++) {
+  const result = [];
+  result.push(source[i]);
+}
+```
+
+每一輪都會重新建立空 Array，前一次的結果無法保留。
+
+:::danger 累積結果的基本結構
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(/* 處理後的值 */);
+}
+```
+
+結果 Array 要建立在 Loop 外面。
+
+:::
+
+---
+
+### 填入新 Array 的兩種方式
+
+#### 使用相同 Index
+
+```js
+const types = [];
+
+for (let i = 0; i < jonas.length; i++) {
+  types[i] = typeof jonas[i];
+}
+```
+
+代表將結果放到指定位置。
+
+#### 使用 push
+
+```js
+const types = [];
+
+for (let i = 0; i < jonas.length; i++) {
+  types.push(typeof jonas[i]);
+}
+```
+
+代表依序將結果加入尾端。
+
+| 寫法                   | 意思          |
+| -------------------- | ----------- |
+| `result[i] = value`  | 放到指定 Index  |
+| `result.push(value)` | 加到 Array 尾端 |
+
+單純依序收集資料時，`push()` 通常比較直覺。
+
+<Highlight>先建立空 Array，再在每一輪使用 push 保存處理結果。</Highlight>
+
+---
+
+## 實際應用
+
+### 將每個數字乘以二
+
+```js
+const numbers = [1, 2, 3];
+const doubledNumbers = [];
+
+for (let i = 0; i < numbers.length; i++) {
+  doubledNumbers.push(numbers[i] * 2);
+}
+
+console.log(doubledNumbers);
+// [2, 4, 6]
+```
+
+### 取出每位使用者的名稱
+
+```js
+const users = [
+  { name: "Sui" },
+  { name: "Amy" },
+  { name: "John" },
+];
+
+const names = [];
+
+for (let i = 0; i < users.length; i++) {
+  names.push(users[i].name);
+}
+
+console.log(names);
+// ["Sui", "Amy", "John"]
+```
+
+兩個例子的共同模式：
+
+```text
+遍歷原始 Array
+    ↓
+取得目前元素
+    ↓
+轉換或取出需要的資料
+    ↓
+保存到新 Array
+```
+
+---
+
+## 常見錯誤 {#common-mistakes}
+
+### 1. Counter 從 1 開始
+
+```js
+for (let i = 1; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+這樣會漏掉 `array[0]`。
+
+正確：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+---
+
+### 2. 使用小於等於 length
+
+```js
+i <= array.length
+```
+
+會多跑一次，最後取得 `undefined`。
+
+正確：
+
+```js
+i < array.length
+```
+
+---
+
+### 3. 把 Array 長度寫死
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log(array[i]);
+}
+```
+
+Array 長度改變時，Loop 不會自動調整。
+
+正確：
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[i]);
+}
+```
+
+---
+
+### 4. 把目前 Index 寫死
+
+```js
+for (let i = 0; i < array.length; i++) {
+  console.log(array[0]);
+}
+```
+
+這樣會一直取得第一個元素。
+
+正確：
+
+```js
+console.log(array[i]);
+```
+
+---
+
+### 5. 在 Loop 裡建立結果 Array
+
+```js
+for (let i = 0; i < source.length; i++) {
+  const result = [];
+}
+```
+
+每一輪都會重新建立空 Array。
+
+正確：
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i]);
+}
+```
+
+---
+
+### 6. 計算了，但沒有保存結果
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  source[i] * 2;
+}
+```
+
+計算結果沒有被保存。
+
+正確：
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(source[i] * 2);
+}
+```
+
+---
+
+## Codewars 常見解題模式
+
+看到以下需求：
+
+```text
+Return a new array
+For each element
+Convert every number
+Double each value
+Store the results
+```
+
+可以先想到：
+
+```js
+function transformArray(input) {
+  const result = [];
+
+  for (let i = 0; i < input.length; i++) {
+    result.push(
+      /* 使用 input[i] 計算的結果 */
+    );
+  }
+
+  return result;
+}
+```
+
+---
+
+## Cheat Sheet
+
+### 遍歷 Array
+
+```js
+for (let i = 0; i < array.length; i++) {
+  const currentElement = array[i];
+
+  console.log(currentElement);
+}
+```
+
+### 建立新的結果 Array
+
+```js
+const result = [];
+
+for (let i = 0; i < source.length; i++) {
+  result.push(
+    /* 使用 source[i] 計算的結果 */
+  );
+}
+```
+
+### 完整範例
+
+```js
+const source = [
+  "Jonas",
+  46,
+  true
+];
+
+const types = [];
+
+for (let i = 0; i < source.length; i++) {
+  const currentElement = source[i];
+
+  types.push(typeof currentElement);
+}
+
+console.log(types);
+```
+
+---
+
+## 結尾：核心觀念整理
+
+使用 For Loop 遍歷 Array 時：
+
+* Counter 從 `0` 開始
+* Condition 使用 `i < array.length`
+* 使用 `array[i]` 取得目前元素
+* 不要把 Array 長度或 Index 寫死
+* 結果 Array 要建立在 Loop 外
+* 使用 `push()` 依序保存處理結果
+
+<Highlight>遍歷 Array 的核心是：從 Index 0 開始，用 array.length 控制範圍，再透過 array[i] 取得並處理每一筆資料。</Highlight>
+:::
