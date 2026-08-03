@@ -15,13 +15,15 @@ export default function PortfolioHero() {
         <div className={styles.layout}>
           <div className={styles.copy}>
             <p className={styles.eyebrow}>軟體工程師</p>
-            <h1 className={styles.headline}>把複雜流程整理成可被使用、維護與持續迭代的產品與系統。</h1>
+            <h1 className={styles.headline}>喜歡拆解繁複的流程，
+            把資料、裝置與外部服務整理成容易使用與維護的服務。</h1>
             <p className={styles.intro}>
               <span className={styles.introFull}>
-                專注 Backend、自動化與 AI 應用的實作。把資料擷取、非同步任務、外部系統整合與地理資訊查詢，整理成可以真正被使用、被維護的產品。從需求釐清、架構設計到部署上線，我負責把整條路徑走完。
+              主要使用 Python 與 Node.js 開發後端服務，處理 API、資料整合、非同步任務與流程自動化。
+              曾參與 IoT 機台資料收集系統，負責 MQTT、UART、OTA 更新與後端串接；也將心理諮商查詢與地政圖資服務整合進 LINE Bot，完成從資料處理到使用者入口的實作。。
               </span>
               <span className={styles.introMobile}>
-                專注 Backend、自動化與 AI 應用的實作。把資料擷取、非同步任務、外部系統整合與地理資訊查詢，整理成可以真正被使用、被維護的產品。
+              我喜歡從實際使用情境出發，把原本分散、重複或操作繁瑣的流程，整理成容易使用與維護的服務。
               </span>
             </p>
             <div className={styles.actions} aria-label="主要行動">

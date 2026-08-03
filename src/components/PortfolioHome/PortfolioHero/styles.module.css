@@ -1,5 +1,5 @@
 .hero {
-  padding-block: 80px 72px;
+  padding-block: 80px 16px;
 }
 
 .layout {
@@ -164,7 +164,7 @@
 
 @media screen and (max-width: 996px) {
   .hero {
-    padding-block: 48px 56px;
+    padding-block: 48px 16px;
   }
 
   .layout {
@@ -175,7 +175,7 @@
 
 @media screen and (max-width: 767px) {
   .hero {
-    padding-block: 32px 40px;
+    padding-block: 32px 12px;
   }
 
   .layout {

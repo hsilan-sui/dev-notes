@@ -1,5 +1,5 @@
 .section {
-  padding-block: 72px;
+  padding-block: 40px 72px;
 }
 
 .stack {
@@ -15,7 +15,7 @@
 
 @media screen and (max-width: 996px) {
   .section {
-    padding-block: 56px;
+    padding-block: 32px 56px;
   }
 
   .stack {
@@ -30,7 +30,7 @@
 
 @media screen and (max-width: 767px) {
   .section {
-    padding-block: 40px;
+    padding-block: 24px 40px;
   }
 
   .stack,

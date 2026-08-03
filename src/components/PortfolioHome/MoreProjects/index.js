@@ -12,16 +12,15 @@ export default function MoreProjects() {
       <div className={sharedStyles.container}>
         <div className={styles.stack}>
           <SectionHeading
-            eyebrow="More Projects"
-            title="More Projects"
-            description="2024 結訓專案-AIoT 物聯網暨人工智慧工程師實戰班"
+            eyebrow="AIoT & Edge AI"
+            title="⛳️ 我的學習旅程起點 ⛳️"
+            description="2024｜AIoT 物聯網暨人工智慧工程師實戰班結訓專案"
           />
           <div className={styles.projectList}>
             {moreProjects.map((project) => (
               <ProjectCard key={project.id} project={project} variant="compact" />
             ))}
           </div>
-          <p className={styles.moreNote}>更多作品陸續整理中</p>
         </div>
       </div>
     </section>

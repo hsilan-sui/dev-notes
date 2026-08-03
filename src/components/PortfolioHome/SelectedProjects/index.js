@@ -14,9 +14,9 @@ export default function SelectedProjects() {
         <div className={styles.stack}>
           <SectionHeading
             id="selected-projects"
-            eyebrow="Selected Projects"
-            title="Selected Projects"
-            description="把真實問題、系統設計與可驗證的作品入口放在同一個脈絡裡。"
+            eyebrow="Side Projects"
+            title="專案展示區"
+            description="喜歡從實際使用情境出發，把原本分散、重複或操作繁瑣的流程，整理成容易使用與維護的服務。"
           />
           {featureProject ? (
             <ProjectCard project={featureProject} variant="feature" />
