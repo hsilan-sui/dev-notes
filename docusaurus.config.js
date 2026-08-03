@@ -99,9 +99,9 @@ const config = {
       // Replace with your project's social card
       image: "img/me.png",
       navbar: {
-        title: "Sui Works", //導覽列左上角標題
+        title: "Side Projects", //導覽列左上角標題
         logo: {
-          alt: "Sui Works",
+          alt: "Side Projects",
           src: "img/logo.png", // Logo 圖檔
         },
         items: [
