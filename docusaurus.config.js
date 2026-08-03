@@ -108,7 +108,7 @@ const config = {
           //導覽列按鈕
           { to: '/docs/MySQL/aggre-fns', label: '技術筆記', position: 'left' },
           {
-            href: "https://github.com/hsilan-sui/sui-dev-notes",
+            href: "https://github.com/hsilan-sui",
             label: "GitHub",
             position: "right",
           },
