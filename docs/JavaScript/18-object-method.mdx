@@ -1,0 +1,235 @@
+---
+title: "【JS觀念筆記_Object】物件方法與 this"
+sidebar_position: 18
+---
+
+## 本篇觀念要點
+
+<Highlight>物件的方法可以透過 this 讀取自己的屬性，也可以新增屬性，甚至呼叫物件裡的其他方法。</Highlight>
+
+1. [物件中的方法](#object-method)
+2. [this 代表誰](#this-keyword)
+3. [把計算結果存回物件](#save-result)
+4. [方法裡呼叫另一個方法](#call-method)
+5. [一句話總結](#summary)
+
+---
+
+## 物件中的方法 {#object-method}
+
+物件裡除了可以放資料，也可以放函式。
+
+當函式放在物件裡面時，可以稱為 **方法 Method**。
+
+```js
+const jonas = {
+  firstName: 'Jonas',
+  birthYear: 1991,
+
+  calcAge: function () {
+    return 2037 - this.birthYear;
+  }
+};
+````
+
+呼叫方法：
+
+```js
+jonas.calcAge();
+```
+
+---
+
+## this 代表誰 {#this-keyword}
+
+在這個例子：
+
+```js
+jonas.calcAge();
+```
+
+是 `jonas` 在呼叫 `calcAge`。
+
+所以這一次：
+
+```js
+this === jonas
+```
+
+因此：
+
+```js
+this.birthYear
+```
+
+可以先理解成：
+
+```js
+jonas.birthYear
+```
+
+也就是：
+
+```text
+jonas.calcAge()
+↓
+jonas 呼叫方法
+↓
+this → jonas
+↓
+this.birthYear
+↓
+jonas.birthYear
+↓
+1991
+```
+
+---
+
+## 把計算結果存回物件 {#save-result}
+
+除了讀取屬性，`this` 也可以新增或修改物件的屬性。
+
+```js
+calcAge: function () {
+  this.age = 2037 - this.birthYear;
+  return this.age;
+}
+```
+
+當執行：
+
+```js
+jonas.calcAge();
+```
+
+這一行：
+
+```js
+this.age = 2037 - this.birthYear;
+```
+
+可以理解成：
+
+```js
+jonas.age = 2037 - jonas.birthYear;
+```
+
+最後變成：
+
+```js
+jonas.age = 46;
+```
+
+因此物件會多出：
+
+```js
+age: 46
+```
+
+之後就可以直接：
+
+```js
+console.log(jonas.age);
+```
+
+<Highlight>this.xxx 不只能讀取屬性，也可以新增或修改目前物件的屬性。</Highlight>
+
+---
+
+## 方法裡呼叫另一個方法 {#call-method}
+
+物件的方法裡，也可以呼叫同一個物件的其他方法。
+
+```js
+const jonas = {
+  firstName: 'Jonas',
+  birthYear: 1991,
+  job: 'teacher',
+  hasDriversLicense: true,
+
+  calcAge: function () {
+    this.age = 2037 - this.birthYear;
+    return this.age;
+  },
+
+  getSummary: function () {
+    return `${this.firstName} is a ${this.calcAge()}-year old ${this.job}, and he has ${this.hasDriversLicense ? 'a' : 'no'} driver's license.`;
+  }
+};
+```
+
+這裡：
+
+```js
+this.firstName
+```
+
+代表：
+
+```js
+jonas.firstName
+```
+
+而：
+
+```js
+this.calcAge()
+```
+
+代表：
+
+```js
+jonas.calcAge()
+```
+
+所以 `getSummary()` 可以直接使用物件自己的資料與方法。
+
+```js
+console.log(jonas.getSummary());
+```
+
+結果：
+
+```text
+Jonas is a 46-year old teacher, and he has a driver's license.
+```
+
+---
+
+## 為什麼用 this，不直接寫 jonas？ {#why-this}
+
+像這樣：
+
+```js
+this.job
+this.calcAge()
+```
+
+會比：
+
+```js
+jonas.job
+jonas.calcAge()
+```
+
+更好。
+
+因為方法不需要把物件名稱寫死，而是使用：
+
+> **目前呼叫這個方法的物件。**
+
+這樣方法比較有彈性，也比較容易重複使用。
+
+---
+
+## 一句話總結 {#summary}
+
+<Highlight>物件方法裡的 this 代表目前呼叫方法的物件，可以用來讀取屬性、修改屬性，以及呼叫同一個物件的其他方法。</Highlight>
+
+```
+
+這篇剛好可以直接接在你上一份「點記法與中括號記法」後面，邏輯會很順：
+
+**物件怎麼取值 → 物件怎麼放方法 → 方法裡怎麼用 this。**
+```

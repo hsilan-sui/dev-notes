@@ -8,6 +8,13 @@
 .docusaurus
 .cache-loader
 
+# Codex unattended run reports/logs
+.codex-reports/
+
+# Raw video source files (large, unreferenced originals; transcoded .mp4 is tracked instead)
+static/video/*.mov
+static/video/*.MOV
+
 # Misc
 .DS_Store
 .env.local

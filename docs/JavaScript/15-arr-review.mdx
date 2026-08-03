@@ -1,0 +1,570 @@
+---
+title: "【JS觀念筆記】Array基礎與常用方法"
+sidebar_position: 15
+---
+
+## 本篇觀念要點
+
+<Highlight>Array 是用來存放與管理多筆資料的容器，建立之後可以透過 Index 讀取資料，也可以使用 Array Method 新增、移除與查詢資料。</Highlight>
+
+1. [為什麼需要 Array](#why-array)
+2. [建立 Array](#create-array)
+3. [Index 與 length](#index-length)
+4. [讀取與修改元素](#read-modify)
+5. [新增與移除元素](#add-remove)
+6. [尋找與判斷元素](#search-check)
+7. [哪些方法會修改原 Array](#mutate-array)
+8. [常見錯誤](#common-errors)
+
+:::info 這篇的學習主線
+多筆資料 → 建立 Array → 用 Index 讀取 → 用 Method 操作 → 根據需求選方法
+:::
+
+---
+
+## 為什麼需要 Array {#why-array}
+
+假設要管理很多位朋友，不適合建立大量變數：
+
+```js title="不好管理的寫法"
+const friend1 = "Michael";
+const friend2 = "Steven";
+const friend3 = "Peter";
+```
+
+應該將同一組資料放進 Array：
+
+```js title="使用 Array 管理資料"
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+常見的 Array：
+
+```js
+const products = ["Keyboard", "Mouse", "Monitor"];
+const roles = ["user", "admin"];
+const scores = [80, 90, 100];
+```
+
+例如購物車、留言、商品清單、待辦事項，以及 API 回傳的多筆資料，通常都會使用 Array。
+
+---
+
+## 建立 Array {#create-array}
+
+最常使用的是陣列字面值：
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+```
+
+另一種建立方式是：
+
+```js
+const years = new Array(1991, 1984, 2008);
+```
+
+實務上通常優先使用：
+
+```js
+const values = [];
+```
+
+:::danger 注意逗號的位置
+
+```js
+"Michael," // ❌ 逗號成為字串內容
+"Michael", // ✅ 逗號用來分隔元素
+```
+
+:::
+
+---
+
+## Index 與 length {#index-length}
+
+### Index
+
+Array 使用 Index 表示元素的位置，而且從 `0` 開始。
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+friends[0]; // "Michael"
+friends[1]; // "Steven"
+friends[2]; // "Peter"
+```
+
+```text
+Michael → Index 0
+Steven  → Index 1
+Peter   → Index 2
+```
+
+<Highlight>第一個元素的 Index 是 0，不是 1。</Highlight>
+
+### length
+
+`length` 表示 Array 裡有多少個元素。
+
+```js
+friends.length; // 3
+```
+
+`length` 是元素數量，不是最後一個 Index。
+
+```text
+元素數量       → 3
+最後一個 Index → 2
+```
+
+### 取得最後一個元素
+
+```js
+friends[friends.length - 1];
+```
+
+因為：
+
+```text
+length 是 3
+最後 Index 是 2
+所以使用 length - 1
+```
+
+不要寫死：
+
+```js
+friends[2];
+```
+
+資料數量可能改變，應使用：
+
+```js
+friends[friends.length - 1];
+```
+
+---
+
+## 讀取與修改元素 {#read-modify}
+
+### 讀取元素
+
+```js
+const firstFriend = friends[0];
+```
+
+### 修改元素
+
+利用 Index 可以直接修改指定位置的內容：
+
+```js
+friends[2] = "Jay";
+```
+
+結果：
+
+```js
+[
+  "Michael",
+  "Steven",
+  "Jay"
+]
+```
+
+### const 與 Array
+
+使用 `const` 宣告的 Array，可以修改裡面的內容：
+
+```js
+friends[0] = "John"; // ✅
+```
+
+但是不能重新指定成另一個 Array：
+
+```js
+friends = ["Bob"]; // ❌
+```
+
+:::note 為什麼 const Array 可以修改
+
+Array 是 Reference Type。
+
+`const` 限制的是變數不能改指向新的 Array，不是限制 Array 裡的內容完全不能改。
+
+```js
+friends[0] = "John"; // 修改原 Array 的內容
+friends = ["Bob"];   // 改指向另一個 Array
+```
+
+:::
+
+---
+
+## 新增與移除元素 {#add-remove}
+
+Array Method 的基本寫法：
+
+```js
+array.method();
+```
+
+`.` 可以先理解為：
+
+> 對這個 Array 使用某個功能。
+
+### push：尾端新增
+
+```js
+friends.push("Jay");
+```
+
+結果：
+
+```js
+[
+  "Michael",
+  "Steven",
+  "Peter",
+  "Jay"
+]
+```
+
+`push()` 會：
+
+1. 在尾端加入元素
+2. 修改原本的 Array
+3. 回傳新的 Array 長度
+
+```js
+const newLength = friends.push("Jay");
+
+console.log(newLength); // 4
+```
+
+### unshift：前端新增
+
+```js
+friends.unshift("John");
+```
+
+結果：
+
+```js
+[
+  "John",
+  "Michael",
+  "Steven",
+  "Peter"
+]
+```
+
+`unshift()` 也會回傳新的 Array 長度。
+
+### pop：移除最後一個
+
+```js
+const removedFriend = friends.pop();
+```
+
+`pop()` 會：
+
+1. 移除最後一個元素
+2. 修改原本的 Array
+3. 回傳被移除的元素
+
+```js
+console.log(removedFriend); // "Peter"
+```
+
+### shift：移除第一個
+
+```js
+const removedFriend = friends.shift();
+```
+
+`shift()` 會移除第一個元素，並回傳被移除的元素。
+
+### 四個方法比較
+
+| 需求 | 方法 | 回傳值 |
+|---|---|---|
+| 尾端新增 | `push()` | 新長度 |
+| 前端新增 | `unshift()` | 新長度 |
+| 移除最後一個 | `pop()` | 被移除的元素 |
+| 移除第一個 | `shift()` | 被移除的元素 |
+
+可以分成兩組記憶：
+
+```text
+尾端操作
+push → 新增
+pop  → 移除
+```
+
+```text
+前端操作
+unshift → 新增
+shift   → 移除
+```
+
+<Highlight>新增方法回傳新的長度；移除方法回傳被移除的元素。</Highlight>
+
+---
+
+## 尋找與判斷元素 {#search-check}
+
+### indexOf：尋找元素位置
+
+`indexOf()` 用來尋找元素所在的 Index。
+
+```js
+const index = friends.indexOf("Steven");
+
+console.log(index); // 1
+```
+
+找不到時會回傳 `-1`：
+
+```js
+friends.indexOf("Bob"); // -1
+```
+
+```text
+0 以上 → 找到
+-1     → 找不到
+```
+
+### includes：判斷元素是否存在
+
+`includes()` 用來判斷 Array 是否包含某個元素。
+
+```js
+friends.includes("Steven"); // true
+friends.includes("Bob");    // false
+```
+
+因為它直接回傳 Boolean，所以很適合搭配 `if`：
+
+```js
+if (friends.includes("Steven")) {
+  console.log("找到 Steven");
+}
+```
+
+### indexOf 與 includes 怎麼選
+
+| 需求 | 方法 | 回傳值 |
+|---|---|---|
+| 想知道元素在哪裡 | `indexOf()` | Index 或 `-1` |
+| 只想知道元素是否存在 | `includes()` | `true` 或 `false` |
+
+:::tip 需求判斷
+
+看到「位置、Index、第幾個」：
+
+```js
+indexOf();
+```
+
+看到「有沒有、是否存在、是否包含」：
+
+```js
+includes();
+```
+
+:::
+
+---
+
+## 哪些方法會修改原 Array {#mutate-array}
+
+以下方法會直接修改原本的 Array：
+
+```js
+push();
+unshift();
+pop();
+shift();
+```
+
+以下方法只負責查詢，不會修改 Array：
+
+```js
+indexOf();
+includes();
+```
+
+| 方法 | 功能 | 是否修改原 Array |
+|---|---|---|
+| `push()` | 尾端新增 | 會 |
+| `unshift()` | 前端新增 | 會 |
+| `pop()` | 移除最後一個 | 會 |
+| `shift()` | 移除第一個 | 會 |
+| `indexOf()` | 尋找位置 | 不會 |
+| `includes()` | 判斷是否存在 | 不會 |
+
+---
+
+## 常見錯誤 {#common-errors}
+
+### 1. 把 length 當成最後一個 Index
+
+```js
+friends[friends.length]; // undefined
+```
+
+正確寫法：
+
+```js
+friends[friends.length - 1];
+```
+
+---
+
+### 2. 誤會 push 的回傳值
+
+```js
+const result = friends.push("Jay");
+```
+
+`result` 是新的 Array 長度，不是新的 Array。
+
+---
+
+### 3. 誤會 pop 的回傳值
+
+```js
+const result = friends.pop();
+```
+
+`result` 是被移除的元素。
+
+---
+
+### 4. 混淆 shift 與 unshift
+
+```text
+unshift → 前端新增
+shift   → 前端移除
+```
+
+---
+
+### 5. 直接把 indexOf 放進 if
+
+```js
+if (friends.indexOf("Michael")) {
+  console.log("找到");
+}
+```
+
+當 `"Michael"` 位於 Index `0` 時，條件會被判斷為 `false`。
+
+正確寫法：
+
+```js
+if (friends.indexOf("Michael") !== -1) {
+  console.log("找到");
+}
+```
+
+單純判斷是否存在時，更適合使用：
+
+```js
+if (friends.includes("Michael")) {
+  console.log("找到");
+}
+```
+
+---
+
+### 6. 忘記 includes 會區分型別
+
+```js
+const values = [23];
+
+values.includes(23);   // true
+values.includes("23"); // false
+```
+
+Number `23` 和 String `"23"` 是不同的值。
+
+英文字母大小寫也會影響結果：
+
+```js
+["Steven"].includes("steven"); // false
+```
+
+---
+
+## Cheat Sheet
+
+```js
+const friends = [
+  "Michael",
+  "Steven",
+  "Peter"
+];
+
+// 讀取
+friends[0];
+
+// 取得長度
+friends.length;
+
+// 取得最後一個元素
+friends[friends.length - 1];
+
+// 修改元素
+friends[1] = "Steve";
+
+// 尾端新增
+friends.push("Jay");
+
+// 前端新增
+friends.unshift("John");
+
+// 移除最後一個
+const lastFriend = friends.pop();
+
+// 移除第一個
+const firstFriend = friends.shift();
+
+// 尋找元素位置
+const index = friends.indexOf("Steven");
+
+// 判斷元素是否存在
+const exists = friends.includes("Steven");
+```
+
+---
+
+## 結尾：核心觀念整理
+
+當需求是管理多筆同類型資料時，先想到 Array。
+
+- 第一個元素的 Index 是 `0`
+- `length` 是元素數量
+- 最後一個元素是 `arr[arr.length - 1]`
+- `const` Array 可以修改內容，但不能重新指定
+- `push()` 與 `unshift()` 用來新增
+- `pop()` 與 `shift()` 用來移除
+- `indexOf()` 用來找位置
+- `includes()` 用來判斷是否存在
+- 新增與移除方法會修改原本的 Array
+
+<Highlight>Array 是用來存放與管理多筆資料的有順序資料結構，每個元素都有自己的 Index，可以依位置讀取、修改與操作資料。</Highlight>
+

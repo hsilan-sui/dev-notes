@@ -1,0 +1,445 @@
+---
+title: "【JS觀念筆記_Array】擷取|修改|反轉|合併|轉字串"
+sidebar_position: 20
+---
+
+## 本篇觀念要點
+
+<Highlight>
+Array Method 是附加在 Array 物件上的 Function。使用前要先判斷：它會建立新結果，還是直接修改原 Array。
+</Highlight>
+
+1. [at 取得指定元素](#at)
+2. [slice 擷取與淺拷貝](#slice)
+3. [splice 修改原 Array](#splice)
+4. [reverse 反轉順序](#reverse)
+5. [concat 合併 Array](#concat)
+6. [join 轉成 String](#join)
+7. [方法比較](#comparison)
+
+:::info 這堂課的主線
+
+取得元素 → 擷取資料 → 修改資料 → 反轉順序 → 合併資料 → 轉成字串
+
+:::
+
+---
+
+## Array Method 是什麼
+
+Method 本質上是附加在 Object 上的 Function。
+
+```js
+arr.slice();
+arr.splice();
+arr.reverse();
+````
+
+Array 可以使用 Method，是因為：
+
+> Array 在 JavaScript 中也是一種特殊的 Object。
+
+---
+
+## at 取得指定元素 {#at}
+
+`.at()` 可以根據位置取得 Array 元素。
+
+```js
+const arr = [23, 11, 64];
+
+console.log(arr[0]);   // 23
+console.log(arr.at(0)); // 23
+```
+
+正數位置和中括號取值類似：
+
+```js
+arr.at(0); // 第一個元素
+arr.at(1); // 第二個元素
+```
+
+### 取得最後一個元素
+
+傳統寫法：
+
+```js
+arr[arr.length - 1];
+```
+
+使用 `slice()`：
+
+```js
+arr.slice(-1)[0];
+```
+
+使用 `.at()`：
+
+```js
+arr.at(-1);
+```
+
+結果都是：
+
+```js
+64
+```
+
+`.at()` 的優點是可以直接使用負數：
+
+```text
+at(-1) → 最後一個元素
+at(-2) → 倒數第二個元素
+```
+
+### String 也可以使用 at
+
+```js
+console.log('jonas'.at(0));  // j
+console.log('jonas'.at(-1)); // s
+```
+
+:::tip at 的核心
+
+```js
+arr.at(0)
+```
+
+從前面取得元素。
+
+```js
+arr.at(-1)
+```
+
+從後面取得元素。
+
+:::
+
+---
+
+## slice 擷取與淺拷貝 {#slice}
+
+`slice()` 擷取 Array 的一部分，並回傳新 Array。
+
+```js
+const arr = ['a', 'b', 'c', 'd', 'e'];
+
+arr.slice(2);
+// ['c', 'd', 'e']
+```
+
+指定開始與結束位置：
+
+```js
+arr.slice(2, 4);
+// ['c', 'd']
+```
+
+語法：
+
+```js
+arr.slice(start, end);
+```
+
+規則：
+
+```text
+包含 start
+不包含 end
+```
+
+因此新 Array 長度為：
+
+```text
+end - start
+```
+
+### 使用負數
+
+```js
+arr.slice(-2);
+// ['d', 'e']
+```
+
+代表從倒數第二個元素擷取到最後。
+
+### 建立 Shallow Copy
+
+```js
+const copy1 = arr.slice();
+const copy2 = [...arr];
+```
+
+兩種方式都能建立淺拷貝，而且不會修改原 Array。
+
+```js
+const reversed = arr.slice().reverse();
+```
+
+這樣是反轉複製出的 Array，原本的 `arr` 不變。
+
+---
+
+## splice 修改原 Array {#splice}
+
+`splice()` 可以刪除、插入或替換元素，而且會修改原 Array。
+
+```js
+const arr = ['a', 'b', 'c', 'd', 'e'];
+
+arr.splice(1, 3);
+
+console.log(arr);
+// ['a', 'e']
+```
+
+語法：
+
+```js
+arr.splice(start, deleteCount);
+```
+
+這裡代表：
+
+```text
+從 Index 1 開始
+刪除 3 個元素
+```
+
+`splice()` 也會回傳被刪除的元素：
+
+```js
+const arr = ['a', 'b', 'c', 'd', 'e'];
+
+const removed = arr.splice(1, 3);
+
+console.log(removed);
+// ['b', 'c', 'd']
+
+console.log(arr);
+// ['a', 'e']
+```
+
+### splice 和 pop 的差別
+
+兩者都會修改原 Array。
+
+| 方法         | 用途        |
+| ---------- | --------- |
+| `pop()`    | 刪除最後一個元素  |
+| `splice()` | 指定位置與數量刪除 |
+
+```js
+arr.pop();
+```
+
+只能刪除最後一筆。
+
+```js
+arr.splice(1, 3);
+```
+
+可以指定從哪裡開始刪除幾筆。
+
+---
+
+## reverse 反轉順序 {#reverse}
+
+`reverse()` 會反轉 Array 的元素順序。
+
+```js
+const arr = ['a', 'b', 'c'];
+
+arr.reverse();
+
+console.log(arr);
+// ['c', 'b', 'a']
+```
+
+注意：
+
+> `reverse()` 會修改原 Array。
+
+要保留原資料，可以先建立淺拷貝：
+
+```js
+const reversed = arr.slice().reverse();
+```
+
+或：
+
+```js
+const reversed = [...arr].reverse();
+```
+
+---
+
+## concat 合併 Array {#concat}
+
+`concat()` 可以合併 Array，並回傳新的 Array。
+
+```js
+const arr = ['a', 'b', 'c'];
+const arr2 = ['d', 'e'];
+
+const letters = arr.concat(arr2);
+
+console.log(letters);
+// ['a', 'b', 'c', 'd', 'e']
+```
+
+也可以使用 Spread Syntax：
+
+```js
+const letters = [...arr, ...arr2];
+```
+
+兩種寫法都不會修改原本的 Array。
+
+---
+
+## join 轉成 String {#join}
+
+`join()` 把 Array 元素連接成 String。
+
+```js
+const letters = ['A', 'B', 'C'];
+
+console.log(letters.join('-'));
+// A-B-C
+```
+
+不同分隔符號：
+
+```js
+letters.join(' ');
+// A B C
+
+letters.join('');
+// ABC
+
+letters.join();
+// A,B,C
+```
+
+資料型別會從：
+
+```text
+Array
+ ↓
+join
+ ↓
+String
+```
+
+也可以和其他 Method Chaining：
+
+```js
+const result = letters
+  .slice()
+  .reverse()
+  .join('-');
+
+console.log(result);
+// C-B-A
+```
+
+---
+
+## 方法比較 {#comparison}
+
+| Method      | 用途       | 回傳結果         | 修改原 Array |
+| ----------- | -------- | ------------ | --------: |
+| `at()`      | 取得指定元素   | 單一元素         |         ❌ |
+| `slice()`   | 擷取或淺拷貝   | 新 Array      |         ❌ |
+| `splice()`  | 刪除、插入、替換 | 被刪除元素的 Array |         ✅ |
+| `reverse()` | 反轉順序     | 反轉後的 Array   |         ✅ |
+| `concat()`  | 合併 Array | 新 Array      |         ❌ |
+| `join()`    | 連接元素     | String       |         ❌ |
+
+---
+
+## 最重要的分類
+
+### 不修改原 Array
+
+```js
+at();
+slice();
+concat();
+join();
+```
+
+### 會修改原 Array
+
+```js
+splice();
+reverse();
+pop();
+```
+
+:::danger 使用前先判斷
+
+執行 Array Method 前，先問：
+
+> 這個 Method 會不會直接修改原 Array？
+
+需要保留原資料時，可以先使用：
+
+```js
+arr.slice();
+```
+
+或：
+
+```js
+[...arr];
+```
+
+建立 Shallow Copy。
+
+:::
+
+---
+
+## 一句話總結
+
+<Highlight>
+`at` 取得元素、`slice` 擷取新 Array、`splice` 修改原 Array、`reverse` 反轉原 Array、`concat` 合併 Array、`join` 將 Array 轉成 String。
+</Highlight>
+
+```text
+at
+→ 取得指定位置元素
+
+slice
+→ 擷取，不修改原 Array
+
+splice
+→ 刪除或插入，會修改原 Array
+
+reverse
+→ 反轉，會修改原 Array
+
+concat
+→ 合併成新 Array
+
+join
+→ 轉成 String
+```
+
+````
+
+其中 `.at()` 最值得記的就是：
+
+```js
+arr.at(-1);
+````
+
+它比：
+
+```js
+arr[arr.length - 1];
+```
+
+更直接表達「取得最後一個元素」。

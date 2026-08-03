@@ -1,0 +1,549 @@
+---
+title: "【JS觀念筆記_Loop】for...of 與 Array entries"
+sidebar_position: 19
+---
+
+## 本篇觀念要點
+
+<Highlight>`for...of` 可以直接遍歷 Array 的元素；如果搭配 `.entries()`，每一輪可以同時取得目前元素的 Index 與 Value。</Highlight>
+
+1. [for...of 基本遍歷](#for-of)
+2. [使用 entries 取得 Index 與 Value](#entries)
+3. [讀取 entries 回傳的資料](#read-entry)
+4. [搭配 Array 解構賦值](#destructuring)
+5. [三種寫法比較](#comparison)
+
+:::info 這堂課的主線
+
+Array → `for...of` 逐筆取得元素 → `.entries()` 同時取得 Index 與 Value → 使用 Array 解構直接拆開資料
+
+:::
+
+---
+
+## for...of 基本遍歷 {#for-of}
+
+`for...of` 可以直接把 Array 裡的元素一筆一筆取出。
+
+```js
+const menu = ['Focaccia', 'Pizza', 'Pasta'];
+
+for (const item of menu) {
+  console.log(item);
+}
+````
+
+輸出：
+
+```text
+Focaccia
+Pizza
+Pasta
+```
+
+每一次 Loop，`item` 都代表：
+
+> 目前這一輪取得的 Array 元素。
+
+因此執行過程可以理解成：
+
+```text
+第 1 輪 → item = 'Focaccia'
+第 2 輪 → item = 'Pizza'
+第 3 輪 → item = 'Pasta'
+```
+
+### Mental Model
+
+```text
+menu
+ ↓
+Focaccia
+ ↓
+Pizza
+ ↓
+Pasta
+```
+
+:::tip 重點
+
+單純使用 `for...of` 時，我們直接取得的是 **元素 Value**，不需要自己使用 Index 去存取 `array[i]`。
+
+:::
+
+---
+
+## 使用 entries 取得 Index 與 Value {#entries}
+
+有時候除了元素本身之外，我們還需要知道：
+
+> 這個元素目前位於 Array 的哪一個 Index。
+
+這時可以搭配：
+
+```js
+.entries()
+```
+
+例如：
+
+```js
+const menu2 = [
+  'Focaccia',
+  'Bruschetta',
+  'Garlic-Bread',
+  'Caprese Salad',
+  'Pizza',
+  'Pasta',
+  'Risotto',
+];
+
+for (const item of menu2.entries()) {
+  console.log(item);
+}
+```
+
+遍歷時會依序取得：
+
+```text
+[0, 'Focaccia']
+[1, 'Bruschetta']
+[2, 'Garlic-Bread']
+[3, 'Caprese Salad']
+[4, 'Pizza']
+[5, 'Pasta']
+[6, 'Risotto']
+```
+
+也就是每一輪取得：
+
+```text
+Index + Value
+```
+
+概念上可以理解成：
+
+```text
+Focaccia
+   ↓
+0 + Focaccia
+   ↓
+[0, 'Focaccia']
+```
+
+因此 `.entries()` 可以先記成：
+
+> **讓每一個 Array 元素在遍歷時，同時帶著自己的 Index。**
+
+:::info 更精確的觀念
+
+`.entries()` 實際上會回傳一個 **Iterator**，讓我們逐筆取得：
+
+```text
+[index, value]
+```
+
+目前先不用深入 Iterator 的底層原理，先掌握它在 `for...of` 中的用途即可。
+
+:::
+
+---
+
+## 讀取 entries 回傳的資料 {#read-entry}
+
+因為：
+
+```js
+for (const item of menu2.entries())
+```
+
+每一輪的 `item` 會像：
+
+```js
+[0, 'Focaccia']
+```
+
+所以它本身也是一個 Array。
+
+因此可以使用 Array Index 取得資料：
+
+```text
+item[0] → Index
+item[1] → Value
+```
+
+例如：
+
+```js
+for (const item of menu2.entries()) {
+  console.log(`${item[0] + 1}: ${item[1]}`);
+}
+```
+
+第一輪：
+
+```js
+item = [0, 'Focaccia'];
+```
+
+因此：
+
+```js
+item[0]; // 0
+item[1]; // 'Focaccia'
+```
+
+最後：
+
+```js
+`${item[0] + 1}: ${item[1]}`
+```
+
+得到：
+
+```text
+1: Focaccia
+```
+
+完整輸出：
+
+```text
+1: Focaccia
+2: Bruschetta
+3: Garlic-Bread
+4: Caprese Salad
+5: Pizza
+6: Pasta
+7: Risotto
+```
+
+### 為什麼 Index 要 `+ 1`？
+
+JavaScript Array 的 Index 從 `0` 開始：
+
+```text
+0 → Focaccia
+1 → Bruschetta
+2 → Garlic-Bread
+```
+
+但如果要顯示給使用者看的菜單編號，通常會希望從 `1` 開始：
+
+```text
+1 → Focaccia
+2 → Bruschetta
+3 → Garlic-Bread
+```
+
+所以顯示時使用：
+
+```js
+item[0] + 1
+```
+
+:::tip 注意
+
+這裡的 `+ 1` 只是改變「顯示的編號」。
+
+Array 真正的 Index 仍然是：
+
+```text
+0、1、2、3...
+```
+
+:::
+
+---
+
+## 搭配 Array 解構賦值 {#destructuring}
+
+前面的：
+
+```js
+item = [0, 'Focaccia'];
+```
+
+其實就是一個 Array。
+
+因此可以使用之前學過的 **Array Destructuring**：
+
+```js
+const [i, value] = [0, 'Focaccia'];
+```
+
+結果：
+
+```js
+i;     // 0
+value; // 'Focaccia'
+```
+
+所以原本：
+
+```js
+for (const item of menu2.entries()) {
+  console.log(`${item[0] + 1}: ${item[1]}`);
+}
+```
+
+可以改寫成：
+
+```js
+for (const [i, value] of menu2.entries()) {
+  console.log(`${i + 1}: ${value}`);
+}
+```
+
+這裡每一輪其實可以想成 JavaScript 幫我們做：
+
+```js
+const [i, value] = [0, 'Focaccia'];
+```
+
+下一輪：
+
+```js
+const [i, value] = [1, 'Bruschetta'];
+```
+
+再下一輪：
+
+```js
+const [i, value] = [2, 'Garlic-Bread'];
+```
+
+因此：
+
+```js
+i
+```
+
+代表目前的 Index，而：
+
+```js
+value
+```
+
+代表目前的元素。
+
+### Mental Model
+
+```text
+menu2.entries()
+       ↓
+[0, 'Focaccia']
+       ↓
+Array 解構
+       ↓
+i = 0
+value = 'Focaccia'
+```
+
+所以：
+
+```js
+for (const [i, value] of menu2.entries())
+```
+
+可以直接讀成：
+
+> 遍歷 `menu2`，每一輪取得目前元素的 Index 和 Value，並分別存入 `i` 與 `value`。
+
+---
+
+## 三種寫法比較 {#comparison}
+
+### 1. 只需要元素
+
+```js
+for (const item of menu2) {
+  console.log(item);
+}
+```
+
+每一輪：
+
+```text
+item = 'Focaccia'
+```
+
+適合：
+
+> 我只需要處理元素本身。
+
+---
+
+### 2. 需要 Index 與 Value
+
+```js
+for (const item of menu2.entries()) {
+  console.log(item);
+}
+```
+
+每一輪：
+
+```text
+item = [0, 'Focaccia']
+```
+
+因此：
+
+```js
+item[0]; // Index
+item[1]; // Value
+```
+
+---
+
+### 3. 使用解構直接取得 Index 與 Value
+
+```js
+for (const [i, value] of menu2.entries()) {
+  console.log(`${i + 1}: ${value}`);
+}
+```
+
+每一輪直接得到：
+
+```text
+i     = 0
+value = 'Focaccia'
+```
+
+這種寫法通常比：
+
+```js
+item[0]
+item[1]
+```
+
+更容易閱讀。
+
+---
+
+## 寫法比較表
+
+| 寫法                        | 每一輪取得的資料         | 適合情境       |
+| ------------------------- | ---------------- | ---------- |
+| `for...of`                | Value            | 只需要元素      |
+| `for...of + entries`      | `[Index, Value]` | 同時需要位置與元素  |
+| `for...of + entries + 解構` | Index、Value 分開   | 最容易直接操作兩個值 |
+
+---
+
+## 常見錯誤 {#common-mistakes}
+
+### 錯誤 1：以為 for...of 會直接取得 Index
+
+```js
+for (const item of menu2) {
+  console.log(item);
+}
+```
+
+這裡的 `item` 是：
+
+```text
+Focaccia
+```
+
+不是：
+
+```text
+0
+```
+
+如果需要 Index，可以使用：
+
+```js
+menu2.entries()
+```
+
+---
+
+### 錯誤 2：加入 entries 後仍然把 item 當成單一元素
+
+```js
+for (const item of menu2.entries()) {
+  console.log(item);
+}
+```
+
+此時 `item` 已經是：
+
+```js
+[0, 'Focaccia']
+```
+
+而不是：
+
+```js
+'Focaccia'
+```
+
+所以：
+
+```js
+item[0]
+```
+
+取得 Index，
+
+```js
+item[1]
+```
+
+取得 Value。
+
+---
+
+### 錯誤 3：忘記 Index 從 0 開始
+
+`.entries()` 第一筆會是：
+
+```js
+[0, 'Focaccia']
+```
+
+如果只是程式內部使用 Index：
+
+```js
+i
+```
+
+即可。
+
+如果是顯示「第幾項」給使用者：
+
+```js
+i + 1
+```
+
+通常會更符合閱讀習慣。
+
+---
+
+## 一句話總結
+
+<Highlight>
+`for...of` 負責逐筆取得元素；`.entries()` 讓每一筆同時帶有 Index 與 Value；再搭配 Array 解構，就可以直接寫成 `[i, value]` 取得兩者。
+</Highlight>
+
+```text
+Array
+  ↓
+for...of
+  ↓
+取得 Value
+  ↓
+.entries()
+  ↓
+取得 Index + Value
+  ↓
+[i, value]
+  ↓
+直接解構使用
+```
+
+```

@@ -1,0 +1,155 @@
+.card {
+  border: 1px solid var(--ph-border-soft);
+  border-radius: 10px;
+  background: var(--ph-surface);
+  color: var(--ph-text-secondary);
+}
+
+.feature {
+  display: flex;
+  gap: 40px;
+  align-items: stretch;
+  padding: 24px;
+}
+
+.compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.moreCard {
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature .content {
+  justify-content: center;
+}
+
+.name {
+  margin: 0;
+  color: var(--ph-text-primary);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.feature .name {
+  font-size: 22px;
+}
+
+.problem,
+.solution {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.problem {
+  color: var(--ph-accent-dark);
+  font-size: 14px;
+}
+
+.feature .problem,
+.feature .solution {
+  font-size: 15px;
+}
+
+.solution {
+  color: var(--ph-text-secondary);
+  font-size: 14px;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 2px;
+}
+
+.projectLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ph-accent);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.projectLink:hover {
+  color: var(--ph-accent-dark);
+  text-decoration: none;
+}
+
+.linkDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.linkIcon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+@media screen and (max-width: 996px) {
+  .feature {
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .feature .name,
+  .name {
+    font-size: 19px;
+  }
+
+  .feature .problem,
+  .feature .solution,
+  .problem,
+  .solution {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .card {
+    border-radius: 8px;
+  }
+
+  .feature,
+  .compact {
+    padding: 18px;
+  }
+
+  .content {
+    gap: 10px;
+  }
+
+  .feature .name,
+  .name {
+    font-size: 17px;
+  }
+
+  .feature .problem,
+  .feature .solution,
+  .problem,
+  .solution {
+    font-size: 13px;
+  }
+
+  .links {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

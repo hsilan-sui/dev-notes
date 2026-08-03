@@ -1,0 +1,54 @@
+.heading {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--ph-accent);
+  font-family: var(--ph-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: var(--ph-text-primary);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.description {
+  margin: 0;
+  color: var(--ph-text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+@media screen and (max-width: 996px) {
+  .title {
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .heading {
+    gap: 8px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 21px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+}

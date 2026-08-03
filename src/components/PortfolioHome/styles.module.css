@@ -1,0 +1,50 @@
+.portfolioHome {
+  --ph-bg: var(--ifm-background-color);
+  --ph-surface: var(--ifm-background-surface-color);
+  --ph-bg-subtle: #f6eee8;
+  --ph-text-primary: var(--ifm-heading-color);
+  --ph-text-secondary: var(--ifm-font-color-secondary);
+  --ph-text-on-accent: #fffdf8;
+  --ph-accent: var(--ifm-color-primary);
+  --ph-accent-dark: var(--ifm-color-primary-dark);
+  --ph-accent-light: var(--ifm-color-primary-light);
+  --ph-accent-wash: rgba(189, 63, 27, 0.08);
+  --ph-border-soft: rgba(34, 48, 65, 0.12);
+  --ph-panel-dark-bg: #1d2733;
+  --ph-panel-dark-text: #edf2f7;
+  --ph-panel-dark-text-secondary: #b7c6d6;
+  --ph-panel-dark-border: rgba(237, 242, 247, 0.12);
+  --ph-overlay-dark: rgba(29, 39, 51, 0.75);
+  --ph-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--ph-bg);
+  color: var(--ph-text-secondary);
+}
+
+[data-theme='dark'] .portfolioHome {
+  --ph-bg-subtle: rgba(255, 255, 255, 0.04);
+  --ph-text-on-accent: #1d2733;
+  --ph-accent-wash: rgba(255, 156, 114, 0.12);
+  --ph-border-soft: rgba(255, 255, 255, 0.14);
+  /* Technical Notes panel uses a dark accent band in light mode. In dark mode,
+     lift it to the surface token so the section remains visually separated. */
+  --ph-panel-dark-bg: var(--ifm-background-surface-color);
+  --ph-panel-dark-border: rgba(255, 255, 255, 0.1);
+}
+
+.container {
+  max-width: 1312px;
+  margin-inline: auto;
+  padding-inline: 64px;
+}
+
+@media screen and (max-width: 996px) {
+  .container {
+    padding-inline: 40px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .container {
+    padding-inline: 20px;
+  }
+}
