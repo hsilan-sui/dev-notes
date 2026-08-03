@@ -101,6 +101,7 @@ caffeinate -i codex exec \
   --color never \
   -o .codex-reports/portfolio-home-last-message.txt \
   "$CODEX_PROMPT" \
+  < /dev/null \
   2>&1 | tee .codex-reports/portfolio-home-run.log
 
 CODEX_EXIT_CODE=$?
@@ -108,6 +109,8 @@ echo "----" | tee -a .codex-reports/portfolio-home-run.log
 echo "Codex exec 原始 exit code: ${CODEX_EXIT_CODE}" | tee -a .codex-reports/portfolio-home-run.log
 exit "${CODEX_EXIT_CODE}"
 ```
+
+> **背景執行踩坑記錄（已修正）**：第一次在背景（non-tty）啟動時，`codex exec` 偵測到 stdin 是一個尚未關閉的 pipe，依官方說明「stdin is piped and a prompt is also provided → stdin is appended as a `<stdin>` block」，即使已經給了 Prompt 參數，它仍會卡住等待 stdin 送出 EOF，畫面停在 `Reading additional input from stdin...` 不再前進，最終被外層排程判定無進度而中止（`status: killed`），過程中**沒有任何檔案被修改**（已用 `git status` / `git diff --stat` 確認）。修正方式：在指令最後加上 `< /dev/null`，明確讓 stdin 立即回傳 EOF，避免無限等待。下方指令區塊已包含這個修正。
 
 ### 這段指令做了什麼、為什麼安全
 
