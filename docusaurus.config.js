@@ -106,7 +106,7 @@ const config = {
         },
         items: [
           //導覽列按鈕
-          { to: '/docs/intro', label: '技術筆記', position: 'left' },
+          { to: '/docs/MySQL/aggre-fns', label: '技術筆記', position: 'left' },
           {
             href: "https://github.com/hsilan-sui/sui-dev-notes",
             label: "GitHub",
