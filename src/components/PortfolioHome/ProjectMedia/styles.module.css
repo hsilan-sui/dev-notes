@@ -2,8 +2,7 @@
   min-width: 0;
 }
 
-.mediaBox,
-.videoOuter {
+.mediaBox {
   position: relative;
   display: grid;
   width: 100%;
@@ -11,6 +10,16 @@
   border: 1px solid var(--ph-border-soft);
   border-radius: 10px;
   background: var(--ph-surface);
+  text-decoration: none;
+  color: inherit;
+}
+
+.mediaImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
 }
 
 .screenshotMedia {
@@ -26,9 +35,15 @@
   height: 260px;
 }
 
-.videoOuter {
-  aspect-ratio: 16 / 9;
+.videoBox {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--ph-border-soft);
+  border-radius: 10px;
   background: var(--ph-bg-subtle);
+  width: min(100%, 300px);
+  margin-inline: auto;
 }
 
 .youtubeMedia {
@@ -81,23 +96,11 @@
   bottom: 16px;
 }
 
-.phoneFrame {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  width: 46.15%;
-  max-width: 156px;
-  height: calc(100% - 48px);
-  transform: translate(-50%, -50%);
-  border: 1px solid var(--ph-border-soft);
-  border-radius: 16px;
-  background: var(--ph-surface);
-}
-
-.phoneFrame .placeholderContent {
-  max-width: 86%;
-  gap: 8px;
+.phoneVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .playButton {
@@ -148,11 +151,14 @@
   .youtubeMedia .mediaBox {
     aspect-ratio: 16 / 9;
   }
+
+  .videoBox {
+    width: min(100%, 320px);
+  }
 }
 
 @media screen and (max-width: 767px) {
-  .mediaBox,
-  .videoOuter {
+  .mediaBox {
     border-radius: 8px;
   }
 
@@ -171,9 +177,9 @@
     bottom: 12px;
   }
 
-  .phoneFrame {
-    height: calc(100% - 32px);
-    border-radius: 10px;
+  .videoBox {
+    width: min(70%, 220px);
+    border-radius: 8px;
   }
 
   .playButton {

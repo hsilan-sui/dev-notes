@@ -106,16 +106,6 @@ const config = {
         },
         items: [
           //導覽列按鈕
-          {
-            to: '/docs/job-hunt-portfolio',
-            label: '求職入口',
-            position: 'left',
-          },
-          {
-            to: '/docs/LINEOA-PORFOLIO/overview',
-            label: '代表專案',
-            position: 'left',
-          },
           { to: '/docs/intro', label: '技術筆記', position: 'left' },
           {
             href: "https://github.com/hsilan-sui/sui-dev-notes",
@@ -126,47 +116,8 @@ const config = {
       },
       footer: {
         style: "dark",
-        links: [
-          {
-            title: "Portfolio",
-            items: [
-              {
-                label: "求職入口",
-                to: "/docs/job-hunt-portfolio",
-              },
-              {
-                label: "LINE OA 互動作品集",
-                to: "/docs/LINEOA-PORFOLIO/overview",
-              },
-            ],
-          },
-          {
-            title: "Notes",
-            items: [
-              {
-                label: "筆記總覽",
-                to: "/docs/intro",
-              },
-              {
-                label: "AI 客服微服務",
-                to: "/docs/backend/ai-chat-service",
-              },
-            ],
-          },
-          {
-            title: "Contact",
-            items: [
-              {
-                label: "GitHub Repository",
-                href: "https://github.com/hsilan-sui/sui-dev-notes",
-              },
-              {
-                label: "LINE OA",
-                href: "https://line.me/R/ti/p/@998enzsc",
-              },
-            ],
-          },
-        ],
+        // Link columns hidden for now; re-add when ready to show them again.
+        links: [],
         copyright: `Copyright © ${new Date().getFullYear()} Sui Hsilan. Built with Docusaurus.`,
       },
       prism: {

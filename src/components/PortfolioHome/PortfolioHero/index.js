@@ -4,7 +4,7 @@ import Icon from '../Icon';
 import sharedStyles from '../styles.module.css';
 import styles from './styles.module.css';
 
-const chips = ['Backend API', 'Queue / Worker', '自動化整合', '地圖 / 公共資料'];
+const chips = ['軟體工程師'];
 
 export default function PortfolioHero() {
   const profileImage = useBaseUrl('/img/me.png');
@@ -14,7 +14,7 @@ export default function PortfolioHero() {
       <div className={sharedStyles.container}>
         <div className={styles.layout}>
           <div className={styles.copy}>
-            <p className={styles.eyebrow}>Backend / Automation / AI Engineer</p>
+            <p className={styles.eyebrow}>軟體工程師</p>
             <h1 className={styles.headline}>把複雜流程整理成可被使用、維護與持續迭代的產品與系統。</h1>
             <p className={styles.intro}>
               <span className={styles.introFull}>
@@ -29,12 +29,9 @@ export default function PortfolioHero() {
                 查看作品
                 <Icon name="arrow-right" className={styles.buttonIcon} />
               </Link>
-              <Link className={styles.secondaryButton} to="/docs/job-hunt-portfolio">
-                查看履歷 / 求職摘要
-              </Link>
               <Link
                 className={styles.ghostButton}
-                href="https://github.com/hsilan-sui/sui-dev-notes"
+                href="https://github.com/hsilan-sui"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -52,10 +49,10 @@ export default function PortfolioHero() {
           </div>
 
           <div className={styles.identity}>
-            <img className={styles.avatar} src={profileImage} alt="于方成 Yu Fang-Cheng" />
+            <img className={styles.avatar} src={profileImage} alt="游方箏Sui" />
             <div className={styles.identityText}>
-              <p className={styles.name}>于方成 Yu Fang-Cheng</p>
-              <p className={styles.role}>Backend / Automation / AI</p>
+              <p className={styles.name}>游方箏 | Sui</p>
+              <p className={styles.role}>Python / Node.js</p>
             </div>
           </div>
         </div>

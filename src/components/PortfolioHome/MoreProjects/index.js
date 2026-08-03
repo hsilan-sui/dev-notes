@@ -14,7 +14,7 @@ export default function MoreProjects() {
           <SectionHeading
             eyebrow="More Projects"
             title="More Projects"
-            description="次要作品先保留結構與入口，等真實素材補齊後可直接接上影片與原始碼。"
+            description="2024 結訓專案-AIoT 物聯網暨人工智慧工程師實戰班"
           />
           <div className={styles.projectList}>
             {moreProjects.map((project) => (

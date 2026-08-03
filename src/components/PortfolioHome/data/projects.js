@@ -10,8 +10,14 @@
  * @property {'screenshot'|'result'|'video'|'youtube'} type
  * @property {string} typeLabel
  * @property {string} placeholderNote
+ * @property {string=} imageSrc   // real asset path under /static, e.g. '/img/portfolio/...'; falls back to the placeholder box when omitted
+ * @property {string=} imageAlt
+ * @property {string=} videoSrc   // real asset path under /static, e.g. '/video/...'; renders an autoplay/loop/muted <video> in the pillarboxed phone frame when set
+ * @property {string=} videoAspectRatio   // CSS aspect-ratio value matching the real recording, e.g. '886 / 1920'; defaults to '884 / 1400'
  * @property {string=} caption
  * @property {string=} durationLabel
+ * @property {string=} youtubeId    // YouTube video id; renders the real https://i.ytimg.com thumbnail when set
+ * @property {string=} youtubeUrl   // full https://www.youtube.com/watch?v=... URL (may include a &t= timestamp), used as the thumbnail's click target
  *
  * @typedef {Object} ProjectData
  * @property {string} id
@@ -30,13 +36,15 @@ export const projects = [
     id: 'counseling-map',
     tier: 'selected',
     name: '心理諮商地圖',
-    problem: '問題：公共心理諮商資源分散、難以依地區與條件查詢。',
-    solution: '解法：整理公共資料，做成可用地圖瀏覽、依距離排序與條件篩選的資源查詢入口。',
+    problem: '需求：公共心理諮商資源分散、難以依地區與條件查詢。',
+    solution: '我怎麼做：整理公共資料，做成可用地圖瀏覽、依距離排序與條件篩選的資源查詢入口。',
     tags: ['Next.js', 'Leaflet', '資料清理', '地理資訊', '公共資料產品化'],
     media: {
       type: 'screenshot',
       typeLabel: 'PRODUCT SCREENSHOT',
       placeholderNote: '建議補入畫面：地圖主畫面（篩選條件 + 資源列表 + 標記點）',
+      imageSrc: '/img/portfolio/counseling-map.png',
+      imageAlt: '心理諮商地圖主畫面：地圖與資源列表',
     },
     links: [
       // TODO: 心理諮商地圖尚無獨立案例頁，取得真實路由後改為 to。
@@ -52,13 +60,17 @@ export const projects = [
     id: 'landinfo-helper',
     tier: 'selected',
     name: '地政圖資小幫手',
-    problem: '問題：地號圖資查詢分散在政府網站，手動截圖存檔耗時。',
-    solution: '解法：串接地號輸入、網頁查詢、圖資擷取與 LINE 回傳，整條流程自動化。',
+    problem: '需求：地號圖資查詢分散在政府網站，手動截圖存檔耗時。',
+    solution: '我怎麼做：串接地號輸入、網頁查詢、圖資擷取與 LINE 回傳，整條流程自動化。',
     tags: ['Playwright', 'BullMQ', 'Queue / Worker', 'Cloud Storage', 'LINE Push'],
     media: {
-      type: 'result',
+      type: 'video',
       typeLabel: 'RESULT PREVIEW',
       placeholderNote: '建議補入畫面：地號查詢結果、LINE 回傳畫面、自動化流程示意圖',
+      videoSrc: '/video/land_info.mp4',
+      videoAspectRatio: '884 / 1638',
+      imageAlt: '地政圖資小幫手操作展示（自動循環播放）',
+      caption: '自動循環播放（靜音展示）',
     },
     links: [
       {label: '查看案例', to: '/docs/LINEOA-PORFOLIO/landinfo-project'},
@@ -71,20 +83,20 @@ export const projects = [
     id: 'line-oa-portfolio',
     tier: 'selected',
     name: 'LINE OA 互動作品集',
-    problem: '問題：履歷與作品分散在多個連結，面試官難以快速瀏覽。',
-    solution: '解法：把履歷、作品導覽與可操作 Demo 整合進 LINE 對話入口，直接互動查看。',
+    problem: '需求：履歷與作品分散在多個連結，面試官難以快速瀏覽。',
+    solution: '我怎麼做：把履歷、作品導覽與可操作 Demo 整合進 LINE 對話入口，直接互動查看。',
     tags: ['FastAPI', 'LINE Messaging API', 'Webhook', 'Redis', 'Queue / Worker'],
     media: {
       type: 'video',
       typeLabel: 'VIDEO PREVIEW',
       placeholderNote: 'LINE 對話畫面',
-      caption: '點擊播放 30 秒操作展示 · 首頁不自動播放',
-      durationLabel: '0:30',
+      videoSrc: '/video/line_oa_demo.mp4',
+      videoAspectRatio: '884 / 1400',
+      imageAlt: 'LINE OA 互動作品集操作展示（自動循環播放）',
+      caption: '自動循環播放（靜音展示）',
     },
     links: [
       {label: '查看案例', to: '/docs/LINEOA-PORFOLIO/overview'},
-      // TODO: LINE OA 互動作品集尚無影片檔，取得真實素材後改為開啟播放器或 Modal。
-      {label: '播放 30 秒展示', disabled: true, todo: '尚無影片檔，待補後改為開啟播放器/Modal'},
       {label: '立即體驗', href: 'https://line.me/R/ti/p/@998enzsc'},
     ],
   },
@@ -99,10 +111,11 @@ export const projects = [
       type: 'youtube',
       typeLabel: 'YOUTUBE',
       placeholderNote: 'YouTube 展示影片縮圖',
+      youtubeId: 'b0CbNcgBwGQ',
+      youtubeUrl: 'https://www.youtube.com/watch?v=b0CbNcgBwGQ&t=43s',
     },
     links: [
-      // TODO: 公仔辨識系統尚無 YouTube 連結，取得真實 URL 後改為 href。
-      {label: '觀看專案影片', disabled: true, todo: '尚無 YouTube 連結，待補'},
+      {label: '觀看專案影片', href: 'https://www.youtube.com/watch?v=b0CbNcgBwGQ&t=43s'},
       // TODO: 公仔辨識系統尚無確認的專案 Repo 連結，取得真實 URL 後改為 href。
       {label: 'GitHub', disabled: true, todo: '尚無確認的專案 Repo 連結，待補'},
     ],
