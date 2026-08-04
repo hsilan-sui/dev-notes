@@ -65,7 +65,7 @@ export default function JournalContentArea({
               aria-label={`上一篇：${previousEntryPreview.title}`}
               onClick={onPreviousDay}
             >
-              <span className={styles.previewVerticalText} aria-hidden="true">想回到過去</span>
+              <span className={styles.previewVerticalText} aria-hidden="true">回到過去</span>
               <span className={styles.previewKicker}>上一篇</span>
               <span className={styles.previewTitle}>{previousEntryPreview.title}</span>
             </button>
@@ -77,6 +77,7 @@ export default function JournalContentArea({
               aria-label={`下一篇：${nextEntryPreview.title}`}
               onClick={onNextDay}
             >
+              <span className={`${styles.previewVerticalText} ${styles.previewVerticalTextNext}`} aria-hidden="true">未來之來</span>
               <span className={styles.previewKicker}>下一篇</span>
               <span className={styles.previewTitle}>{nextEntryPreview.title}</span>
             </button>

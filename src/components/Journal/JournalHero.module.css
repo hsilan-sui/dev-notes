@@ -16,7 +16,7 @@
 
 .numeralRow::before {
   align-self: stretch;
-  width: 1px;
+  width: 2px;
   background: var(--journal-border);
   content: '';
 }
@@ -29,7 +29,7 @@
 
   .numeralRow::before {
     width: 40px;
-    height: 1px;
+    height: 2px;
     align-self: center;
   }
 }

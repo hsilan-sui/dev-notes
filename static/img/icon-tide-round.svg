@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 222" width="236" height="222" role="img" aria-label="Sui 意識潮 TIDE">
+  <style>
+    .tide-wave-line { animation: tide-wave-flow 6s ease-in-out infinite; }
+    @keyframes tide-wave-flow {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(5px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tide-wave-line { animation: none; }
+    }
+  </style>
+  <circle cx="108" cy="110" r="108" fill="#F4F5F6" stroke="#5C7285" stroke-width="1.2" />
+  <circle cx="268" cy="110" r="108" fill="#151E2C" />
+  <text x="58" y="72" text-anchor="middle" font-family="'Newsreader', Georgia, serif" font-style="italic" font-size="21" font-weight="600" letter-spacing="2" fill="#5C7285">Sui</text>
+  <text x="20" y="108" font-family="'Noto Serif TC', 'Newsreader', Georgia, serif" font-size="36" font-weight="500" letter-spacing="2" fill="#5C7285">意識潮</text>
+  <text x="116" y="164" text-anchor="middle" font-family="'Newsreader', Georgia, serif" font-style="italic" font-size="21" font-weight="600" letter-spacing="2" fill="#5C7285">TIDE</text>
+  <path id="tide-icon-wave" class="tide-wave-line" d="M20 129 C 36 122, 48 135, 66 128 C 84 122, 94 134, 112 127 C 118 125, 124 127, 135 126" fill="none" stroke="#5C7285" stroke-width="1.2" stroke-linecap="round" />
+  <circle cx="0" cy="0" r="4" fill="none" stroke="#5C7285" stroke-width="1.2">
+    <animateMotion dur="7s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear">
+      <mpath href="#tide-icon-wave" />
+    </animateMotion>
+  </circle>
+</svg>

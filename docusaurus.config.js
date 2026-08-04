@@ -15,7 +15,7 @@ const config = {
    */
   title: "關於我", //網站標題（會出現在 <title>）
   tagline: "把技術筆記、作品脈絡與可 demo 專案整合成求職主站", //副標，出現在首頁
-  favicon: "img/favicon.ico", // 網站小圖示 icon（建議 32x32）
+  favicon: "img/icon-tide-round.svg", // 網站小圖示 icon（建議 32x32）
   stylesheets: [
     "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&family=Noto+Serif+TC:wght@500&display=swap",
   ],
@@ -106,8 +106,10 @@ const config = {
       navbar: {
         title: "關於我", //導覽列左上角標題
         logo: {
-          alt: "關於我",
-          src: "img/logo.png", // Logo 圖檔
+          alt: "Sui 意識潮 TIDE",
+          src: "img/icon-tide-round.svg", // Logo 圖檔
+          width: 56,
+          height: 46,
         },
         items: [
           //導覽列按鈕

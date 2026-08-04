@@ -1,0 +1,708 @@
+{
+  "version": "2.15",
+  "children": [
+    {
+      "type": "frame",
+      "id": "LcSaQ",
+      "x": 0,
+      "y": 0,
+      "name": "Wordmark — MY 意識潮 TIDE",
+      "width": 420,
+      "height": 260,
+      "fill": "$tide-bg",
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "C9LWp",
+          "x": 60,
+          "y": 70,
+          "name": "意識潮",
+          "fill": "$tide-ink",
+          "content": "意識潮",
+          "fontFamily": "Noto Serif TC",
+          "fontSize": 96,
+          "fontWeight": "500",
+          "letterSpacing": 6
+        },
+        {
+          "type": "text",
+          "id": "UBGHV",
+          "x": 141,
+          "y": 38,
+          "name": "MY",
+          "fill": "$tide-accent",
+          "content": "MY",
+          "fontFamily": "Newsreader",
+          "fontSize": 22,
+          "fontWeight": "500",
+          "letterSpacing": 4,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "text",
+          "id": "HTjr0",
+          "x": 282,
+          "y": 222,
+          "name": "TIDE",
+          "fill": "$tide-accent",
+          "content": "TIDE",
+          "fontFamily": "Newsreader",
+          "fontSize": 22,
+          "fontWeight": "500",
+          "letterSpacing": 4,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "text",
+          "id": "ED58p",
+          "x": 298,
+          "y": 70,
+          "name": "MY TIDE Caps",
+          "fill": "$tide-accent",
+          "content": "MY TIDE",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 4
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "hoQz3",
+      "x": 520,
+      "y": 0,
+      "name": "Wordmark Compact — Date Block Companion",
+      "width": 240,
+      "height": 190,
+      "fill": "$tide-bg",
+      "layout": "vertical",
+      "gap": 10,
+      "padding": [
+        24,
+        20,
+        20,
+        20
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "B6vPUd",
+          "name": "MY TIDE Caps",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width-height",
+          "width": 40,
+          "height": 11,
+          "content": "MY ",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 4
+        },
+        {
+          "type": "text",
+          "id": "AcrkE",
+          "name": "意識。潮",
+          "fill": "$tide-ink",
+          "content": "意識。潮",
+          "fontFamily": "Noto Serif TC",
+          "fontSize": 34,
+          "fontWeight": "500",
+          "letterSpacing": 3
+        },
+        {
+          "type": "text",
+          "id": "ZsOUa",
+          "name": "MY TIDE Caps",
+          "fill": "$tide-accent",
+          "content": "TIDE",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600",
+          "letterSpacing": 4
+        },
+        {
+          "type": "frame",
+          "id": "KkRyP",
+          "name": "Wave Divider",
+          "width": 170,
+          "height": 20,
+          "layout": "none",
+          "children": [
+            {
+              "type": "path",
+              "id": "skTLu",
+              "x": 0,
+              "y": 0,
+              "name": "Wave Line",
+              "geometry": "M0 12c26-10 48 6 78-2 26-7 44 6 72-1 8-2 14 0 20-1",
+              "viewBox": [
+                0,
+                0,
+                170,
+                20
+              ],
+              "width": 170,
+              "height": 20,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "ellipse",
+              "id": "tzMam",
+              "x": 73,
+              "y": 5,
+              "name": "Node",
+              "fill": "#00000000",
+              "width": 9,
+              "height": 9,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1.1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "FS9Li",
+      "x": 520,
+      "y": 290,
+      "name": "Round Icon — Sui 意識潮 TIDE",
+      "clip": true,
+      "width": 220,
+      "height": 220,
+      "fill": "$tide-bg",
+      "cornerRadius": 999,
+      "stroke": "$tide-accent",
+      "strokeWidth": 1.2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "roWgv",
+          "x": 49,
+          "y": 57,
+          "name": "Sui",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width",
+          "width": 50,
+          "content": "Sui",
+          "textAlign": "center",
+          "fontFamily": "Newsreader",
+          "fontSize": 15,
+          "fontWeight": "500",
+          "letterSpacing": 2,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "text",
+          "id": "pmZAm",
+          "x": 100,
+          "y": 140,
+          "name": "TIDE",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width",
+          "width": 50,
+          "content": "TIDE",
+          "textAlign": "center",
+          "fontFamily": "Newsreader",
+          "fontSize": 15,
+          "fontWeight": "500",
+          "letterSpacing": 2,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "frame",
+          "id": "F0P2N6",
+          "x": 34,
+          "y": 124,
+          "name": "Wave",
+          "width": 115,
+          "height": 16,
+          "layout": "none",
+          "children": [
+            {
+              "type": "path",
+              "id": "QN2z2",
+              "x": 0,
+              "y": 0,
+              "name": "Wave Line",
+              "geometry": "M0 9c16-7 28 6 46-1 18-6 28 6 46-1 6-2 12 0 23-1",
+              "viewBox": [
+                0,
+                0,
+                115,
+                16
+              ],
+              "width": 115,
+              "height": 16,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "ellipse",
+              "id": "F3WCh",
+              "x": 42,
+              "y": 3,
+              "name": "Node",
+              "fill": "#00000000",
+              "width": 8,
+              "height": 8,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "FsYqO",
+          "x": 35,
+          "y": 72,
+          "name": "意識潮",
+          "fill": "$tide-accent",
+          "content": "意識潮",
+          "fontFamily": "Noto Serif TC",
+          "fontSize": 36,
+          "fontWeight": "500",
+          "letterSpacing": 2
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "J8F6fa",
+      "x": 68,
+      "y": 278,
+      "name": "Round Icon — Sui 意識潮 TIDE",
+      "clip": true,
+      "width": 220,
+      "height": 220,
+      "fill": "$tide-bg",
+      "cornerRadius": 999,
+      "stroke": "$tide-accent",
+      "strokeWidth": 1.2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "V4AxY",
+          "x": 48,
+          "y": 59,
+          "name": "Sui",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width-height",
+          "width": 58,
+          "height": 13,
+          "content": "Sui",
+          "textAlign": "center",
+          "fontFamily": "Newsreader",
+          "fontSize": 15,
+          "fontWeight": "500",
+          "letterSpacing": 2,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "text",
+          "id": "t0ATFj",
+          "x": 106,
+          "y": 132,
+          "name": "TIDE",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width",
+          "width": 50,
+          "content": "TIDE",
+          "textAlign": "center",
+          "fontFamily": "Newsreader",
+          "fontSize": 15,
+          "fontWeight": "500",
+          "letterSpacing": 2,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "frame",
+          "id": "N94o6s",
+          "x": 35,
+          "y": 116,
+          "name": "Wave",
+          "width": 115,
+          "height": 16,
+          "layout": "none",
+          "children": [
+            {
+              "type": "path",
+              "id": "c7FUD",
+              "x": 0,
+              "y": 0,
+              "name": "Wave Line",
+              "geometry": "M0 9c16-7 28 6 46-1 18-6 28 6 46-1 6-2 12 0 23-1",
+              "viewBox": [
+                0,
+                0,
+                115,
+                16
+              ],
+              "width": 115,
+              "height": 16,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "ellipse",
+              "id": "fyBxL",
+              "x": 42,
+              "y": 3,
+              "name": "Node",
+              "fill": "#00000000",
+              "width": 8,
+              "height": 8,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "oWQDw",
+          "x": 25,
+          "y": 72,
+          "name": "意識潮",
+          "fill": "$tide-accent",
+          "content": "意識潮",
+          "fontFamily": "Noto Serif TC",
+          "fontSize": 36,
+          "fontWeight": "500",
+          "letterSpacing": 2
+        },
+        {
+          "type": "frame",
+          "id": "JxZGb",
+          "x": 353,
+          "y": -49,
+          "name": "Frame 2",
+          "flipX": true,
+          "clip": true,
+          "width": 57,
+          "height": 294,
+          "fill": "#FFFFFF",
+          "layout": "none"
+        },
+        {
+          "type": "polygon",
+          "polygonCount": 3,
+          "id": "po8Mo",
+          "x": 110,
+          "y": 0,
+          "fill": "#CCCCCC",
+          "width": 179,
+          "height": 307
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "I9czhf",
+      "x": 840,
+      "y": 290,
+      "name": "Round Icon v2 — Crescent",
+      "width": 236,
+      "height": 222,
+      "fill": "#00000000",
+      "layout": "none",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "CepvV",
+          "x": 0,
+          "y": 2,
+          "name": "White Front",
+          "fill": "$tide-bg",
+          "width": 216,
+          "height": 216,
+          "stroke": "$tide-accent",
+          "strokeWidth": 1.2
+        },
+        {
+          "type": "ellipse",
+          "id": "hIZeV",
+          "x": 160,
+          "y": 2,
+          "name": "Dark Moon Back",
+          "fill": "$tide-navy",
+          "width": 216,
+          "height": 216
+        },
+        {
+          "type": "text",
+          "id": "jpZbE",
+          "x": 29,
+          "y": 48,
+          "name": "Sui",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width-height",
+          "width": 72,
+          "height": 20,
+          "content": "Sui",
+          "textAlign": "center",
+          "fontFamily": "Newsreader",
+          "fontSize": 30,
+          "fontWeight": "600",
+          "letterSpacing": 2,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "text",
+          "id": "hOR7t",
+          "x": 20,
+          "y": 74,
+          "name": "意識潮",
+          "fill": "$tide-accent",
+          "content": "意識潮",
+          "fontFamily": "Noto Serif TC",
+          "fontSize": 36,
+          "fontWeight": "500",
+          "letterSpacing": 2
+        },
+        {
+          "type": "text",
+          "id": "uW3Qv",
+          "x": 53,
+          "y": 134,
+          "name": "TIDE",
+          "fill": "$tide-accent",
+          "textGrowth": "fixed-width-height",
+          "width": 95,
+          "height": 54,
+          "content": "TIDE",
+          "textAlign": "center",
+          "fontFamily": "Newsreader",
+          "fontSize": 30,
+          "fontWeight": "600",
+          "letterSpacing": 2,
+          "fontStyle": "italic"
+        },
+        {
+          "type": "frame",
+          "id": "kfJUq",
+          "x": 20,
+          "y": 118,
+          "name": "Wave",
+          "width": 115,
+          "height": 16,
+          "layout": "none",
+          "children": [
+            {
+              "type": "path",
+              "id": "zyWms",
+              "x": 0,
+              "y": 0,
+              "name": "Wave Line",
+              "geometry": "M0 9c16-7 28 6 46-1 18-6 28 6 46-1 6-2 12 0 23-1",
+              "viewBox": [
+                0,
+                0,
+                115,
+                16
+              ],
+              "width": 115,
+              "height": 16,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1.2,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "ellipse",
+              "id": "U6H5Dx",
+              "x": 42,
+              "y": 3,
+              "name": "Node",
+              "fill": "#00000000",
+              "width": 8,
+              "height": 8,
+              "stroke": "$tide-accent",
+              "strokeWidth": 1.2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "cJRZF",
+      "x": -70,
+      "y": 397,
+      "name": "Frame 1",
+      "clip": true,
+      "width": 83,
+      "height": 5,
+      "fill": "#FFFFFF",
+      "layout": "none"
+    },
+    {
+      "type": "ellipse",
+      "id": "M5VWHU",
+      "x": -229,
+      "y": 215,
+      "fill": "#CCCCCC",
+      "width": 192,
+      "height": 182
+    },
+    {
+      "type": "polygon",
+      "polygonCount": 3,
+      "id": "Oc34U",
+      "x": -112,
+      "y": 290,
+      "fill": "#CCCCCC",
+      "width": 168,
+      "height": 291
+    },
+    {
+      "type": "polygon",
+      "polygonCount": 3,
+      "id": "ojBxg",
+      "x": 0,
+      "y": 458,
+      "fill": "#CCCCCC",
+      "width": 89,
+      "height": 80
+    },
+    {
+      "type": "ellipse",
+      "id": "rY0Ge",
+      "x": 365,
+      "y": 436,
+      "name": "Dark Moon Back",
+      "fill": "$tide-navy",
+      "width": 216,
+      "height": 216
+    },
+    {
+      "type": "ellipse",
+      "id": "CLBxX",
+      "x": 429,
+      "y": 483,
+      "name": "White Front",
+      "fill": "$tide-bg",
+      "width": 216,
+      "height": 216,
+      "stroke": "$tide-accent",
+      "strokeWidth": 1.2
+    },
+    {
+      "type": "text",
+      "id": "TjTCV",
+      "x": 243,
+      "y": 483,
+      "name": "Sui",
+      "fill": "$tide-accent",
+      "textGrowth": "fixed-width-height",
+      "width": 72,
+      "height": 20,
+      "content": "Mｙ",
+      "textAlign": "center",
+      "fontFamily": "Newsreader",
+      "fontSize": 30,
+      "fontWeight": "600",
+      "letterSpacing": 2,
+      "fontStyle": "italic"
+    },
+    {
+      "type": "text",
+      "id": "EMOkw",
+      "x": 239,
+      "y": 518,
+      "name": "意識潮",
+      "fill": "$tide-accent",
+      "content": "意識潮",
+      "fontFamily": "Noto Serif TC",
+      "fontSize": 36,
+      "fontWeight": "500",
+      "letterSpacing": 2
+    },
+    {
+      "type": "frame",
+      "id": "O1kqNS",
+      "x": 239,
+      "y": 562,
+      "width": 115,
+      "height": 16,
+      "layout": "none",
+      "children": [
+        {
+          "type": "path",
+          "id": "X4Kf2",
+          "x": 0,
+          "y": 0,
+          "name": "Wave Line",
+          "geometry": "M0 9c16-7 28 6 46-1 18-6 28 6 46-1 6-2 12 0 23-1",
+          "viewBox": [
+            0,
+            0,
+            115,
+            16
+          ],
+          "width": 115,
+          "height": 16,
+          "stroke": "$tide-accent",
+          "strokeWidth": 1.2,
+          "strokeLinecap": "round"
+        },
+        {
+          "type": "ellipse",
+          "id": "A3jpm",
+          "x": 42,
+          "y": 3,
+          "name": "Node",
+          "fill": "#00000000",
+          "width": 8,
+          "height": 8,
+          "stroke": "$tide-accent",
+          "strokeWidth": 1.2
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "LOemE",
+      "x": 288,
+      "y": 576,
+      "name": "TIDE",
+      "fill": "$tide-accent",
+      "textGrowth": "fixed-width-height",
+      "width": 86,
+      "height": 30,
+      "content": "TIDE",
+      "textAlign": "center",
+      "fontFamily": "Newsreader",
+      "fontSize": 30,
+      "fontWeight": "600",
+      "letterSpacing": 2,
+      "fontStyle": "italic"
+    }
+  ],
+  "variables": {
+    "tide-ink": {
+      "type": "color",
+      "value": "#26292E"
+    },
+    "tide-accent": {
+      "type": "color",
+      "value": "#5C7285"
+    },
+    "tide-bg": {
+      "type": "color",
+      "value": "#F4F5F6"
+    },
+    "tide-navy": {
+      "type": "color",
+      "value": "#151E2C"
+    }
+  },
+  "fileToken": "5e38582a-ca0d-4c82-a4f9-b4d6482cd1ee"
+}
