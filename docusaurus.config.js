@@ -13,11 +13,11 @@ const config = {
   /**
    * 第一區：網站基本資訊與部署設定
    */
-  title: "Sui｜Backend × Automation × AI", //網站標題（會出現在 <title>）
+  title: "關於我", //網站標題（會出現在 <title>）
   tagline: "把技術筆記、作品脈絡與可 demo 專案整合成求職主站", //副標，出現在首頁
   favicon: "img/favicon.ico", // 網站小圖示 icon（建議 32x32）
   stylesheets: [
-    "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&display=swap",
+    "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&family=Noto+Serif+TC:wght@500&display=swap",
   ],
 
   // Set the production url of your site here
@@ -70,6 +70,8 @@ const config = {
             "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: {
+          blogTitle: "意識潮 | My Tide",
+          blogDescription: "詩、散文、旅行、生活與時間的潮汐片段",
           showReadingTime: true, // 顯示閱讀時間
           feedOptions: {
             type: ["rss", "atom"],
@@ -102,15 +104,15 @@ const config = {
       // Replace with your project's social card
       image: "img/me.png",
       navbar: {
-        title: "Side Projects", //導覽列左上角標題
+        title: "關於我", //導覽列左上角標題
         logo: {
-          alt: "Side Projects",
+          alt: "關於我",
           src: "img/logo.png", // Logo 圖檔
         },
         items: [
           //導覽列按鈕
           { to: '/docs/MySQL/aggre-fns', label: '技術筆記', position: 'left' },
-          { to: '/blog', label: 'Journal', position: 'left' },
+          { to: '/blog', label: '意識潮 | My Tide', position: 'left' },
           {
             href: "https://github.com/hsilan-sui",
             label: "GitHub",

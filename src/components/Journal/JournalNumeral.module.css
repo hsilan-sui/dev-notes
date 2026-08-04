@@ -2,8 +2,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 20px;
   color: var(--journal-ink);
+}
+
+.dateGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .day {
@@ -43,7 +48,7 @@
 }
 
 @media screen and (max-width: 596px) {
-  .numeral {
+  .dateGroup {
     gap: 14px;
   }
 

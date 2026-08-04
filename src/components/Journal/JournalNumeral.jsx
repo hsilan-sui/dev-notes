@@ -12,12 +12,14 @@ export default function JournalNumeral({date, isMostRecent}) {
 
   return (
     <div className={styles.numeral} aria-label={`${year} ${month} ${day}`}>
-      <span className={styles.day}>{day}</span>
-      <span className={styles.monthColumn}>
-        <span className={styles.month}>{month}</span>
-        <span className={styles.year}>{year}</span>
-        {isMostRecent ? <span className={styles.pill}>今天</span> : null}
-      </span>
+      <div className={styles.dateGroup}>
+        <span className={styles.day}>{day}</span>
+        <span className={styles.monthColumn}>
+          <span className={styles.month}>{month}</span>
+          <span className={styles.year}>{year}</span>
+          {isMostRecent ? <span className={styles.pill}>今天</span> : null}
+        </span>
+      </div>
     </div>
   );
 }

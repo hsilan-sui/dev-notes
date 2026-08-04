@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
+import Link from '@docusaurus/Link';
 import clsx from 'clsx';
 import JournalContentArea from './JournalContentArea.jsx';
 import JournalHero from './JournalHero.jsx';
@@ -99,6 +100,7 @@ export default function JournalPage({items = [], metadata}) {
 
   return (
     <main className={clsx('journal-scope', styles.page)}>
+      <Link className={styles.backHomeLink} to="/">折返</Link>
       <JournalHero
         currentDay={currentDay}
         mostRecentDayKey={timeline.mostRecentDayKey}

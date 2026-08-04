@@ -15,7 +15,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse}) {
         <div className={`${styles.body} ${styles.expandedBody}`}>
           <button type="button" className={styles.backLink} onClick={onCollapse}>
             <Icon name="arrow-left" className={styles.ctaIcon} />
-            <span>返回 Journal</span>
+            <span>返回意識潮</span>
           </button>
           <div className={styles.meta}>
             {entry.formattedDate ? <span>{entry.formattedDate}</span> : null}
@@ -46,7 +46,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse}) {
           ) : null}
           <button type="button" className={styles.backLink} onClick={onCollapse}>
             <Icon name="arrow-left" className={styles.ctaIcon} />
-            <span>返回 Journal</span>
+            <span>返回意識潮</span>
           </button>
         </div>
       </article>

@@ -1,8 +1,39 @@
 .page {
+  position: relative;
   overflow-x: hidden;
   background: var(--journal-bg);
   color: var(--journal-ink);
   font-family: var(--journal-font-body), var(--ifm-font-family-base);
+}
+
+.backHomeLink {
+  position: absolute;
+  left: 32px;
+  top: 22px;
+  z-index: 3;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 8px;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    text-shadow 180ms ease;
+}
+
+.backHomeLink:hover,
+.backHomeLink:focus-visible {
+  color: var(--ifm-link-color);
+  text-shadow:
+    0 0 14px rgba(189, 63, 27, 0.18),
+    0 0 28px rgba(189, 63, 27, 0.1);
+  text-decoration: none;
+}
+
+.backHomeLink:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 5px;
 }
 
 .liveRegion {
@@ -12,4 +43,12 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+@media screen and (max-width: 596px) {
+  .backHomeLink {
+    left: 20px;
+    top: 16px;
+    font-size: 12px;
+  }
 }

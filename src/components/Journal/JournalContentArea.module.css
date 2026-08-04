@@ -42,6 +42,7 @@
   width: 100%;
   grid-column: 2;
   isolation: isolate;
+  perspective: 900px;
 }
 
 .cardShell {
@@ -73,16 +74,42 @@
   opacity: 0.88;
   padding: 24px 20px;
   text-align: left;
+  transform-style: preserve-3d;
   transition:
-    opacity var(--journal-motion-hover-transition),
-    transform var(--journal-motion-hover-transition);
+    box-shadow 420ms var(--journal-motion-ease),
+    opacity 420ms var(--journal-motion-ease),
+    transform 420ms var(--journal-motion-ease);
+  will-change: transform;
 }
 
 .previewPanel::before {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.24), transparent 42%);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.26), transparent 42%),
+    repeating-linear-gradient(
+      92deg,
+      rgba(92, 114, 133, 0.06) 0,
+      rgba(92, 114, 133, 0.06) 1px,
+      transparent 1px,
+      transparent 11px
+    );
   content: '';
+}
+
+.previewPanel::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 34px;
+  background:
+    linear-gradient(90deg, rgba(38, 41, 46, 0.12), transparent),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26), transparent 36%, rgba(38, 41, 46, 0.08));
+  content: '';
+  opacity: 0.65;
+  transition:
+    opacity 420ms var(--journal-motion-ease),
+    transform 420ms var(--journal-motion-ease);
 }
 
 .previewPanelPrevious {
@@ -91,6 +118,12 @@
   clip-path: polygon(0 8%, 100% 0, 88% 100%, 0 92%);
   transform: translateX(-68%) rotate(-7deg) skewY(-1deg);
   transform-origin: right center;
+}
+
+.previewPanelPrevious::after {
+  right: -1px;
+  transform: translateX(4px) rotateY(-24deg);
+  transform-origin: left center;
 }
 
 .previewPanelNext {
@@ -102,19 +135,43 @@
   text-align: right;
 }
 
+.previewPanelNext::after {
+  left: -1px;
+  transform: translateX(-4px) rotateY(24deg);
+  transform-origin: right center;
+}
+
 .previewPanel:hover,
 .previewPanel:focus-visible {
+  box-shadow:
+    0 34px 70px rgba(38, 41, 46, 0.17),
+    0 14px 26px rgba(38, 41, 46, 0.1);
   opacity: 1;
 }
 
 .previewPanelPrevious:hover,
 .previewPanelPrevious:focus-visible {
-  transform: translateX(-74%) rotate(-8deg) skewY(-1deg);
+  transform: translateX(-88%) translateY(-9px) rotate(-10deg) skewY(-2deg) rotateY(18deg);
 }
 
 .previewPanelNext:hover,
 .previewPanelNext:focus-visible {
-  transform: translateX(74%) rotate(8deg) skewY(1deg);
+  transform: translateX(88%) translateY(-9px) rotate(10deg) skewY(2deg) rotateY(-18deg);
+}
+
+.previewPanel:hover::after,
+.previewPanel:focus-visible::after {
+  opacity: 0.95;
+}
+
+.previewPanelPrevious:hover::after,
+.previewPanelPrevious:focus-visible::after {
+  transform: translateX(13px) rotateY(-48deg);
+}
+
+.previewPanelNext:hover::after,
+.previewPanelNext:focus-visible::after {
+  transform: translateX(-13px) rotateY(48deg);
 }
 
 .previewPanel:focus-visible {
@@ -123,10 +180,26 @@
 }
 
 .previewKicker,
-.previewTitle {
+.previewTitle,
+.previewVerticalText {
   position: relative;
   z-index: 1;
   display: block;
+}
+
+.previewVerticalText {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  color: var(--journal-ink);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-align: center;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
 }
 
 .previewKicker {

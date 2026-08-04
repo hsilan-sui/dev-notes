@@ -19,7 +19,10 @@ function BlogListPageMetadata(props) {
   const title = isBlogOnlyMode ? siteTitle : blogTitle;
   return (
     <>
-      <PageMetadata title={title} description={blogDescription} />
+      <PageMetadata title={title} description={blogDescription}>
+        <title>{blogTitle}</title>
+        <meta property="og:title" content={blogTitle} />
+      </PageMetadata>
       <SearchMetadata tag="blog_posts_list" />
     </>
   );

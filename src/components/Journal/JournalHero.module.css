@@ -6,3 +6,30 @@
   border-bottom: 1px solid var(--journal-border);
   background: var(--journal-bg-card);
 }
+
+.numeralRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.numeralRow::before {
+  align-self: stretch;
+  width: 1px;
+  background: var(--journal-border);
+  content: '';
+}
+
+@media screen and (max-width: 596px) {
+  .numeralRow {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .numeralRow::before {
+    width: 40px;
+    height: 1px;
+    align-self: center;
+  }
+}

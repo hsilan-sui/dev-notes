@@ -1,0 +1,86 @@
+.mark {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.lockup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.group {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.tag {
+  color: var(--journal-accent);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.cjk {
+  color: var(--journal-accent);
+  font-family: 'Noto Serif TC', var(--journal-font-heading), Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.wave {
+  display: block;
+  overflow: visible;
+}
+
+.waveLine {
+  fill: none;
+  stroke: var(--journal-accent);
+  stroke-linecap: round;
+  stroke-width: 1;
+  animation: journal-mark-wave-flow 6s ease-in-out infinite;
+}
+
+.waveNode {
+  fill: none;
+  stroke: var(--journal-accent);
+  stroke-width: 1;
+}
+
+@keyframes journal-mark-wave-flow {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waveLine {
+    animation: none;
+  }
+}
+
+@media screen and (max-width: 596px) {
+  .tag {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+  }
+
+  .cjk {
+    font-size: 18px;
+  }
+
+  .wave {
+    width: 76px;
+    height: 12px;
+  }
+}

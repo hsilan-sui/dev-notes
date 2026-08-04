@@ -1,8 +1,12 @@
 .window {
+  --timeline-glow-padding: 26px;
+
+  box-sizing: border-box;
   width: 100%;
-  height: var(--journal-hero-window-height);
+  height: calc(var(--journal-hero-window-height) + var(--timeline-glow-padding) * 2);
   overflow-x: auto;
   overflow-y: hidden;
+  padding-block: var(--timeline-glow-padding);
   scrollbar-width: none;
   touch-action: pan-x;
 }
@@ -34,6 +38,10 @@
 .nodeList {
   position: absolute;
   inset: 0;
+}
+
+.svg {
+  overflow: visible;
 }
 
 .wavePath {
