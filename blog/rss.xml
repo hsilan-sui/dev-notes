@@ -1,13 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="rss.xsl"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
-        <title>Sui｜Backend × Automation × AI Blog</title>
+        <title>關於我 Blog</title>
         <link>https://hsilan-sui.github.io/dev-notes/blog</link>
-        <description>Sui｜Backend × Automation × AI Blog</description>
+        <description>關於我 Blog</description>
         <lastBuildDate>Thu, 26 Aug 2021 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-Hant</language>
+        <item>
+            <title><![CDATA[Journal Density QA Fixture 02]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-02</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-02</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
+            <category>Docusaurus</category>
+        </item>
+        <item>
+            <title><![CDATA[Journal Density QA Fixture 03]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-03</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-03</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
+            <category>Docusaurus</category>
+        </item>
+        <item>
+            <title><![CDATA[Journal Density QA Fixture 01]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-01</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-01</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
+            <category>Docusaurus</category>
+        </item>
+        <item>
+            <title><![CDATA[Journal Layout QA Fixture]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/blog/journal-layout-test</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/blog/journal-layout-test</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for verifying the Journal same-day layout and vertical navigation.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for verifying the Journal same-day layout and vertical navigation.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only so the Journal list page can render a day with more than one entry from real Docusaurus blog plugin data.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
+            <category>Docusaurus</category>
+        </item>
         <item>
             <title><![CDATA[Welcome]]></title>
             <link>https://hsilan-sui.github.io/dev-notes/blog/welcome</link>
@@ -29,6 +77,18 @@
 <p><strong>And if you don't want a blog</strong>: just delete this directory, and use <code>blog: false</code> in your Docusaurus config.</p>]]></content:encoded>
             <category>Facebook</category>
             <category>Hello</category>
+            <category>Docusaurus</category>
+        </item>
+        <item>
+            <title><![CDATA[Journal Density QA Fixture 04]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-04</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/blog/journal-density-test-04</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
             <category>Docusaurus</category>
         </item>
         <item>
