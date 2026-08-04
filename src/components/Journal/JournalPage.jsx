@@ -100,7 +100,10 @@ export default function JournalPage({items = [], metadata}) {
 
   return (
     <main className={clsx('journal-scope', styles.page)}>
-      <Link className={styles.backHomeLink} to="/">折返</Link>
+      <Link className={styles.backHomeLink} to="/" aria-label="折返首頁">
+        <span className={styles.backHomeText} aria-hidden="true">折返</span>
+        <span className={styles.backHomeTextHover} aria-hidden="true">返折</span>
+      </Link>
       <JournalHero
         currentDay={currentDay}
         mostRecentDayKey={timeline.mostRecentDayKey}
