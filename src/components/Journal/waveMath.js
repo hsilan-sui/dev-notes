@@ -110,12 +110,12 @@ function densityBoostAtX(x, densityAnchors, opts) {
     return 0;
   }
 
-  const spread = opts.spacing * 1.45;
-  const maxBoost = opts === MOBILE_WAVE ? 7 : 10;
+  const spread = opts.spacing * 2.2;
+  const maxBoost = opts === MOBILE_WAVE ? 12 : 18;
   const boost = densityAnchors.reduce((total, anchor) => {
     const distance = x - anchor.x;
     const influence = Math.exp(-(distance * distance) / (2 * spread * spread));
-    const countBoost = Math.min(anchor.count - 1, 4) * (opts === MOBILE_WAVE ? 2.4 : 3.2);
+    const countBoost = Math.min(anchor.count - 1, 5) * (opts === MOBILE_WAVE ? 3.1 : 4.4);
 
     return total + countBoost * influence;
   }, 0);

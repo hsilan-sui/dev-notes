@@ -186,7 +186,7 @@ export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, onS
               className={styles.glow}
               cx={activePosition.x}
               cy={activePosition.y}
-              r={(variant === 'mobile' ? 62 : 82) / 2}
+              r={(variant === 'mobile' ? 82 : 108) / 2}
             />
           ) : null}
           {days.map((day, index) => {

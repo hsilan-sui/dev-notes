@@ -37,10 +37,116 @@
   justify-content: center;
 }
 
-.cardShell {
+.carouselStage {
+  position: relative;
   width: 100%;
   grid-column: 2;
+  isolation: isolate;
+}
+
+.cardShell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
   animation: journal-card-in var(--journal-motion-duration-card-in) var(--journal-motion-ease) both;
+}
+
+.previewPanel {
+  position: absolute;
+  z-index: 1;
+  top: 28px;
+  bottom: 28px;
+  display: grid;
+  width: clamp(110px, 18vw, 176px);
+  min-height: 180px;
+  align-content: end;
+  gap: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(92, 114, 133, 0.12);
+  background:
+    linear-gradient(135deg, rgba(250, 251, 251, 0.96), rgba(228, 234, 238, 0.88));
+  box-shadow:
+    0 24px 48px rgba(38, 41, 46, 0.13),
+    0 8px 18px rgba(38, 41, 46, 0.08);
+  color: var(--journal-ink-secondary);
+  cursor: pointer;
+  opacity: 0.88;
+  padding: 24px 20px;
+  text-align: left;
+  transition:
+    opacity var(--journal-motion-hover-transition),
+    transform var(--journal-motion-hover-transition);
+}
+
+.previewPanel::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.24), transparent 42%);
+  content: '';
+}
+
+.previewPanelPrevious {
+  left: 0;
+  border-radius: 18px 8px 8px 18px;
+  clip-path: polygon(0 8%, 100% 0, 88% 100%, 0 92%);
+  transform: translateX(-68%) rotate(-7deg) skewY(-1deg);
+  transform-origin: right center;
+}
+
+.previewPanelNext {
+  right: 0;
+  border-radius: 8px 18px 18px 8px;
+  clip-path: polygon(12% 0, 100% 8%, 100% 92%, 0 100%);
+  transform: translateX(68%) rotate(7deg) skewY(1deg);
+  transform-origin: left center;
+  text-align: right;
+}
+
+.previewPanel:hover,
+.previewPanel:focus-visible {
+  opacity: 1;
+}
+
+.previewPanelPrevious:hover,
+.previewPanelPrevious:focus-visible {
+  transform: translateX(-74%) rotate(-8deg) skewY(-1deg);
+}
+
+.previewPanelNext:hover,
+.previewPanelNext:focus-visible {
+  transform: translateX(74%) rotate(8deg) skewY(1deg);
+}
+
+.previewPanel:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 4px;
+}
+
+.previewKicker,
+.previewTitle {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.previewKicker {
+  color: var(--journal-accent);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.previewTitle {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: var(--journal-font-heading), Georgia, serif;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 @keyframes journal-card-in {
@@ -60,6 +166,10 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
+  .previewPanel {
+    display: none;
+  }
+
   .sameDayCaption {
     font-size: 11px;
   }
@@ -73,6 +183,10 @@
   .cardShell {
     animation-duration: 150ms;
     animation-name: journal-card-reduced;
+  }
+
+  .previewPanel {
+    transition: none;
   }
 
   @keyframes journal-card-reduced {

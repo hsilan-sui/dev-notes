@@ -2,7 +2,6 @@ import {useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
 import JournalContentArea from './JournalContentArea.jsx';
 import JournalHero from './JournalHero.jsx';
-import JournalMiniHeader from './JournalMiniHeader.jsx';
 import useJournalTimeline from './useJournalTimeline.js';
 import './tokens.css';
 import styles from './JournalPage.module.css';
@@ -43,14 +42,18 @@ export default function JournalPage({items = [], metadata}) {
 
   if (!currentDay || !currentEntry) {
     return (
-      <main className={clsx('journal-scope', styles.page)}>
-        <JournalMiniHeader />
-      </main>
+      <main className={clsx('journal-scope', styles.page)} />
     );
   }
 
   const previousDayKey = timeline.getPrevDayWithEntry(currentDay.dayKey);
   const nextDayKey = timeline.getNextDayWithEntry(currentDay.dayKey);
+  const previousDay = previousDayKey
+    ? timeline.days.find((candidate) => candidate.dayKey === previousDayKey)
+    : null;
+  const nextDay = nextDayKey
+    ? timeline.days.find((candidate) => candidate.dayKey === nextDayKey)
+    : null;
 
   function selectDay(dayKey) {
     const day = timeline.days.find((candidate) => candidate.dayKey === dayKey);
@@ -96,7 +99,6 @@ export default function JournalPage({items = [], metadata}) {
 
   return (
     <main className={clsx('journal-scope', styles.page)}>
-      <JournalMiniHeader />
       <JournalHero
         currentDay={currentDay}
         mostRecentDayKey={timeline.mostRecentDayKey}
@@ -109,6 +111,8 @@ export default function JournalPage({items = [], metadata}) {
         currentEntryIndex={currentEntryIndex}
         previousDayKey={previousDayKey}
         nextDayKey={nextDayKey}
+        previousEntryPreview={previousDay?.entries[0] || null}
+        nextEntryPreview={nextDay?.entries[0] || null}
         onPreviousDay={handlePreviousDay}
         onNextDay={handleNextDay}
         onPreviousEntry={handlePreviousEntry}

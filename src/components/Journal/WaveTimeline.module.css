@@ -46,7 +46,7 @@
 .glow {
   fill: var(--journal-accent-soft);
   filter: blur(var(--journal-glow-blur));
-  opacity: var(--journal-opacity-glow);
+  opacity: 0.58;
   transition:
     cx var(--journal-motion-duration-moment) var(--journal-motion-ease),
     cy var(--journal-motion-duration-moment) var(--journal-motion-ease);
