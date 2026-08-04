@@ -1,0 +1,124 @@
+.window {
+  width: 100%;
+  height: var(--journal-hero-window-height);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.window::-webkit-scrollbar {
+  display: none;
+}
+
+.track {
+  position: relative;
+  min-width: 100%;
+  height: var(--journal-hero-window-height);
+  animation: journal-wave-breathe 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes journal-wave-breathe {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(16px);
+  }
+}
+
+.svg,
+.nodeList {
+  position: absolute;
+  inset: 0;
+}
+
+.wavePath {
+  fill: none;
+  stroke: var(--journal-timeline-line);
+  stroke-linecap: round;
+  stroke-width: 1.5;
+}
+
+.glow {
+  fill: var(--journal-accent-soft);
+  filter: blur(var(--journal-glow-blur));
+  opacity: var(--journal-opacity-glow);
+  transition:
+    cx var(--journal-motion-duration-moment) var(--journal-motion-ease),
+    cy var(--journal-motion-duration-moment) var(--journal-motion-ease);
+}
+
+.emptyNode {
+  fill: var(--journal-timeline-line);
+  opacity: var(--journal-opacity-day-empty);
+}
+
+.companionDot {
+  fill: var(--journal-timeline-line);
+}
+
+.nodeList {
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nodeItem {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  transform: translate(-22px, -22px);
+}
+
+.nodeButton {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.nodeDot {
+  width: var(--journal-day-node-size);
+  height: var(--journal-day-node-size);
+  border-radius: var(--journal-radius-pill);
+  background: var(--journal-timeline-line);
+  opacity: var(--node-opacity);
+  transition:
+    background-color var(--journal-motion-hover-transition),
+    opacity var(--journal-motion-hover-transition);
+}
+
+.nodeButtonActive .nodeDot {
+  background: var(--journal-accent);
+  opacity: var(--journal-opacity-day-current);
+}
+
+.nodeButton:hover .nodeDot,
+.nodeButton:focus-visible .nodeDot {
+  opacity: var(--journal-opacity-day-current);
+}
+
+.nodeButton:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: -4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow,
+  .nodeDot {
+    transition: none;
+  }
+
+  .track {
+    animation: none;
+  }
+}

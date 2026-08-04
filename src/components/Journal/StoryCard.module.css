@@ -1,0 +1,134 @@
+.card {
+  width: 100%;
+  max-width: var(--journal-card-max-width);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--journal-radius-card);
+  background: var(--journal-bg-card);
+  box-shadow: var(--journal-shadow);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: var(--journal-card-hero-image-height);
+  object-fit: cover;
+}
+
+.card.expanded {
+  max-width: var(--journal-card-max-width-expanded);
+}
+
+.body {
+  display: grid;
+  gap: var(--journal-card-body-gap);
+  padding: var(--journal-card-body-padding);
+  text-align: center;
+}
+
+.expandedBody {
+  text-align: left;
+}
+
+.expandedBody .meta,
+.expandedBody .tags {
+  justify-self: start;
+  justify-content: flex-start;
+}
+
+.meta,
+.tags,
+.cta,
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meta {
+  gap: 10px;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 13px;
+}
+
+.separator,
+.tagSeparator {
+  color: var(--journal-border);
+}
+
+.title {
+  margin: 0;
+  color: var(--journal-ink);
+  font-family: var(--journal-font-heading), Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.preview {
+  margin: 0;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.tags {
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 13px;
+}
+
+.tagItem {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cta,
+.backLink {
+  justify-self: center;
+  gap: 8px;
+  padding-top: 16px;
+  border: 0;
+  background: transparent;
+  color: var(--journal-ink);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.backLink {
+  justify-self: start;
+  padding-top: 0;
+  font-size: 13px;
+  color: var(--journal-ink-secondary);
+}
+
+.cta:hover,
+.cta:focus-visible,
+.backLink:hover,
+.backLink:focus-visible {
+  color: var(--journal-ink);
+  text-decoration: none;
+}
+
+.ctaIcon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.fullContent {
+  margin-top: 8px;
+  color: var(--journal-ink);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  text-align: left;
+  line-height: 1.75;
+}

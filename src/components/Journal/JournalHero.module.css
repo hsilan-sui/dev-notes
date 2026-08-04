@@ -1,0 +1,8 @@
+.hero {
+  display: grid;
+  gap: var(--journal-hero-gap);
+  padding: var(--journal-hero-padding);
+  border-top: 1px solid var(--journal-border);
+  border-bottom: 1px solid var(--journal-border);
+  background: var(--journal-bg-card);
+}

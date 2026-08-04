@@ -1,0 +1,61 @@
+.button {
+  display: inline-grid;
+  min-width: 44px;
+  min-height: 44px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--journal-ink-secondary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: var(--journal-opacity-disabled-nav);
+}
+
+.circle {
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--journal-border);
+  border-radius: var(--journal-radius-pill);
+  transition:
+    border-color var(--journal-motion-hover-transition),
+    color var(--journal-motion-hover-transition);
+}
+
+.horizontal .circle {
+  width: var(--journal-nav-btn-horizontal);
+  height: var(--journal-nav-btn-horizontal);
+}
+
+.vertical .circle {
+  width: var(--journal-nav-btn-vertical);
+  height: var(--journal-nav-btn-vertical);
+}
+
+.horizontal .icon {
+  width: var(--journal-nav-icon-horizontal);
+  height: var(--journal-nav-icon-horizontal);
+}
+
+.vertical .icon {
+  width: var(--journal-nav-icon-vertical);
+  height: var(--journal-nav-icon-vertical);
+}
+
+.button:hover:not(:disabled),
+.button:focus-visible {
+  color: var(--journal-ink);
+}
+
+.button:hover:not(:disabled) .circle,
+.button:focus-visible .circle {
+  border-color: var(--journal-ink-secondary);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 3px;
+}

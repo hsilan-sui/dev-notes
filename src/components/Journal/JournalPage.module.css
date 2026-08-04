@@ -1,0 +1,15 @@
+.page {
+  overflow-x: hidden;
+  background: var(--journal-bg);
+  color: var(--journal-ink);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+}
+
+.liveRegion {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}

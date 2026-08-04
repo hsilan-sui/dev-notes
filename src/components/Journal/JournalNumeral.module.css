@@ -1,0 +1,67 @@
+.numeral {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  color: var(--journal-ink);
+}
+
+.day {
+  font-family: var(--journal-font-heading), Georgia, serif;
+  font-size: var(--journal-numeral-size);
+  font-weight: 300;
+  line-height: 0.9;
+}
+
+.monthColumn {
+  display: grid;
+  gap: 4px;
+  padding-top: 8px;
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+}
+
+.month {
+  color: var(--journal-ink);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.year {
+  color: var(--journal-ink-secondary);
+  font-size: 13px;
+}
+
+.pill {
+  justify-self: start;
+  border-radius: var(--journal-radius-pill);
+  background: var(--journal-accent-soft);
+  color: var(--journal-accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+}
+
+@media screen and (max-width: 596px) {
+  .numeral {
+    gap: 14px;
+  }
+
+  .monthColumn {
+    gap: 3px;
+    padding-top: 6px;
+  }
+
+  .month {
+    font-size: 13px;
+  }
+
+  .year {
+    font-size: 11px;
+  }
+
+  .pill {
+    font-size: 10px;
+    padding: 3px 9px;
+  }
+}

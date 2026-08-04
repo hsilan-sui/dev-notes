@@ -1,0 +1,57 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--journal-mini-header-padding);
+  background: var(--journal-bg);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+}
+
+.wordmark {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.eyebrow {
+  color: var(--journal-accent);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+
+.tagline {
+  color: var(--journal-ink-secondary);
+  font-size: 13px;
+}
+
+.caption {
+  margin: 0;
+  color: var(--journal-ink-secondary);
+  font-size: 12px;
+}
+
+@media screen and (max-width: 596px) {
+  .header {
+    display: grid;
+    justify-content: start;
+    gap: var(--journal-space-xs);
+  }
+
+  .wordmark {
+    gap: 8px;
+  }
+
+  .eyebrow {
+    font-size: 11.5px;
+    letter-spacing: 2.5px;
+  }
+
+  .tagline {
+    font-size: 11.5px;
+  }
+
+  .caption {
+    font-size: 11px;
+  }
+}

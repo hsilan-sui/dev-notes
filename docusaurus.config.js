@@ -16,6 +16,9 @@ const config = {
   title: "Sui｜Backend × Automation × AI", //網站標題（會出現在 <title>）
   tagline: "把技術筆記、作品脈絡與可 demo 專案整合成求職主站", //副標，出現在首頁
   favicon: "img/favicon.ico", // 網站小圖示 icon（建議 32x32）
+  stylesheets: [
+    "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&display=swap",
+  ],
 
   // Set the production url of your site here
   url: "https://hsilan-sui.github.io", // 網站的網域（部署後的網址）
@@ -107,6 +110,7 @@ const config = {
         items: [
           //導覽列按鈕
           { to: '/docs/MySQL/aggre-fns', label: '技術筆記', position: 'left' },
+          { to: '/blog', label: 'Journal', position: 'left' },
           {
             href: "https://github.com/hsilan-sui",
             label: "GitHub",

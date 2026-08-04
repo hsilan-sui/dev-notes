@@ -1,0 +1,87 @@
+.content {
+  display: grid;
+  justify-items: center;
+  gap: var(--journal-content-gap);
+  padding: var(--journal-content-padding);
+  background: var(--journal-bg);
+}
+
+.sameDayControl {
+  display: grid;
+  justify-items: center;
+  gap: var(--journal-same-day-gap);
+}
+
+.sameDayCaption,
+.navCaption {
+  margin: 0;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  text-align: center;
+}
+
+.sameDayCaption {
+  font-size: 12px;
+}
+
+.navCaption {
+  font-size: 13px;
+}
+
+.cardRow {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, var(--journal-card-max-width)) auto;
+  gap: var(--journal-nav-row-gap);
+  align-items: center;
+  justify-content: center;
+}
+
+.cardShell {
+  width: 100%;
+  grid-column: 2;
+  animation: journal-card-in var(--journal-motion-duration-card-in) var(--journal-motion-ease) both;
+}
+
+@keyframes journal-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--journal-motion-translate-card) * -1));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media screen and (max-width: 596px) {
+  .cardRow {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .sameDayCaption {
+    font-size: 11px;
+  }
+
+  .navCaption {
+    font-size: 11.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardShell {
+    animation-duration: 150ms;
+    animation-name: journal-card-reduced;
+  }
+
+  @keyframes journal-card-reduced {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}
