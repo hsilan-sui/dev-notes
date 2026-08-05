@@ -21,6 +21,18 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
             <category>Docusaurus</category>
         </item>
         <item>
+            <title><![CDATA[Journal Density QA Fixture 02]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
+            <category>Docusaurus</category>
+        </item>
+        <item>
             <title><![CDATA[Journal Density QA Fixture 03]]></title>
             <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</link>
             <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</guid>
@@ -36,18 +48,6 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
             <title><![CDATA[Journal Density QA Fixture 04]]></title>
             <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-04</link>
             <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-04</guid>
-            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
-            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
-            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
-It is not a real journal entry, essay, poem, or site-owner writing.</p>
-<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
-Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
-            <category>Docusaurus</category>
-        </item>
-        <item>
-            <title><![CDATA[Journal Density QA Fixture 02]]></title>
-            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02</link>
-            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02</guid>
             <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
             <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
             <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
