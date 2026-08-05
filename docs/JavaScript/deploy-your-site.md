@@ -2,6 +2,8 @@
 sidebar_position: 5
 ---
 
+> 預估閱讀時間：約 1 分鐘
+
 # Deploy your site
 
 Docusaurus is a **static-site-generator** (also called **[Jamstack](https://jamstack.org/)**).

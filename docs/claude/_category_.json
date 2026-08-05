@@ -1,0 +1,10 @@
+{
+  "label": "Claude",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "slug": "/claude",
+    "title": "Claude 學習筆記",
+    "description": "整理 Anthropic 官方課程、Claude Code、Skills、Hooks、Subagents 與 AI Agent 協作開發流程。"
+  }
+}

@@ -3,6 +3,8 @@ title: "【GROUP BY 觀念釐清】分組 → 計算 → 組合結果"
 sidebar_position: 3
 ---
 
+> 預估閱讀時間：約 2 分鐘
+
 ## 本篇觀念
 
 `GROUP BY` 不只是「把資料分組」。

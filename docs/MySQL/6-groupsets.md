@@ -3,6 +3,8 @@ title: "【GROUPING SETS】一次完成多種分組統計"
 sidebar_position: 6
 ---
 
+> 預估閱讀時間：約 2 分鐘
+
 ## 本篇觀念要點
 
 當我們想從同一張資料表，同時看到：

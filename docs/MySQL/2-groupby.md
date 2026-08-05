@@ -3,6 +3,8 @@ title: "【GROUP BY 分組】先分類，再對每組分別統計"
 sidebar_position: 2
 ---
 
+> 預估閱讀時間：約 5 分鐘
+
 ## 本篇觀念要點
 
 聚合函式可以計算整份資料的 `SUM` 總和、`AVG` 平均與 `COUNT` 筆數。

@@ -114,7 +114,7 @@ const config = {
         },
         items: [
           //導覽列按鈕
-          { to: '/docs/MySQL/aggre-fns', label: 'PLAYBOOK', position: 'left' },
+          { to: '/docs/claude/intro', label: 'PLAYBOOK', position: 'left' },
           // 意識潮尚未寫夠內容，先隱藏這個導覽列連結，準備好之後把下面這行取消註解即可
           // { to: '/my-tide', label: '意識潮 | My Tide', position: 'left' },
           {

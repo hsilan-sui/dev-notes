@@ -166,14 +166,14 @@ body {
     text-shadow 220ms ease;
 }
 
-.navbar__link[href*='/docs/MySQL/aggre-fns'] {
+.navbar__link[href*='/docs/claude/intro'] {
   position: relative;
   color: transparent;
   overflow: hidden;
 }
 
-.navbar__link[href*='/docs/MySQL/aggre-fns']::before,
-.navbar__link[href*='/docs/MySQL/aggre-fns']::after {
+.navbar__link[href*='/docs/claude/intro']::before,
+.navbar__link[href*='/docs/claude/intro']::after {
   position: absolute;
   top: 50%;
   color: var(--ifm-menu-color);
@@ -184,24 +184,24 @@ body {
     transform 260ms var(--ifm-transition-timing-default);
 }
 
-.navbar__link[href*='/docs/MySQL/aggre-fns']::before {
+.navbar__link[href*='/docs/claude/intro']::before {
   left: var(--ifm-navbar-item-padding-horizontal);
   content: 'PLAY';
 }
 
-.navbar__link[href*='/docs/MySQL/aggre-fns']::after {
+.navbar__link[href*='/docs/claude/intro']::after {
   right: var(--ifm-navbar-item-padding-horizontal);
   content: 'BOOK';
 }
 
-.navbar__link[href*='/docs/MySQL/aggre-fns']:hover::before,
-.navbar__link[href*='/docs/MySQL/aggre-fns']:focus-visible::before {
+.navbar__link[href*='/docs/claude/intro']:hover::before,
+.navbar__link[href*='/docs/claude/intro']:focus-visible::before {
   color: var(--ifm-color-primary);
   animation: navbar-playbook-play-spin 560ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-.navbar__link[href*='/docs/MySQL/aggre-fns']:hover::after,
-.navbar__link[href*='/docs/MySQL/aggre-fns']:focus-visible::after {
+.navbar__link[href*='/docs/claude/intro']:hover::after,
+.navbar__link[href*='/docs/claude/intro']:focus-visible::after {
   color: var(--ifm-color-primary);
   animation: navbar-playbook-book-shake 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   animation-delay: 140ms;
@@ -260,21 +260,21 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:hover::before,
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:focus-visible::before,
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:hover::after,
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:focus-visible::after {
+  .navbar__link[href*='/docs/claude/intro']:hover::before,
+  .navbar__link[href*='/docs/claude/intro']:focus-visible::before,
+  .navbar__link[href*='/docs/claude/intro']:hover::after,
+  .navbar__link[href*='/docs/claude/intro']:focus-visible::after {
     animation: none;
   }
 
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:hover::before,
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:focus-visible::before {
+  .navbar__link[href*='/docs/claude/intro']:hover::before,
+  .navbar__link[href*='/docs/claude/intro']:focus-visible::before {
     color: var(--ifm-color-primary);
     transform: translateY(calc(-50% - 4px));
   }
 
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:hover::after,
-  .navbar__link[href*='/docs/MySQL/aggre-fns']:focus-visible::after {
+  .navbar__link[href*='/docs/claude/intro']:hover::after,
+  .navbar__link[href*='/docs/claude/intro']:focus-visible::after {
     color: var(--ifm-color-primary);
     transform: translateY(calc(-50% + 4px));
   }
