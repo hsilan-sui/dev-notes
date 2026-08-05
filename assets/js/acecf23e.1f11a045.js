@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunksui_dev_notes=globalThis.webpackChunksui_dev_notes||[]).push([[1903],{79531(e){e.exports=JSON.parse('{"blogBasePath":"/dev-notes/my-tide","blogTitle":"\u610f\u8b58\u6f6e | My Tide","authorsListPath":"/dev-notes/my-tide/authors"}')}}]);
