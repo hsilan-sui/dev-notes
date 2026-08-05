@@ -4,8 +4,6 @@ import Icon from '../Icon';
 import sharedStyles from '../styles.module.css';
 import styles from './styles.module.css';
 
-const chips = ['軟體工程師'];
-
 export default function PortfolioHero() {
   const profileImage = useBaseUrl('/img/me.png');
 
@@ -14,7 +12,7 @@ export default function PortfolioHero() {
       <div className={sharedStyles.container}>
         <div className={styles.layout}>
           <div className={styles.copy}>
-            <p className={styles.eyebrow}>軟體工程師</p>
+            <p className={styles.eyebrow}></p>
             <h1 className={styles.headline}>喜歡拆解繁複的流程，
             把資料、裝置與外部服務整理成容易使用與維護的服務。</h1>
             <p className={styles.intro}>
@@ -41,20 +39,13 @@ export default function PortfolioHero() {
                 GitHub
               </Link>
             </div>
-            <ul className={styles.chips} aria-label="核心能力">
-              {chips.map((chip) => (
-                <li className={styles.chip} key={chip}>
-                  {chip}
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div className={styles.identity}>
             <img className={styles.avatar} src={profileImage} alt="游方箏Sui" />
             <div className={styles.identityText}>
               <p className={styles.name}>游方箏 | Sui</p>
-              <p className={styles.role}>Python / Node.js</p>
+              <p className={styles.role}>軟體工程師</p>
             </div>
           </div>
         </div>

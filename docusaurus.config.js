@@ -70,6 +70,7 @@ const config = {
             "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: {
+          routeBasePath: "my-tide",
           blogTitle: "意識潮 | My Tide",
           blogDescription: "詩、散文、旅行、生活與時間的潮汐片段",
           showReadingTime: true, // 顯示閱讀時間
@@ -113,8 +114,9 @@ const config = {
         },
         items: [
           //導覽列按鈕
-          { to: '/docs/MySQL/aggre-fns', label: '技術筆記', position: 'left' },
-          { to: '/blog', label: '意識潮 | My Tide', position: 'left' },
+          { to: '/docs/MySQL/aggre-fns', label: 'PLAYBOOK', position: 'left' },
+          // 意識潮尚未寫夠內容，先隱藏這個導覽列連結，準備好之後把下面這行取消註解即可
+          // { to: '/my-tide', label: '意識潮 | My Tide', position: 'left' },
           {
             href: "https://github.com/hsilan-sui",
             label: "GitHub",

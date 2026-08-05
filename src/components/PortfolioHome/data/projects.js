@@ -45,7 +45,7 @@ export const projects = [
       'Leaflet',
       '資料清理',
       '地理資訊',
-      'OPEN_DATA資料',
+      'OPEN DATA',
     ],
     media: {
       type: 'screenshot',
@@ -70,10 +70,10 @@ export const projects = [
         label: 'GitHub',
         href: 'https://github.com/hsilan-sui/counseling-map',
       },
-      {
-        label: '透過 LINE_OA 互動體驗',
-        href: 'https://line.me/R/ti/p/@998enzsc',
-      },
+      // {
+      //   label: '透過 LINE_OA 互動體驗',
+      //   href: 'https://line.me/R/ti/p/@998enzsc',
+      // },
     ],
   },
   {
@@ -117,8 +117,8 @@ export const projects = [
     id: 'line-oa-portfolio',
     tier: 'selected',
     name: 'LINE OA 互動作品集',
-    problem: '需求：專案分散在多個連結，整合之前的流程，以LINE BOT作為快速看專案測試的小窗口。',
-    solution: '我怎麼做：把專案導覽與可操作 Demo 整合進 LINE 對話入口，可以直接互動查看。',
+    problem: '需求：我的專案分散在不同網站、Demo 與 GitHub 儲存庫中，之前DEMO發生專案連線斷線，所以我想到就整合在一個窗口來展示。',
+    solution: '我怎麼做：以 LINE OA 作為統一入口，整合專案導覽、互動 Demo 與服務查詢，讓使用者能直接在對話介面中查看並操作專案。',
     tags: ['FastAPI', 'LINE Messaging API', 'Webhook', 'Redis', 'Queue / Worker'],
     media: {
       type: 'video',
@@ -135,7 +135,7 @@ export const projects = [
         label: 'GitHub',
         to: 'https://github.com/hsilan-sui/line_resume_fastapi',
       },
-      {label: '立即體驗', href: 'https://line.me/R/ti/p/@998enzsc'},
+      // {label: '立即體驗', href: 'https://line.me/R/ti/p/@998enzsc'},
     ],
   },
   {
