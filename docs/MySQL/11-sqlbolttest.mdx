@@ -1,0 +1,125 @@
+---
+title: "【SQL 聚合查詢】情境題：區分何時用HAVING？"
+sidebar_position: 11
+---
+
+> 預估閱讀時間：約 4 分鐘
+
+沿用前一篇筆記 `employees 表`，一定要先 `GROUP BY`，再用 `HAVING`篩分組結果的情境題。
+
+### employees 表
+
+| role     | name       | building | years_employed |
+| -------- | ---------- | -------- | -------------: |
+| Engineer | Becky A.   | 1e       |              4 |
+| Engineer | Dan B.     | 1e       |              2 |
+| Engineer | Sharon F.  | 1e       |              6 |
+| Engineer | Dan M.     | 1e       |              4 |
+| Engineer | Malcom S.  | 1e       |              1 |
+| Artist   | Tylar S.   | 2w       |              2 |
+| Artist   | Sherman D. | 2w       |              8 |
+| Artist   | Jakob J.   | 2w       |              6 |
+| Artist   | Lillia A.  | 2w       |              7 |
+| Artist   | Brandon J. | 2w       |              7 |
+
+
+### 提示：SQL的執行順序
+
+```
+FROM employees
+↓
+WHERE
+先留下 years_employed >= 3 的員工
+↓
+GROUP BY
+按照 role 分組
+↓
+Aggregate
+計算每組有幾個人
+↓
+HAVING
+只留下人數 >= 3 的組
+↓
+SELECT
+顯示 role 與人數
+```
+
+### 題目 1：篩選人數較多的 Role
+
+> 找出「員工人數至少 4 人」的 Role，並顯示該 Role 與員工人數。
+
+HINT:按照這個順序想：
+
+```text
+FROM
+↓
+WHERE
+↓
+GROUP BY
+↓
+Aggregate
+↓
+HAVING
+↓
+SELECT
+```
+
+先不要寫 SQL，先想 4 個問題：
+
+```text
+1. 要用什麼欄位分組？
+
+2. 每一組要算什麼？
+
+3. HAVING 要篩選什麼條件？
+
+4. SELECT最後顯示什麼？(最後每一組，我要顯示「組別名稱」＋「這組算出來的什麼結果」？)
+```
+
+
+> 解題：
+```sql
+SELECT role, AVG(years_employed) AS 員工數量
+FROM employees
+GROUP BY role
+HAVING AVG(years_employed) >= 5;
+```
+
+---
+
+### 題目 2：篩選平均年資較高的 Role
+
+> 找出「平均工作年資大於 5 年」的 Role，並顯示 Role 與平均工作年資。
+
+一樣先按照執行流程想：
+
+```text
+FROM employees
+↓
+WHERE
+需要先篩 Row 嗎？
+↓
+GROUP BY
+按照誰分組？
+↓
+Aggregate
+每組算什麼？
+↓
+HAVING
+哪些 Group 要留下？
+↓
+SELECT
+最後顯示什麼？(最後每一組，我要顯示「組別名稱」＋「這組算出來的什麼結果」？)
+```
+
+
+> 解題：
+```sql
+select role ,  Avg(yearSELECT role, AVG(years_employed) AS 平均年資
+FROM employees
+GROUP BY role
+HAVING AVG(years_employed) >= 5;s_employed)  AS 平均年資 FROM  employees group by role having Avg(years_employed) >= 5;
+```
+
+
+

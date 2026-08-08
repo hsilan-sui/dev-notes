@@ -1,0 +1,1623 @@
+---
+title: "【SQL 聚合查詢】參考：SQLBolt Lesson 10(解題練習)"
+sidebar_position: 9
+---
+
+> 預估閱讀時間：約 6 分鐘
+
+本文參考：[SQLBolt Lesson 10 — Queries with Aggregates Pt. 1](https://sqlbolt.com/lesson/select_queries_with_aggregates)
+
+- 以下Aggregate Functions 也可以叫聚合函式
+- SQLBolt網站的觀念協助我釐清聚合與GROUP BY的使用
+
+## 本篇觀念要點
+
+SQL 的 Aggregate Functions(聚合函式) 可以把多筆資料整理成統計結果；
+如果搭配 `GROUP BY`，就可以先把資料分組，再對每一組分別計算。
+
+1. [什麼是 Aggregate Functions](#aggregate)
+2. [常見的聚合函式](#aggregate-functions)
+3. [沒有 GROUP BY 的聚合](#without-group-by)
+4. [使用 GROUP BY 分組統計](#group-by)
+5. [如何判斷要不要 GROUP BY](#how-to-decide)
+6. [SQLBolt Exercise 10](#exercise)
+7. [常見錯誤](#common-mistakes)
+
+:::info 這堂課的主線
+
+多筆資料 → 決定要計算什麼 → 使用 Aggregate Function → 如果題目要求「每一個」就先 `GROUP BY` → 每一組各自產生統計結果
+
+:::
+
+---
+
+## 什麼是 Aggregate Functions {#aggregate}
+
+前面使用 `SELECT` 時，我通常是在找：
+
+> 哪些資料列符合條件？
+
+例如：
+
+```sql
+SELECT *
+FROM employees
+WHERE building = '1e';
+```
+
+這個查詢會把符合條件的員工一筆一筆列出來。
+
+但有些問題不是想知道「有哪些資料」，而是想知道：
+
+```text
+總共有幾筆？
+最大是多少？
+最小是多少？
+平均是多少？
+全部加起來是多少？
+```
+
+這時就會使用：
+
+```text
+Aggregate Functions
+聚合函式
+```
+
+例如：
+
+```sql
+SELECT MAX(years_employed)
+FROM employees;
+```
+
+這裡不是要找出每一位員工。
+
+而是在問：
+
+> 所有員工裡，最大的 `years_employed` 是多少？
+
+### Mental Model
+
+假設資料是：
+
+```text
+4
+2
+6
+4
+1
+```
+
+執行：
+
+```sql
+MAX(years_employed)
+```
+
+可以理解成：
+
+```text
+4
+2
+6
+4
+1
+ ↓
+MAX
+ ↓
+6
+```
+
+也就是：
+
+> 多筆資料 → 經過聚合函式 → 變成一個統計結果。
+
+:::tip 重點
+
+Aggregate Function聚合函式 關心的不是「某一筆資料是什麼」，而是：
+
+> **這一批資料統計起來是多少？**
+
+:::
+
+---
+
+## 常見的聚合函式 {#aggregate-functions}
+
+SQL 常見的 Aggregate Functions 有：
+
+| Function        | 用途                  |
+| --------------- | ------------------- |
+| `COUNT(*)`      | 計算資料共有幾列            |
+| `COUNT(column)` | 計算欄位中非 `NULL` 的資料數量 |
+| `MIN(column)`   | 找出最小值               |
+| `MAX(column)`   | 找出最大值               |
+| `AVG(column)`   | 計算平均值               |
+| `SUM(column)`   | 計算總和                |
+
+---
+
+### COUNT
+
+如果我要知道：
+
+> employees 總共有多少筆資料？
+
+可以使用：
+
+```sql
+SELECT COUNT(*)
+FROM employees;
+```
+
+`COUNT(*)` 計算的是：
+
+```text
+資料列數量
+```
+
+---
+
+### COUNT column
+:::danger
+也可以寫：
+
+```sql
+SELECT COUNT(building)
+FROM employees;
+```
+
+但它和：
+
+```sql
+COUNT(*)
+```
+
+有一個重要差異。
+
+`COUNT(column)` 不會計算 `NULL`。
+
+例如：
+
+| name   | building |
+| ------ | -------- |
+| Becky  | 1e       |
+| Dan    | 1e       |
+| Sharon | NULL     |
+
+那麼：
+
+```sql
+COUNT(*)
+```
+
+結果是：`3`筆資料
+
+但：
+
+```sql
+COUNT(building)
+```
+
+結果只會算是：`2`筆資料
+
+<Highlight>因為 `NULL` 不會被計算。</Highlight>
+:::
+---
+
+### MIN 與 MAX
+
+找最小值：
+
+```sql
+SELECT MIN(years_employed)
+FROM employees;
+```
+
+找最大值：
+
+```sql
+SELECT MAX(years_employed)
+FROM employees;
+```
+
+例如：
+
+```text
+4
+2
+6
+4
+1
+```
+
+執行：
+
+```text
+MIN → 1
+MAX → 6
+```
+
+---
+
+### AVG
+
+計算平均值：
+
+```sql
+SELECT AVG(years_employed)
+FROM employees;
+```
+
+概念就是：
+
+```text
+所有年資加總
+÷
+員工數量
+```
+
+---
+
+### SUM
+
+計算全部數值的總和：
+
+```sql
+SELECT SUM(years_employed)
+FROM employees;
+```
+
+例如：
+
+```text
+4 + 2 + 6 + 4 + 1
+```
+
+結果：
+
+```text
+17
+```
+
+---
+
+## 沒有 GROUP BY 的聚合 {#without-group-by}
+
+如果 Aggregate Function 沒有搭配：
+
+```sql
+GROUP BY
+```
+
+SQL 會把目前所有資料當成：
+
+> 同一整組資料。
+
+例如：
+
+```sql
+SELECT MAX(years_employed)
+FROM employees;
+```
+
+假設 employees 有：
+
+| name   | years_employed |
+| ------ | -------------: |
+| Becky  |              4 |
+| Dan    |              2 |
+| Sharon |              6 |
+| Malcom |              1 |
+
+SQL 可以理解成：
+
+```text
+全部 employees
+       ↓
+4  2  6  1
+       ↓
+      MAX
+       ↓
+       6
+```
+
+最後只會得到：
+
+| max |
+| --: |
+|   6 |
+
+也就是：
+
+> 沒有 `GROUP BY` 時，整批資料一起算一次。
+
+---
+
+### 再看一個例子
+
+```sql
+SELECT AVG(years_employed)
+FROM employees;
+```
+
+這代表：
+
+> 計算所有員工的平均年資。
+
+不是：
+
+```text
+Engineer 平均
+Artist 平均
+Manager 平均
+```
+
+而是：
+
+```text
+所有員工
+   ↓
+一起計算 AVG
+   ↓
+一個答案
+```
+
+:::tip 判斷方式
+
+如果題目只問：
+
+> 全部資料的最大、最小、平均、數量或總和是多少？
+
+通常不需要 `GROUP BY`。
+
+:::
+
+---
+
+## 使用 GROUP BY 分組統計 {#group-by}
+
+有時候題目不是要：
+
+> 所有員工平均年資。
+
+而是：
+
+> 每一種 Role 的平均年資。
+
+這時候就不能把全部員工混在一起算。
+
+我要先按照：
+
+```text
+role
+```
+
+把資料分組。
+
+例如：
+
+| role     | name    | years_employed |
+| -------- | ------- | -------------: |
+| Engineer | Becky   |              4 |
+| Engineer | Dan     |              2 |
+| Engineer | Sharon  |              6 |
+| Artist   | Tylar   |              2 |
+| Artist   | Sherman |              8 |
+
+使用：
+
+```sql
+GROUP BY role
+```
+
+資料可以想像成：
+
+```text
+Engineer
+├─ Becky   4
+├─ Dan     2
+└─ Sharon  6
+
+Artist
+├─ Tylar   2
+└─ Sherman 8
+```
+
+接著：
+
+```sql
+AVG(years_employed)
+```
+
+不是執行一次。
+
+而是：
+
+```text
+Engineer
+4 + 2 + 6
+    ↓
+   AVG
+    ↓
+    4
+
+
+Artist
+2 + 8
+  ↓
+ AVG
+  ↓
+  5
+```
+
+因此：
+
+```sql
+SELECT role, AVG(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+結果會像：
+
+| role     | avg_years |
+| -------- | --------: |
+| Engineer |         4 |
+| Artist   |         5 |
+
+---
+
+### GROUP BY 在做什麼？
+
+`GROUP BY` 的工作可以先簡單記成：
+
+> 把相同值的資料放到同一組。
+
+例如：
+
+```sql
+GROUP BY role
+```
+
+代表：
+
+```text
+相同 role
+放在同一組
+```
+
+所以：
+
+```text
+Engineer → 一組
+Artist   → 一組
+Manager  → 一組
+```
+
+接著 Aggregate Function 才會對：
+
+> 每一組
+
+各算一次。
+
+---
+
+### Mental Model
+
+```text
+employees
+    ↓
+GROUP BY role
+    ↓
+Engineer
+Artist
+Manager
+    ↓
+每一組執行 AVG
+    ↓
+Engineer AVG
+Artist AVG
+Manager AVG
+```
+
+所以：
+
+```sql
+SELECT role, AVG(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+我可以直接讀成：
+
+> 先按照 `role` 把員工分組，再分別計算每一種 Role 的平均工作年資。
+
+:::info 最重要的觀念
+
+`GROUP BY` 決定：
+
+> **誰跟誰是一組。**
+
+Aggregate Function 決定：
+
+> **每一組要算什麼。**
+
+:::
+
+---
+
+## 如何判斷要不要 GROUP BY {#how-to-decide}
+
+看到 Aggregate 題目時，我可以先不要急著寫 SQL。
+
+先問兩個問題。
+
+---
+
+### 問題一：我要算什麼？
+
+例如題目說：
+
+> 找出最長工作年資。
+
+我要找：
+
+```text
+最大值
+```
+
+所以想到：
+
+```sql
+MAX()
+```
+
+---
+
+題目說：
+
+> 計算平均工作年資。
+
+我要找：
+
+```text
+平均
+```
+
+所以想到：
+
+```sql
+AVG()
+```
+
+---
+
+題目說：
+
+> 總共有多少員工？
+
+我要找：
+
+```text
+數量
+```
+
+所以想到：
+
+```sql
+COUNT()
+```
+
+---
+
+題目說：
+
+> 所有工作年資加起來。
+
+我要找：
+
+```text
+總和
+```
+
+所以想到：
+
+```sql
+SUM()
+```
+
+---
+
+### 問題二：我要「每個誰」各算一次？
+
+這是判斷 `GROUP BY` 最重要的一步。
+
+例如：
+
+> 每一種 Role 的平均年資。
+
+看到：
+
+```text
+每一種 Role
+```
+
+代表：
+
+```sql
+GROUP BY role
+```
+
+---
+
+例如：
+
+> 每一棟 Building 的總工作年資。
+
+看到：
+
+```text
+每一棟 Building
+```
+
+代表：
+
+```sql
+GROUP BY building
+```
+
+---
+
+例如：
+
+> 每個 Department 有多少員工？
+
+看到：
+
+```text
+每個 Department
+```
+
+代表：
+
+```sql
+GROUP BY department
+```
+
+---
+
+### 我的判斷流程
+
+```text
+題目
+ ↓
+要算什麼？
+ ↓
+COUNT MAX MIN AVG SUM
+ ↓
+有沒有「每個誰」？
+ ↓
+沒有 → 全部資料一起算
+有   → GROUP BY 那個欄位
+```
+
+---
+
+### 對比
+
+題目：
+
+```text
+所有員工的平均年資
+```
+
+只有一個答案：
+
+```text
+全部 employees
+      ↓
+     AVG
+      ↓
+一個結果
+```
+
+所以：
+
+```sql
+SELECT AVG(years_employed)
+FROM employees;
+```
+
+---
+
+題目：
+
+```text
+每一種 Role 的平均年資
+```
+
+會有很多答案：
+
+```text
+Engineer → AVG
+Artist   → AVG
+Manager  → AVG
+```
+
+所以：
+
+```sql
+SELECT role, AVG(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+---
+
+## SQLBolt Exercise 10 {#exercise}
+
+這一課使用：
+
+```text
+employees
+```
+
+資料表。
+
+| role     | name       | building | years_employed |
+| -------- | ---------- | -------- | -------------: |
+| Engineer | Becky A.   | 1e       |              4 |
+| Engineer | Dan B.     | 1e       |              2 |
+| Engineer | Sharon F.  | 1e       |              6 |
+| Engineer | Dan M.     | 1e       |              4 |
+| Engineer | Malcom S.  | 1e       |              1 |
+| Artist   | Tylar S.   | 2w       |              2 |
+| Artist   | Sherman D. | 2w       |              8 |
+| Artist   | Jakob J.   | 2w       |              6 |
+| Artist   | Lillia A.  | 2w       |              7 |
+| Artist   | Brandon J. | 2w       |              7 |
+| Manager  | Scott K.   | 1e       |              9 |
+| Manager  | Shirlee M. | 1e       |              3 |
+| Manager  | Daria O.   | 2w       |              6 |
+
+---
+
+### Exercise 1
+
+題目：
+
+> 找出一名員工在工作室任職過的最長時間。
+
+先問：
+
+```text
+我要算什麼？
+```
+
+答案：
+
+```text
+最大年資
+```
+
+所以：
+
+```sql
+MAX(years_employed)
+```
+
+再問：
+
+```text
+有沒有「每個誰」？
+```
+
+沒有。
+
+所以全部員工一起計算。
+
+```sql
+SELECT MAX(years_employed)
+FROM employees;
+```
+
+Mental Model：
+
+```text
+所有員工
+   ↓
+years_employed
+   ↓
+MAX
+   ↓
+最長年資
+```
+
+---
+
+---
+
+### Exercise 2
+
+題目：
+
+> 對每一種 Role，找出該職位員工的平均工作年資。
+
+這題我不要先從：
+
+```sql
+AVG(years_employed)
+```
+
+開始想。
+
+而是按照 SQL 的執行流程，一步一步處理。
+
+### Step 1：FROM — 資料從哪裡來？
+
+題目使用的是：
+
+```text
+employees
+```
+
+所以先確定：
+
+```sql
+FROM employees
+```
+
+目前我手上的資料是：
+
+```text
+employees 全部員工資料
+```
+
+---
+
+### Step 2：WHERE — 有沒有要先篩選資料？
+
+題目沒有說：
+
+```text
+只看 Engineer
+只看某棟 Building
+只看工作超過 5 年的人
+```
+
+所以這題：
+
+```text
+不需要 WHERE
+```
+
+所有員工都保留下來。
+
+---
+
+### Step 3：GROUP BY — 哪些資料要放在同一組？
+
+題目說：
+
+> 對「每一種 Role」計算。
+
+關鍵是：
+
+```text
+每一種 Role
+```
+
+所以我要按照：
+
+```sql
+GROUP BY role
+```
+
+把相同 `role` 的員工放在一起。
+
+資料會從：
+
+```text
+employees
+```
+
+變成：
+
+```text
+Engineer
+├─ Becky
+├─ Dan
+├─ Sharon
+├─ Dan
+└─ Malcom
+
+Artist
+├─ Tylar
+├─ Sherman
+├─ Jakob
+├─ Lillia
+└─ Brandon
+
+Manager
+├─ Scott
+├─ Shirlee
+└─ Daria
+```
+
+---
+
+### Step 4：SELECT — 每一組最後要算什麼？
+
+現在資料已經按照：
+
+```sql
+GROUP BY role
+```
+
+分好了。
+
+題目要的是：
+
+> 每一種 Role 的平均工作年資。
+
+所以每一組都執行：
+
+```sql
+AVG(years_employed)
+```
+
+最後輸出：
+
+```sql
+SELECT role, AVG(years_employed)
+```
+
+---
+
+### 完整查詢
+
+```sql
+SELECT role, AVG(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+### Mental Model
+
+```text
+FROM employees
+      ↓
+取得所有員工
+      ↓
+WHERE
+沒有篩選條件
+      ↓
+GROUP BY role
+      ↓
+Engineer
+Artist
+Manager
+      ↓
+每一組計算 AVG years_employed
+      ↓
+SELECT role 與平均年資
+```
+
+我可以把這題讀成：
+
+> 先從 `employees` 取得資料，沒有需要篩選的條件，所以直接按照 `role` 分組，最後計算每一組的平均工作年資。
+
+---
+
+### Exercise 3
+
+題目：
+
+> 找出每一棟 Building 中，所有員工累積工作的總年資。
+
+一樣按照 SQL 執行流程思考。
+
+### Step 1：FROM — 資料從哪裡來？
+
+資料來源：
+
+```sql
+FROM employees
+```
+
+目前取得：
+
+```text
+所有員工資料
+```
+
+---
+
+### Step 2：WHERE — 要不要先篩選？
+
+題目沒有指定：
+
+```text
+特定 Role
+特定 Building
+特定工作年資
+```
+
+所以：
+
+```text
+不需要 WHERE
+```
+
+---
+
+### Step 3：GROUP BY — 哪些資料要放在同一組？
+
+題目說：
+
+> 每一棟 Building
+
+所以分組依據是：
+
+```sql
+GROUP BY building
+```
+
+原本所有員工會被整理成：
+
+```text
+Building 1e
+├─ Becky
+├─ Dan
+├─ Sharon
+├─ Dan
+├─ Malcom
+├─ Scott
+└─ Shirlee
+
+Building 2w
+├─ Tylar
+├─ Sherman
+├─ Jakob
+├─ Lillia
+├─ Brandon
+└─ Daria
+```
+
+---
+
+### Step 4：SELECT — 每一組最後要算什麼？
+
+題目要：
+
+> 所有員工累積工作的總年資。
+
+所以對每一個 Building 執行：
+
+```sql
+SUM(years_employed)
+```
+
+最後輸出：
+
+```sql
+SELECT building, SUM(years_employed)
+```
+
+---
+
+### 完整查詢
+
+```sql
+SELECT building, SUM(years_employed)
+FROM employees
+GROUP BY building;
+```
+
+### Mental Model
+
+```text
+FROM employees
+      ↓
+取得所有員工
+      ↓
+WHERE
+沒有篩選條件
+      ↓
+GROUP BY building
+      ↓
+1e
+2w
+      ↓
+每一組計算 SUM years_employed
+      ↓
+SELECT building 與總年資
+```
+
+我可以把這題讀成：
+
+> 先從 `employees` 取得資料，沒有需要篩選，所以按照 `building` 分組，最後把每一棟 Building 裡的 `years_employed` 加總。
+
+---
+
+## 三種題型比較 {#comparison}
+
+比起只看 Aggregate Function，我現在可以直接按照：
+
+```text
+FROM
+↓
+WHERE
+↓
+GROUP BY
+↓
+SELECT Aggregate
+```
+
+來分析題目。
+
+---
+
+### 1. 全部資料算一次
+
+題目：
+
+> 找出全公司最長年資。
+
+#### FROM
+
+```sql
+FROM employees
+```
+
+取得所有員工。
+
+#### WHERE
+
+沒有篩選條件。
+
+#### GROUP BY
+
+題目沒有說：
+
+```text
+每個 Role
+每棟 Building
+每個 Department
+```
+
+所以：
+
+```text
+不需要 GROUP BY
+```
+
+#### SELECT
+
+所有資料直接一起計算：
+
+```sql
+MAX(years_employed)
+```
+
+完整 SQL：
+
+```sql
+SELECT MAX(years_employed)
+FROM employees;
+```
+
+Mental Model：
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+沒有 WHERE
+      ↓
+沒有 GROUP BY
+      ↓
+全部一起 MAX
+      ↓
+一個結果
+```
+
+---
+
+### 2. 每一組計算平均
+
+題目：
+
+> 每種 Role 的平均年資。
+
+流程：
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+沒有 WHERE
+      ↓
+GROUP BY role
+      ↓
+Engineer
+Artist
+Manager
+      ↓
+每組 AVG years_employed
+```
+
+SQL：
+
+```sql
+SELECT role, AVG(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+---
+
+### 3. 每一組計算總和
+
+題目：
+
+> 每棟 Building 的總年資。
+
+流程：
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+沒有 WHERE
+      ↓
+GROUP BY building
+      ↓
+1e
+2w
+      ↓
+每組 SUM years_employed
+```
+
+SQL：
+
+```sql
+SELECT building, SUM(years_employed)
+FROM employees
+GROUP BY building;
+```
+
+---
+
+## 寫法比較表
+
+| 題目                 | FROM        | WHERE | GROUP BY     | 最後計算                  |
+| ------------------ | ----------- | ----- | ------------ | --------------------- |
+| 全公司有多少員工           | `employees` | 無     | 無            | `COUNT(*)`            |
+| 全公司最長年資            | `employees` | 無     | 無            | `MAX(years_employed)` |
+| 全公司平均年資            | `employees` | 無     | 無            | `AVG(years_employed)` |
+| 每種 Role 的平均年資      | `employees` | 無     | `role`       | `AVG(years_employed)` |
+| 每棟 Building 的總年資   | `employees` | 無     | `building`   | `SUM(years_employed)` |
+| 每個 Department 的員工數 | `employees` | 無     | `department` | `COUNT(*)`            |
+
+---
+
+## 常見錯誤 {#common-mistakes}
+
+### 錯誤 1：看到平均，就直接從 AVG 開始想
+
+例如題目：
+
+> 每種 Role 的平均年資。
+
+如果我第一個念頭只是：
+
+```sql
+AVG(years_employed)
+```
+
+很容易漏掉：
+
+```text
+每種 Role
+```
+
+真正比較穩定的思考方式是：
+
+```text
+FROM 哪張表？
+↓
+WHERE 要不要先篩？
+↓
+GROUP BY 要怎麼分組？
+↓
+最後每組算什麼？
+```
+
+所以這題應該是：
+
+```text
+FROM employees
+↓
+不需要 WHERE
+↓
+GROUP BY role
+↓
+AVG years_employed
+```
+
+---
+
+### 錯誤 2：看到 Aggregate 就認為一定需要 GROUP BY
+
+題目：
+
+> 找出所有員工最高年資。
+
+流程：
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+沒有 WHERE
+      ↓
+題目沒有要求「每個誰」
+      ↓
+不需要 GROUP BY
+      ↓
+全部一起 MAX
+```
+
+所以：
+
+```sql
+SELECT MAX(years_employed)
+FROM employees;
+```
+
+---
+
+### 錯誤 3：看到「每個」卻沒有 GROUP BY
+
+題目：
+
+> 每一種 Role 的平均年資。
+
+SQL 執行到：
+
+```text
+FROM employees
+```
+
+之後，目前還是一大堆員工資料。
+
+如果沒有：
+
+```sql
+GROUP BY role
+```
+
+SQL 就沒有把：
+
+```text
+Engineer
+Artist
+Manager
+```
+
+分開。
+
+那麼：
+
+```sql
+AVG(years_employed)
+```
+
+就會直接對所有員工一起計算。
+
+因此：
+
+```sql
+SELECT AVG(years_employed)
+FROM employees;
+```
+
+得到的是：
+
+> 全公司平均年資。
+
+而不是：
+
+> 每一種 Role 的平均年資。
+
+---
+
+### 錯誤 4：不知道 GROUP BY 到底在執行流程的哪一步
+
+`GROUP BY` 不是最後輸出的功能。
+
+它是在：
+
+```text
+FROM
+↓
+WHERE
+↓
+GROUP BY
+↓
+Aggregate
+```
+
+這個位置，把目前留下來的資料重新整理成不同群組。
+
+例如：
+
+```sql
+GROUP BY building
+```
+
+是在說：
+
+> 把目前資料中相同 `building` 的 Row 放到同一組。
+
+變成：
+
+```text
+1e
+├─ Becky
+├─ Dan
+├─ Sharon
+├─ Scott
+└─ Shirlee
+
+2w
+├─ Tylar
+├─ Sherman
+├─ Jakob
+├─ Lillia
+├─ Brandon
+└─ Daria
+```
+
+完成分組之後：
+
+```sql
+SUM(years_employed)
+```
+
+才會對：
+
+```text
+1e 這一組
+2w 這一組
+```
+
+分別執行。
+
+---
+
+### 錯誤 5：把 SQL 寫法順序和思考流程混在一起
+
+SQL 寫出來是：
+
+```sql
+SELECT role, AVG(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+但是我理解它時，不應該照文字從第一行往下執行。
+
+我的 Mental Model 應該是：
+
+```text
+FROM employees
+      ↓
+先取得資料
+      ↓
+WHERE
+先決定哪些 Row 留下
+      ↓
+GROUP BY role
+決定哪些 Row 是同一組
+      ↓
+AVG years_employed
+每一組進行計算
+      ↓
+SELECT
+決定最後看到哪些結果
+```
+
+:::tip 重點
+
+**SQL 的書寫順序，不等於 SQL 的邏輯執行順序。**
+
+寫：
+
+```text
+SELECT → FROM → WHERE → GROUP BY
+```
+
+但理解資料怎麼流動時，我要想：
+
+```text
+FROM → WHERE → GROUP BY → Aggregate → SELECT
+```
+
+:::
+
+---
+
+## 一句話總結
+
+之後看到 Aggregate 題目，我不再先問：
+
+```text
+我要用 COUNT、AVG 還是 SUM？
+```
+
+而是先讓資料按照 SQL 執行流程往下走：
+
+```text
+FROM
+資料從哪裡來？
+ ↓
+WHERE
+哪些 Row 要留下？
+ ↓
+GROUP BY
+留下來的 Row 要怎麼分組？
+ ↓
+Aggregate
+每一組要算什麼？
+ ↓
+SELECT
+最後要顯示什麼？
+```
+
+例如：
+
+> 每種 Role 的平均年資。
+
+我的思考是：
+
+```text
+FROM employees
+↓
+沒有 WHERE
+↓
+GROUP BY role
+↓
+AVG years_employed
+↓
+SELECT role 與平均年資
+```
+
+而不是：
+
+```text
+先想到 AVG
+↓
+再想要不要 GROUP BY
+```
+
+最重要的 Mental Model：
+
+> **先讓資料流動，再決定怎麼統計。**
+
+`FROM` 決定資料來源。
+
+`WHERE` 決定哪些 Row 留下。
+
+`GROUP BY` 決定哪些 Row 被放在同一組。
+
+Aggregate Function 決定每一組怎麼計算。
+
+`SELECT` 決定最後我要看到什麼。

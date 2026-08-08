@@ -1,0 +1,196 @@
+---
+title: "【SQL 聚合查詢】情境題：組合WHERE,GROUP BY, HAVING"
+sidebar_position: 12
+---
+
+> 預估閱讀時間：約 4 分鐘
+
+沿用前一篇筆記 `employees 表`，同時練：**先篩 Row → 再分組group by → 再篩 Group**情境題。
+
+### employees 表
+
+| role     | name       | building | years_employed |
+| -------- | ---------- | -------- | -------------: |
+| Engineer | Becky A.   | 1e       |              4 |
+| Engineer | Dan B.     | 1e       |              2 |
+| Engineer | Sharon F.  | 1e       |              6 |
+| Engineer | Dan M.     | 1e       |              4 |
+| Engineer | Malcom S.  | 1e       |              1 |
+| Artist   | Tylar S.   | 2w       |              2 |
+| Artist   | Sherman D. | 2w       |              8 |
+| Artist   | Jakob J.   | 2w       |              6 |
+| Artist   | Lillia A.  | 2w       |              7 |
+| Artist   | Brandon J. | 2w       |              7 |
+
+
+### 提示：SQL的執行順序
+
+```
+FROM employees
+↓
+WHERE
+先留下 years_employed >= 3 的員工
+↓
+GROUP BY
+按照 role 分組
+↓
+Aggregate
+計算每組有幾個人
+↓
+HAVING
+只留下人數 >= 3 的組
+↓
+SELECT
+顯示 role 與人數
+```
+
+### 題目 1：指定 Building，再篩 Role 人數
+
+> 只統計在 **Building `1e`** 工作的員工，找出其中「員工人數至少 2 人」的 Role，顯示 Role 與員工人數。
+
+
+先不要寫 SQL，照執行流程拆：
+
+```text
+FROM
+資料從哪裡來？
+
+↓
+
+WHERE
+哪些原始 Row 要留下？
+提示：Building 1e
+
+↓
+
+GROUP BY
+留下來的人要按照什麼分組？
+提示：每個 Role
+
+↓
+
+Aggregate
+每一組要算什麼？
+提示：員工人數
+
+↓
+
+HAVING
+哪些 Group 才留下？
+提示：至少 2 人
+
+↓
+
+SELECT
+最後要看到什麼？
+```
+
+這題之所以一定同時需要 `WHERE` 和 `HAVING`：
+
+```text
+Building = 1e
+→ 原始 Row 本來就知道
+→ WHERE
+
+每個 Role 的人數 >= 2
+→ 分組 COUNT 之後才知道
+→ HAVING
+```
+
+> 題解：
+
+```sql
+SELECT role, COUNT(*) AS 員工人數
+FROM employees
+WHERE building = '1e'
+GROUP BY role
+HAVING COUNT(*) >= 2;
+```
+
+---
+
+### 題目 2：先篩年資，再篩 Building 平均年資
+
+> 只考慮「工作年資至少 3 年」的員工，按照 Building 分組，找出「平均工作年資大於 6 年」的 Building，並顯示 Building 與平均工作年資。
+
+Mental Model：
+
+```text
+FROM employees
+↓
+WHERE
+只留下 years_employed >= 3
+↓
+GROUP BY
+按照 building 分組
+↓
+Aggregate
+計算每棟 building 的平均年資
+↓
+HAVING
+只留下平均年資 > 6 的 building
+↓
+SELECT
+顯示 building 與平均年資
+```
+
+這題最值得注意的是：
+
+```text
+years_employed >= 3
+```
+
+是在看**某一個員工 Row 的年資**：
+
+```sql
+WHERE
+```
+
+但是：
+
+```text
+平均年資 > 6
+```
+
+必須等到同一棟 Building 的人被分組後，算完 `AVG` 才知道：
+
+```sql
+HAVING
+```
+
+---
+
+可以把這兩題當成這個辨識練習：
+
+| 條件                | 處理對象     | Clause   |
+| ----------------- | -------- | -------- |
+| Building 是 `1e`   | 原始員工 Row | `WHERE`  |
+| Role 人數至少 2       | 分組統計結果   | `HAVING` |
+| 員工年資至少 3 年        | 原始員工 Row | `WHERE`  |
+| Building 平均年資 > 6 | 分組統計結果   | `HAVING` |
+
+核心就是：
+
+```text
+WHERE
+先決定誰有資格進入分組
+↓
+GROUP BY
+把留下的人分組
+↓
+Aggregate
+算出每組結果
+↓
+HAVING
+決定哪些組有資格留下
+```
+
+> 解題：
+
+```sql
+SELECT building, AVG(years_employed) AS 平均工作年資
+FROM employees
+WHERE years_employed >= 3
+GROUP BY building
+HAVING AVG(years_employed) > 6;
+```

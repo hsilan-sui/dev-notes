@@ -1,0 +1,1798 @@
+---
+title: "【SQL Functions】我到底是在算「一列」還是「一群資料」？"
+sidebar_position: 8
+---
+
+我學到 `COUNT()`、`SUM()`、`CONCAT()` 的時候，其實每一個語法單獨看，我都知道它在幹嘛。
+
+例如：
+
+```sql
+COUNT()
+SUM()
+AVG()
+CONCAT()
+```
+
+我知道：
+
+* `COUNT()` 是數數量
+* `SUM()` 是加總
+* `AVG()` 是平均
+* `CONCAT()` 是把字串接起來
+
+但真的開始加上group by和其他一起來解題，我還是會卡住。
+
+所以我的問題其實不是：
+
+> 「我不知道 COUNT 是什麼。」
+
+而是：
+
+> **「COUNT 現在到底在數哪些資料？」**
+
+以及：
+
+> **「這個 Function 是對每一個資料列做事情，還是把很多列一起拿來算？」**
+
+再往下一層，其實是：
+
+> **「我現在看到的一列代表什麼？最後又希望一列代表什麼？」**
+
+這才是我要真正搞懂的東西。
+
+---
+
+# 1. 我先重新理解 Function
+
+Function 先不要想得太複雜。
+
+我可以把它理解成：
+
+```text
+給它資料
+   ↓
+Function 做事情
+   ↓
+得到結果
+```
+
+例如：
+
+```sql
+SELECT CONCAT(first_name, ' ', last_name)
+FROM employees;
+```
+
+`CONCAT()` 收到：
+
+```text
+first_name
+空格
+last_name
+```
+
+例如某一列是：
+
+```text
+John
+Smith
+```
+
+那這一列執行：
+
+```text
+John + 空格 + Smith
+        ↓
+     John Smith
+```
+
+所以：
+
+```sql
+CONCAT(first_name, ' ', last_name)
+```
+
+本質就是：
+
+```text
+Input
+  ↓
+CONCAT
+  ↓
+Output
+```
+
+到這裡其實跟我以前理解 JavaScript、Python 的 Function 沒有差很多。
+
+但 SQL 有一個我要特別注意的地方：
+
+> **SQL Function 是在 Table 的資料上工作。**
+
+所以我不能只問：
+
+> 這個 Function 做什麼？
+
+我還要問：
+
+> **它現在是對「一列」做，還是對「很多列」做？**
+
+這就會分成兩種很重要的 Function：
+
+```text
+Scalar Function
+→ 每一列自己算自己的
+
+Aggregate Function
+→ 很多列一起算出一個結果
+```
+
+---
+
+# 2. Scalar Function(純量函式/標量函式)：我把它想成「每一列自己處理」
+
+假設現在有：
+
+| emp_no | first_name | last_name |
+| -----: | ---------- | --------- |
+|    101 | John       | Smith     |
+|    102 | Amy        | Chen      |
+|    103 | Tom        | Lee       |
+
+我執行：
+
+```sql
+SELECT
+    emp_no,
+    CONCAT(first_name, ' ', last_name) AS 全名
+FROM employees;
+```
+
+以前我可能只會記：
+
+> `CONCAT()` 可以串接字串。
+
+但我現在要多看一層。
+
+SQL 實際上是在做：
+
+先取～`employees`員工資料表;
+
+選擇查詢員工編號(`emp_no`)和 全名(`標量函式concat()`只是把每列各自的資料columns 組成字串來看)
+```text
+第 1 列
+John + Smith
+↓
+John Smith
+
+
+第 2 列
+Amy + Chen
+↓
+Amy Chen
+
+
+第 3 列
+Tom + Lee
+↓
+Tom Lee
+```
+
+也就是：
+
+```text
+Row 1 → CONCAT → Result 1
+Row 2 → CONCAT → Result 2
+Row 3 → CONCAT → Result 3
+```
+
+最後：
+
+| emp_no | full_name  |
+| -----: | ---------- |
+|    101 | John Smith |
+|    102 | Amy Chen   |
+|    103 | Tom Lee    |
+
+這裡我要注意：
+
+> **原本有 3 個 Employee rows，做完 CONCAT 之後還是 3 個 Employee rows。**
+
+```text
+3 rows
+  ↓
+CONCAT
+  ↓
+3 rows
+```
+
+:::info
+`CONCAT()` 沒有把 John、Amy、Tom 合成一筆資料。
+
+它只是：
+
+> John 處理 John 的。
+> Amy 處理 Amy 的。
+> Tom 處理 Tom 的。
+
+所以我可以把 Scalar Function標量函式 記成：
+
+> **每一列自己算自己的。**
+:::
+
+---
+
+# 3. Scalar Function 最重要的地方：它沒有改變「一列是誰」
+
+這句我要特別記。
+
+原始 `employees`：
+
+```text
+一列 = 一位 Employee
+```
+
+做完：
+
+```sql
+CONCAT(first_name, ' ', last_name)
+```
+
+之後：
+
+```text
+一列 = 還是一位 Employee
+```
+
+只是原本：
+
+```text
+John | Smith
+```
+
+現在多算出：
+
+```text
+John Smith
+```
+
+所以 Scalar Function 通常是在：
+
+> **改變這一列裡面的值，而不是把很多列收起來。**
+
+---
+
+# 4. 再用幾個例子確認 Scalar
+
+例如：
+
+```sql
+SELECT UPPER(first_name)
+FROM employees;
+```
+
+資料：
+
+```text
+John
+Amy
+Tom
+```
+
+實際概念：
+
+```text
+John → UPPER → JOHN
+Amy  → UPPER → AMY
+Tom  → UPPER → TOM
+```
+
+還是三列。
+
+---
+
+如果是：
+
+```sql
+SELECT LENGTH(first_name)
+FROM employees;
+```
+
+則是：
+
+```text
+John → LENGTH → 4
+Amy  → LENGTH → 3
+Tom  → LENGTH → 3
+```
+
+還是：
+
+```text
+一個 Employee
+↓
+Function
+↓
+這個 Employee 的計算結果
+```
+
+所以我以後看到：
+
+```sql
+CONCAT()
+UPPER()
+LOWER()
+LENGTH()
+```
+
+先想到：
+
+> **這些 Function 通常是在每一列各自執行。**
+
+---
+
+# 5. Aggregate Function 完全不一樣
+
+現在換一張薪資表：
+
+| emp_no | salary |
+| -----: | -----: |
+|    101 |    100 |
+|    102 |    200 |
+|    103 |     50 |
+|    104 |     50 |
+
+如果我寫：
+
+```sql
+SELECT SUM(salary)
+FROM salaries;
+```
+
+這時候不是：
+
+```text
+100 → 一個結果
+200 → 一個結果
+50  → 一個結果
+50  → 一個結果
+```
+
+而是：
+
+```text
+100
+200
+ 50
+ 50
+───
+ ↓
+SUM
+ ↓
+400
+```
+
+原本：
+
+```text
+4 rows
+```
+
+最後：
+
+```text
+1 value
+```
+
+這就是 Aggregate 聚合函式。
+
+---
+
+# 6. 我可以把 Aggregate 理解成「把一群資料收起來算」
+
+常見的：
+![圖片說明](/img/aggregate_01.png)
+
+```sql
+COUNT()
+SUM()
+AVG()
+MAX()
+MIN()
+```
+
+例如：
+
+```text
+salary
+
+100
+200
+50
+50
+```
+
+### COUNT
+
+```sql
+COUNT(*)
+```
+
+我是在問：
+
+> 這一群資料有幾列？
+
+答案：
+
+```text
+4
+```
+
+---
+
+### SUM
+
+```sql
+SUM(salary)
+```
+
+我是在問：
+
+> 這一群 salary 全部加起來是多少？
+
+答案：
+
+```text
+400
+```
+
+---
+
+### AVG
+
+```sql
+AVG(salary)
+```
+
+我是在問：
+
+> 這一群 salary 的平均是多少？
+
+答案：
+
+```text
+100
+```
+
+---
+
+### MAX
+
+```sql
+MAX(salary)
+```
+
+我是在問：
+
+> 這一群 salary 最大的是多少？
+
+答案：
+
+```text
+200
+```
+
+---
+
+### MIN
+
+```sql
+MIN(salary)
+```
+
+我是在問：
+
+> 這一群 salary 最小的是多少？
+
+答案：
+
+```text
+50
+```
+
+所以不管是哪一個 Aggregate Function，核心都是：
+
+```text
+很多 rows
+   ↓
+把它們當成一群
+   ↓
+Aggregate
+   ↓
+一個 Summary
+```
+
+---
+
+# 7. 所以 Scalar 跟 Aggregate，我真正要分的是這件事
+
+我不要只背：
+
+> Scalar 是什麼、Aggregate 是什麼。
+
+我要直接看資料。
+
+### Scalar
+
+```text
+Row 1 → Result 1
+Row 2 → Result 2
+Row 3 → Result 3
+```
+
+也就是：
+
+> **每一列自己處理。**
+
+### Aggregate
+
+```text
+Row 1
+Row 2
+Row 3
+  ↓
+一起算
+  ↓
+Result
+```
+
+也就是：
+
+> **很多列一起處理。**
+
+---
+
+# 8. 但 Aggregate 真正讓我卡住的是 GROUP BY
+
+如果題目只是：
+
+> 公司總共有多少員工？
+
+資料：
+
+| id | name | department |
+| -: | ---- | ---------- |
+|  1 | Amy  | IT         |
+|  2 | Tom  | IT         |
+|  3 | John | HR         |
+|  4 | Mary | HR         |
+|  5 | Bob  | HR         |
+
+我可以直接：
+
+```sql
+SELECT COUNT(*)
+FROM Employee;
+```
+
+因為我要的是：
+
+```text
+整間公司
+↓
+全部 Employee rows
+↓
+COUNT
+↓
+5
+```
+
+這時候很好懂。
+
+---
+
+# 9. 但題目一改成「每個部門有多少人」，我就要換一個思考方式
+
+題目：
+
+> 每個 Department 有多少 Employee？
+
+我不能只：
+
+```sql
+SELECT COUNT(*)
+FROM Employee;
+```
+
+因為這會回答：
+
+```text
+公司總共有 5 個人
+```
+
+但題目問的是：
+
+```text
+IT 有幾個？
+HR 有幾個？
+```
+
+所以我要的結果其實是：
+
+| department | employee_count |
+| ---------- | -------------: |
+| IT         |              2 |
+| HR         |              3 |
+
+這時候我要開始問一個很重要的問題：
+
+> **「最後我希望誰一列？」**
+
+答案是：
+
+```text
+IT → 一列
+HR → 一列
+```
+
+也就是：
+
+> **每個 Department 一列。**
+
+那我才知道：
+
+```sql
+GROUP BY department
+```
+
+---
+
+# 10. 我現在怎麼理解 GROUP BY？
+
+我以前很容易把 `GROUP BY` 想成：
+
+> 「這題好像有 COUNT，所以我要 GROUP BY 一些欄位。」
+
+這樣很容易亂掉。
+
+我現在應該想：
+
+> **GROUP BY 是在決定「哪些 rows 要被視為同一組」。**
+
+例如：
+
+```sql
+GROUP BY department
+```
+
+其實就是把：
+
+```text
+Amy   IT
+Tom   IT
+John  HR
+Mary  HR
+Bob   HR
+```
+
+整理成：
+
+```text
+IT 這一組
+├── Amy
+└── Tom
+
+
+HR 這一組
+├── John
+├── Mary
+└── Bob
+```
+
+接著 `COUNT()` 才進來。
+
+```text
+IT Group
+├── Amy
+└── Tom
+     ↓
+   COUNT
+     ↓
+     2
+```
+
+以及：
+
+```text
+HR Group
+├── John
+├── Mary
+└── Bob
+     ↓
+   COUNT
+     ↓
+     3
+```
+
+所以我現在可以把兩件事拆開：
+
+> **GROUP BY：誰一組？**
+
+> **Aggregate Function：每一組要算什麼？**
+
+這兩個問題不是同一個問題。
+
+---
+
+# 11. Aggregate 不是永遠「整張表變一列」
+
+這裡是我一定要修正的地方。
+
+如果沒有：
+
+```sql
+GROUP BY
+```
+
+那：
+
+```text
+整張 Table
+↓
+可以視為一整組
+↓
+COUNT
+↓
+一個答案
+```
+
+但如果：
+
+```sql
+GROUP BY department
+```
+
+就會變成：
+
+```text
+整張 Table
+     ↓
+按照 department 分組
+     ↓
+IT Group       HR Group
+   ↓              ↓
+ COUNT          COUNT
+   ↓              ↓
+   2              3
+```
+
+所以更精確的理解不是：
+
+> Aggregate = 整張表變成一列。
+
+而是：
+
+> **Aggregate Function 會對「目前的一組 rows」算出一個結果。**
+
+有沒有 `GROUP BY`，會決定「一組」到底是什麼。
+
+---
+
+# 12. 這其實就是我解題會卡住的地方
+
+例如這題：
+
+> 每個老師教幾個不同的科目？
+
+資料：
+
+| teacher_id | subject_id | dept_id |
+| ---------: | ---------: | ------: |
+|          1 |          2 |       3 |
+|          1 |          2 |       4 |
+|          1 |          3 |       3 |
+|          2 |          1 |       1 |
+|          2 |          2 |       1 |
+
+我以前很容易看到：
+
+```text
+teacher_id
+subject_id
+dept_id
+```
+
+然後開始想：
+
+> GROUP BY 到底要放哪一些？
+
+甚至可能寫：
+
+```sql
+GROUP BY subject_id, dept_id
+```
+
+但這其實太早開始想語法了。
+
+我現在第一個問題應該是：
+
+> **最後誰應該一列？**
+
+題目說：
+
+> 每個老師。
+
+所以：
+
+```text
+Teacher 1 → 一列
+Teacher 2 → 一列
+```
+
+那我要分組的對象自然就是：
+
+```sql
+GROUP BY teacher_id
+```
+
+因為我要：
+
+```text
+Teacher 1 的所有資料
+→ 放成一組
+
+Teacher 2 的所有資料
+→ 放成另一組
+```
+
+---
+
+# 13. GROUP BY 決定完，再想「我要數什麼」
+
+Teacher 1 原始資料：
+
+```text
+Teacher 1 → Subject 2
+Teacher 1 → Subject 2
+Teacher 1 → Subject 3
+```
+
+題目不是問：
+
+> Teacher 1 有幾筆資料？
+
+而是：
+
+> Teacher 1 教幾個「不同科目」？
+
+所以我要的是：
+
+```text
+2
+2
+3
+↓
+DISTINCT
+↓
+2, 3
+↓
+COUNT
+↓
+2
+```
+
+因此：
+
+```sql
+COUNT(DISTINCT subject_id)
+```
+
+完整：
+
+```sql
+SELECT
+    teacher_id,
+    COUNT(DISTINCT subject_id) AS cnt
+FROM Teacher
+GROUP BY teacher_id;
+```
+
+---
+
+# 14. 我之前真正混在一起的是這兩個問題
+
+### 問題一
+
+> **我要誰一組？**
+
+這是：
+
+```sql
+GROUP BY
+```
+
+### 問題二
+
+> **每一組我要算什麼？**
+
+這是：
+
+```sql
+COUNT()
+SUM()
+AVG()
+MAX()
+MIN()
+```
+
+所以：
+
+```text
+每位老師教幾科
+
+誰一組？
+→ Teacher
+
+算什麼？
+→ 不同 Subject 的數量
+```
+
+翻成 SQL 才是：
+
+```text
+GROUP BY teacher_id
+
+COUNT DISTINCT subject_id
+```
+
+這樣比直接猜 SQL 清楚很多。
+
+---
+
+# 15. 再看 Manager 題，我就更能看出這件事
+
+題目：
+
+> 找出至少有 5 個 Direct Reports 的 Manager。
+
+假設 JOIN 完：
+
+| manager_id | manager_name | employee_id | employee_name |
+| ---------: | ------------ | ----------: | ------------- |
+|        101 | John         |         102 | Dan           |
+|        101 | John         |         103 | James         |
+|        101 | John         |         104 | Amy           |
+|        101 | John         |         105 | Anne          |
+|        101 | John         |         106 | Ron           |
+|        201 | Mary         |         202 | Bob           |
+
+這裡我先不要想：
+
+```sql
+HAVING COUNT(...)
+```
+
+我要先看：
+
+> **JOIN 完後的一列代表什麼？**
+
+現在一列代表：
+
+```text
+一個 Manager
+和
+一個 Direct Report
+之間的關係
+```
+
+所以 John 才會出現 5 次：
+
+```text
+John → Dan
+John → James
+John → Amy
+John → Anne
+John → Ron
+```
+
+這不是資料重複錯誤。
+
+是因為 JOIN 後：
+
+> **資料粒度已經改變了。**
+
+---
+
+# 16. 接著我才問：最後誰一列？
+
+題目要的是：
+
+> Manager。
+
+所以：
+
+```text
+John → 最後一列
+Mary → 最後一列
+```
+
+那我要：
+
+```text
+John 的 rows → 一組
+Mary 的 rows → 一組
+```
+
+也就是：
+
+```sql
+GROUP BY manager
+```
+
+然後：
+
+```text
+John Group
+├── Dan
+├── James
+├── Amy
+├── Anne
+└── Ron
+```
+
+再：
+
+```text
+COUNT
+↓
+5
+```
+
+Mary：
+
+```text
+Mary Group
+└── Bob
+
+COUNT
+↓
+1
+```
+
+現在才有：
+
+```text
+John → 5
+Mary → 1
+```
+
+---
+
+# 17. HAVING 是最後才出現的
+
+題目還說：
+
+> 至少 5 個 Direct Reports。
+
+現在我已經算完：
+
+```text
+John → 5
+Mary → 1
+```
+
+我要的是：
+
+```text
+留下 John
+丟掉 Mary
+```
+
+所以：
+
+```sql
+HAVING COUNT(*) >= 5
+```
+
+這樣我就比較不會死背：
+
+> HAVING 是 Aggregate 的 WHERE。
+
+我可以直接理解：
+
+```text
+GROUP BY
+↓
+先形成 Group
+↓
+COUNT
+↓
+算出每組結果
+↓
+HAVING
+↓
+再決定哪些 Group 留下
+```
+
+所以 `HAVING` 本來就應該比較後面才想。
+
+---
+
+# 18. Customer 題也用完全相同的思考
+
+題目：
+
+> 每個 Customer 總共花多少錢？
+
+資料：
+
+| order_id | customer_id | amount |
+| -------: | ----------: | -----: |
+|        1 |         101 |    500 |
+|        2 |         101 |    300 |
+|        3 |         102 |    200 |
+|        4 |         102 |    100 |
+|        5 |         102 |     50 |
+
+我不要先看到「總共」就直接衝 `SUM()`。
+
+先問：
+
+> **最後誰一列？**
+
+答案：
+
+```text
+Customer 101 → 一列
+Customer 102 → 一列
+```
+
+所以：
+
+```sql
+GROUP BY customer_id
+```
+
+接著才問：
+
+> **每一組算什麼？**
+
+Customer 101：
+
+```text
+500
+300
+↓
+SUM
+↓
+800
+```
+
+Customer 102：
+
+```text
+200
+100
+50
+↓
+SUM
+↓
+350
+```
+
+所以：
+
+```sql
+SELECT
+    customer_id,
+    SUM(amount) AS total_spending
+FROM Orders
+GROUP BY customer_id;
+```
+
+---
+
+# 19. 如果題目改成平均，其實「誰一組」根本沒變
+
+例如：
+
+> 每個 Customer 的平均訂單金額。
+
+我最後還是：
+
+```text
+Customer 101 → 一列
+Customer 102 → 一列
+```
+
+所以：
+
+```sql
+GROUP BY customer_id
+```
+
+完全不用改。
+
+真正改的是：
+
+```text
+每一組要算什麼？
+```
+
+原本：
+
+```sql
+SUM(amount)
+```
+
+現在：
+
+```sql
+AVG(amount)
+```
+
+所以這讓我更清楚：
+
+> **GROUP BY 負責資料的分組方式。**
+
+> **Aggregate Function 負責每組要怎麼計算。**
+
+---
+
+# 20. COUNT 我也不能只記「數數量」
+
+看到：
+
+```sql
+COUNT(*)
+```
+
+我要知道：
+
+> 我在數 rows。
+
+例如：
+
+```text
+Math
+Math
+English
+English
+Science
+```
+
+```sql
+COUNT(*)
+```
+
+就是：
+
+```text
+5 rows
+```
+
+但：
+
+```sql
+COUNT(DISTINCT subject_id)
+```
+
+是在問：
+
+> 不重複的 subject 有幾個？
+
+所以：
+
+```text
+Math
+Math
+English
+English
+Science
+   ↓
+DISTINCT
+   ↓
+Math
+English
+Science
+   ↓
+COUNT
+   ↓
+3
+```
+
+因此以後我不能只問：
+
+> 「這題是不是 COUNT？」
+
+我要問：
+
+> **「我到底在數什麼？」**
+
+是：
+
+```text
+Row 數量？
+```
+
+還是：
+
+```text
+Unique Value 數量？
+```
+
+這會決定：
+
+```sql
+COUNT(*)
+```
+
+還是：
+
+```sql
+COUNT(DISTINCT ...)
+```
+
+---
+
+# 21. JOIN 題我要多問一次「現在一列是什麼」
+
+這對我很重要。
+
+因為 JOIN 前：
+
+```text
+一列 = 一位 Manager
+```
+
+JOIN 後可能變成：
+
+```text
+一列 = Manager 和 Employee 的一個關係
+```
+
+所以原本：
+
+```text
+John
+```
+
+可能 JOIN 完變：
+
+```text
+John → Dan
+John → Amy
+John → Tom
+John → Bob
+John → Mary
+```
+
+John 出現 5 次，不代表 SQL 壞掉。
+
+而是：
+
+> **現在一列的意義變了。**
+
+如果題目最後又要求：
+
+> 一個 Manager 一列。
+
+那我才需要透過：
+
+```sql
+GROUP BY manager_id
+```
+
+重新把 John 的 5 個 relationship rows 收成 John 的一組。
+
+這就是我之前容易忽略的：
+
+> **SQL 解題不是只有欄位，還要一直追蹤「現在一列代表什麼」。**
+
+---
+
+# 22. 所以我以後不要從 SELECT 開始解題
+
+我以前容易一看到題目就：
+
+```sql
+SELECT ...
+FROM ...
+GROUP BY ...
+```
+
+然後寫到一半不知道自己在幹嘛。
+
+以後 Aggregate 題，我先寫中文。
+
+### 第一題
+
+> **原始 Table 的一列代表什麼？**
+
+例如：
+
+```text
+一筆 Teacher 與 Subject 的紀錄
+```
+
+### 第二題
+
+> **如果有 JOIN，JOIN 完的一列代表什麼？**
+
+例如：
+
+```text
+一個 Manager 與一個 Direct Report 的關係
+```
+
+### 第三題
+
+> **最後我希望一列代表什麼？**
+
+例如：
+
+```text
+一位 Teacher
+```
+
+或：
+
+```text
+一位 Manager
+```
+
+### 第四題
+
+> **所以我要誰一組？**
+
+例如：
+
+```text
+Teacher
+```
+
+所以：
+
+```sql
+GROUP BY teacher_id
+```
+
+### 第五題
+
+> **每一組我要算什麼？**
+
+例如：
+
+```text
+不同 Subject 的數量
+```
+
+所以：
+
+```sql
+COUNT(DISTINCT subject_id)
+```
+
+### 第六題
+
+> **算完之後還要篩選 Group 嗎？**
+
+如果：
+
+```text
+只要 Direct Reports >= 5 的 Manager
+```
+
+才想到：
+
+```sql
+HAVING
+```
+
+---
+
+# 23. 我現在的 SQL Aggregate 解題模板
+
+以後看到題目，我先填這個，不急著寫 SQL：
+
+```text
+原始 Table 一列代表：
+→
+
+JOIN 後一列代表：
+→
+
+最後 Output 一列代表：
+→
+
+所以誰要成為一組：
+→
+
+每一組我要算什麼：
+→
+
+要不要篩選計算後的 Group：
+→
+```
+
+例如 Teacher：
+
+```text
+原始 Table 一列代表：
+→ 一筆 Teacher 教 Subject 的紀錄
+
+JOIN 後一列代表：
+→ 沒有 JOIN
+
+最後 Output 一列代表：
+→ 一位 Teacher
+
+所以誰要成為一組：
+→ teacher_id
+
+每一組我要算什麼：
+→ 不同 subject_id 的數量
+
+要不要篩選計算後的 Group：
+→ 不用
+```
+
+最後才翻譯：
+
+```sql
+SELECT
+    teacher_id,
+    COUNT(DISTINCT subject_id) AS cnt
+FROM Teacher
+GROUP BY teacher_id;
+```
+
+---
+
+# 24. 我自己的 Cheat Sheet
+
+## 看到 Scalar Function
+
+我問：
+
+> **是不是每一列自己算自己的？**
+
+如果是：
+
+```text
+Row 1 → Result 1
+Row 2 → Result 2
+Row 3 → Result 3
+```
+
+例如：
+
+```sql
+CONCAT()
+UPPER()
+LOWER()
+LENGTH()
+```
+
+我就知道：
+
+> **資料通常沒有被收成 Group，一列代表的東西通常沒變。**
+
+---
+
+## 看到 Aggregate Function
+
+我問：
+
+> **是不是很多 rows 要一起算一個答案？**
+
+例如：
+
+```sql
+COUNT()
+SUM()
+AVG()
+MAX()
+MIN()
+```
+
+Mental Model：
+
+```text
+很多 rows
+↓
+一組資料
+↓
+Aggregate
+↓
+一個結果
+```
+
+---
+
+## 看到 GROUP BY
+
+我不要問：
+
+> 要 GROUP BY 哪些欄位？
+
+我先問：
+
+> **最後我要誰一列？**
+
+然後：
+
+> **誰應該被收成同一組？**
+
+這才是 `GROUP BY` 真正要回答的問題。
+
+---
+
+## 看到 COUNT
+
+我問：
+
+> **我到底在數什麼？**
+
+可能是：
+
+```text
+有幾個 rows？
+```
+
+也可能是：
+
+```text
+有幾個不同的 subject？
+```
+
+所以才決定：
+
+```sql
+COUNT(*)
+```
+
+或：
+
+```sql
+COUNT(DISTINCT subject_id)
+```
+
+---
+
+## 看到 HAVING
+
+我先不要急著用。
+
+我要先確認：
+
+```text
+GROUP BY 完了嗎？
+↓
+Aggregate 算完了嗎？
+↓
+現在是不是要篩選「算完的 Group」？
+```
+
+如果是，才想到：
+
+```sql
+HAVING
+```
+
+---
+
+# 25. 最後我真正要記住的不是語法
+
+我這次真正卡住的地方，其實不是：
+
+```text
+COUNT 不會
+GROUP BY 不會
+HAVING 不會
+```
+
+而是以前我會把它們全部混在一起想。
+
+現在我要拆開：
+
+```text
+GROUP BY
+→ 誰一組？
+
+COUNT SUM AVG
+→ 每組算什麼？
+
+HAVING
+→ 哪些算完的組留下？
+```
+
+而在這些之前，還有更重要的一題：
+
+> **「現在的一列代表什麼？」**
+
+以及：
+
+> **「最後我希望一列代表什麼？」**
+
+---
+
+# 26. 我以後看到 Aggregate 題，先對自己說這句
+
+不要急著寫 SQL。
+
+先看資料：
+
+```text
+現在一列是什麼？
+        ↓
+最後一列要是什麼？
+        ↓
+中間需不需要把很多 rows 收成一組？
+        ↓
+誰一組？
+        ↓
+每組算什麼？
+        ↓
+算完還要篩選嗎？
+```
+
+最後才翻譯成 SQL：
+
+```text
+誰一組
+↓
+GROUP BY
+
+每組算什麼
+↓
+COUNT SUM AVG
+
+哪些組留下
+↓
+HAVING
+```
+
+---
+
+# 我這篇真正要帶走的一句話
+
+> **SQL 解題時，我不要先找語法，我要先追蹤「一列代表什麼」。**
+
+Scalar Function：
+
+```text
+一列
+↓
+處理
+↓
+還是一列
+```
+
+Aggregate Function：
+
+```text
+很多列
+↓
+一起計算
+↓
+一個結果
+```
+
+GROUP BY + Aggregate：
+
+```text
+很多列
+↓
+按照「我希望誰一列」來分組
+↓
+每組做 Aggregate
+↓
+每組得到一列
+```
+
+所以如果下次我又卡在 `GROUP BY`，先不要亂加欄位。
+
+回來問自己：
+
+> **「題目最後到底要誰一列？」**

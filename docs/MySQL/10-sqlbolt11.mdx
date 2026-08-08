@@ -1,0 +1,1135 @@
+---
+title: "【SQL 聚合查詢】參考：SQLBolt Lesson 11(解題練習)"
+sidebar_position: 10
+---
+
+> 預估閱讀時間：約 4 分鐘
+
+本文參考：[SQL Lesson 11: Queries with aggregates (Pt. 2)](https://sqlbolt.com/lesson/select_queries_with_aggregates_pt_2)
+
+- 以下Aggregate Functions 也可以叫聚合函式
+- SQLBolt網站的觀念協助我釐清聚合與GROUP BY的使用
+
+## 本篇觀念要點
+
+`WHERE` 與 `HAVING` 都是在「篩選資料」，但它們篩選的對象不同。
+
+* `WHERE`：篩選 **原始 Row**
+* `GROUP BY`：把留下來的 Row 分組
+* Aggregate Function：對每一組進行統計
+* `HAVING`：篩選 **分組後的結果**
+
+1. [HAVING 是什麼](#having)
+2. [WHERE 與 HAVING 的差別](#where-vs-having)
+3. [Exercise 1 Artist 數量](#exercise-1)
+4. [Exercise 2 每種 Role 的員工數](#exercise-2)
+5. [Exercise 3 Engineer 總工作年資](#exercise-3)
+6. [三題比較](#comparison)
+7. [一句話總結](#summary)
+
+:::info 這堂課的主線
+
+FROM 取得資料 → WHERE 篩 Row → GROUP BY 分組 → Aggregate 統計 → HAVING 篩 Group → SELECT 輸出結果
+
+:::
+
+---
+
+## HAVING 是什麼 {#having}
+
+上一課我已經知道：
+
+```sql
+GROUP BY
+```
+
+可以把資料分組。
+
+例如：
+
+```sql
+GROUP BY role
+```
+
+會把員工分成：
+
+```text
+Engineer
+Artist
+Manager
+```
+
+接著可以：
+
+```sql
+COUNT(*)
+```
+
+計算每一組有多少人。
+
+例如結果可能是：
+
+| role     | employee_count |
+| -------- | -------------: |
+| Engineer |              5 |
+| Artist   |              5 |
+| Manager  |              3 |
+
+但如果題目進一步問：
+
+> 只留下員工人數至少 5 人的 Role。
+
+這時候我要篩選的已經不是原始員工 Row。
+
+我要篩選的是：
+
+```text
+Engineer → 5
+Artist   → 5
+Manager  → 3
+```
+
+這些「分組後的統計結果」。
+
+所以使用：
+
+```sql
+HAVING COUNT(*) >= 5
+```
+
+完整概念：
+
+```sql
+SELECT role, COUNT(*) AS employee_count
+FROM employees
+GROUP BY role
+HAVING COUNT(*) >= 5;
+```
+
+---
+
+### Mental Model
+
+```text
+FROM employees
+      ↓
+取得原始員工
+      ↓
+WHERE
+篩選原始 Row
+      ↓
+GROUP BY role
+      ↓
+Engineer
+Artist
+Manager
+      ↓
+COUNT 每一組
+      ↓
+Engineer 5
+Artist   5
+Manager  3
+      ↓
+HAVING count >= 5
+      ↓
+Engineer
+Artist
+      ↓
+SELECT
+輸出結果
+```
+
+:::tip 我現在要記住
+
+`HAVING` 不是「比較進階的 WHERE」。
+
+它們處理的是不同階段的資料。
+
+```text
+WHERE
+→ Group 前
+
+HAVING
+→ Group 後
+```
+
+:::
+
+---
+
+## WHERE 與 HAVING 的差別 {#where-vs-having}
+
+我可以先用一句話判斷：
+
+> **我要篩的是原始資料，還是統計後的 Group？**
+
+---
+
+### WHERE：篩原始 Row
+
+例如：
+
+> 只看 Engineer。
+
+原始資料裡本來就有：
+
+```text
+role = Engineer
+```
+
+所以使用：
+
+```sql
+WHERE role = 'Engineer'
+```
+
+流程：
+
+```text
+employees
+↓
+WHERE role = Engineer
+↓
+只剩 Engineer Row
+```
+
+---
+
+### HAVING：篩統計後的 Group
+
+例如：
+
+> 找出員工數超過 4 人的 Role。
+
+原始資料裡沒有：
+
+```text
+employee_count
+```
+
+我要先：
+
+```text
+GROUP BY role
+↓
+COUNT
+```
+
+才知道：
+
+```text
+Engineer → 5
+Artist   → 5
+Manager  → 3
+```
+
+這時再：
+
+```sql
+HAVING COUNT(*) > 4
+```
+
+---
+
+### 我的判斷方式
+
+```text
+條件是原始欄位？
+例如 role = Engineer
+        ↓
+      WHERE
+
+
+條件是統計結果？
+例如 COUNT > 4
+        ↓
+      HAVING
+```
+
+---
+
+## Exercise 1 {#exercise-1}
+
+題目：
+
+> Find the number of Artists in the studio.
+
+中文：
+
+> 找出工作室裡共有多少位 Artist。
+
+而且題目特別提醒：
+
+> 不要使用 `HAVING`。
+
+這題是在測我：
+
+> **不要看到 Aggregate 就亂用 GROUP BY 或 HAVING。**
+
+---
+
+### Step 1：FROM — 資料從哪裡來？
+
+資料來源：
+
+```sql
+FROM employees
+```
+
+---
+
+### Step 2：WHERE — 哪些 Row 我要留下？
+
+題目只想看：
+
+```text
+Artist
+```
+
+而 `role` 本來就是 employees 每一列都有的欄位。
+
+所以：
+
+```sql
+WHERE role = 'Artist'
+```
+
+這一步之後：
+
+```text
+employees
+   ↓
+WHERE role = Artist
+   ↓
+Tylar
+Sherman
+Jakob
+Lillia
+Brandon
+```
+
+---
+
+### Step 3：GROUP BY — 需要分組嗎？
+
+不需要。
+
+因為我不是問：
+
+> 每種 Role 各有幾個人？
+
+而只是問：
+
+> Artist 有幾個人？
+
+現在 `WHERE` 已經把其他 Role 全部排除了。
+
+所以：
+
+```text
+不需要 GROUP BY
+```
+
+---
+
+### Step 4：Aggregate — 我要算什麼？
+
+我要算：
+
+```text
+有幾位員工
+```
+
+所以：
+
+```sql
+COUNT(*)
+```
+
+---
+
+### Step 5：HAVING — 需要篩 Group 嗎？
+
+沒有 Group。
+
+也沒有任何：
+
+```text
+COUNT 大於多少
+AVG 大於多少
+SUM 小於多少
+```
+
+這類條件。
+
+所以：
+
+```text
+不需要 HAVING
+```
+
+---
+
+### 完整 SQL
+
+```sql
+SELECT COUNT(*) AS artist_count
+FROM employees
+WHERE role = 'Artist';
+```
+
+結果：
+
+```text
+5
+```
+
+---
+
+### Mental Model
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+WHERE role = Artist
+      ↓
+只留下 Artist
+      ↓
+沒有 GROUP BY
+      ↓
+COUNT
+      ↓
+5
+```
+
+### 我這題真正要複習的觀念
+
+不要寫成：
+
+```sql
+GROUP BY role
+```
+
+因為我根本不需要比較不同 Role。
+
+題目已經指定：
+
+```text
+只要 Artist
+```
+
+所以先：
+
+```sql
+WHERE role = 'Artist'
+```
+
+就夠了。
+
+---
+
+## Exercise 2 {#exercise-2}
+
+題目：
+
+> Find the number of Employees of each role in the studio.
+
+中文：
+
+> 找出工作室中，每一種 Role 分別有多少位員工。
+
+這題和上一題只有幾個字不同，但 SQL 思考完全不同。
+
+上一題：
+
+```text
+Artist 有幾個？
+```
+
+這一題：
+
+```text
+每一種 Role 各有幾個？
+```
+
+看到：
+
+> 每一種 Role
+
+我就要開始想到：
+
+```sql
+GROUP BY role
+```
+
+---
+
+### Step 1：FROM — 資料從哪裡來？
+
+```sql
+FROM employees
+```
+
+---
+
+### Step 2：WHERE — 要不要先刪掉某些 Row？
+
+題目沒有說：
+
+```text
+只看 Artist
+只看 Engineer
+排除 Manager
+```
+
+所以：
+
+```text
+不需要 WHERE
+```
+
+我要保留所有員工。
+
+---
+
+### Step 3：GROUP BY — 誰跟誰是一組？
+
+題目說：
+
+> 每一種 Role。
+
+所以：
+
+```sql
+GROUP BY role
+```
+
+資料被整理成：
+
+```text
+Engineer
+├─ Becky
+├─ Dan
+├─ Sharon
+├─ Dan
+└─ Malcom
+
+Artist
+├─ Tylar
+├─ Sherman
+├─ Jakob
+├─ Lillia
+└─ Brandon
+
+Manager
+├─ Scott
+├─ Shirlee
+└─ Daria
+```
+
+---
+
+### Step 4：Aggregate — 每組要算什麼？
+
+題目問：
+
+> 每組有多少員工？
+
+所以：
+
+```sql
+COUNT(*)
+```
+
+每組各自計算：
+
+```text
+Engineer → 5
+Artist   → 5
+Manager  → 3
+```
+
+---
+
+### Step 5：HAVING — 哪些 Group 要留下？
+
+題目沒有說：
+
+```text
+只留下 5 人以上的 Role
+只留下少於 4 人的 Role
+```
+
+所以：
+
+```text
+不需要 HAVING
+```
+
+全部 Group 都輸出。
+
+---
+
+### 完整 SQL
+
+```sql
+SELECT role, COUNT(*) AS employee_count
+FROM employees
+GROUP BY role;
+```
+
+---
+
+### Mental Model
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+沒有 WHERE
+      ↓
+GROUP BY role
+      ↓
+Engineer
+Artist
+Manager
+      ↓
+每組 COUNT
+      ↓
+Engineer 5
+Artist   5
+Manager  3
+      ↓
+沒有 HAVING
+      ↓
+全部輸出
+```
+
+### 我這題真正要複習的觀念
+
+看到：
+
+```text
+每一種
+每一個
+每一棟
+每個部門
+每個使用者
+```
+
+我要開始問自己：
+
+> 這是不是在告訴我 Group 的單位？
+
+這題：
+
+```text
+每一種 Role
+```
+
+所以：
+
+```sql
+GROUP BY role
+```
+
+---
+
+## Exercise 3 {#exercise-3}
+
+題目：
+
+> Find the total number of years employed by all Engineers.
+
+中文：
+
+> 找出所有 Engineer 累積工作的總年資。
+
+這題很容易因為看到：
+
+```text
+all Engineers
+total
+```
+
+就下意識想使用 `GROUP BY`。
+
+但其實不需要。
+
+---
+
+### Step 1：FROM — 資料從哪裡來？
+
+```sql
+FROM employees
+```
+
+---
+
+### Step 2：WHERE — 哪些 Row 我要留下？
+
+題目只要：
+
+```text
+Engineer
+```
+
+所以：
+
+```sql
+WHERE role = 'Engineer'
+```
+
+這時資料變成：
+
+| name   | years_employed |
+| ------ | -------------: |
+| Becky  |              4 |
+| Dan B. |              2 |
+| Sharon |              6 |
+| Dan M. |              4 |
+| Malcom |              1 |
+
+---
+
+### Step 3：GROUP BY — 要不要分組？
+
+不需要。
+
+因為題目沒有問：
+
+> 每種 Role 的總年資。
+
+它只問：
+
+> Engineer 的總年資。
+
+`WHERE` 已經把資料縮小成：
+
+```text
+只有 Engineer
+```
+
+現在直接一起加總即可。
+
+---
+
+### Step 4：Aggregate — 我要算什麼？
+
+題目說：
+
+```text
+total years
+```
+
+所以：
+
+```sql
+SUM(years_employed)
+```
+
+計算：
+
+```text
+4 + 2 + 6 + 4 + 1
+↓
+17
+```
+
+---
+
+### Step 5：HAVING — 要篩統計後的結果嗎？
+
+沒有。
+
+所以：
+
+```text
+不需要 HAVING
+```
+
+---
+
+### 完整 SQL
+
+```sql
+SELECT SUM(years_employed) AS total_years
+FROM employees
+WHERE role = 'Engineer';
+```
+
+結果：
+
+```text
+17
+```
+
+---
+
+### Mental Model
+
+```text
+FROM employees
+      ↓
+所有員工
+      ↓
+WHERE role = Engineer
+      ↓
+只剩 Engineer
+      ↓
+沒有 GROUP BY
+      ↓
+SUM years_employed
+      ↓
+17
+```
+
+### 我這題真正要複習的觀念
+
+這題與：
+
+> 每個 Role 的總年資
+
+不同。
+
+如果題目是：
+
+> 每個 Role 的總年資
+
+才會變成：
+
+```sql
+SELECT role, SUM(years_employed)
+FROM employees
+GROUP BY role;
+```
+
+但現在題目已經指定：
+
+```text
+Engineer
+```
+
+所以：
+
+```sql
+WHERE role = 'Engineer'
+```
+
+就可以先把資料篩完。
+
+---
+
+## 三題比較 {#comparison}
+
+這三題其實是在測我能不能判斷：
+
+```text
+WHERE
+GROUP BY
+Aggregate
+```
+
+各自負責什麼。
+
+| 題目           | WHERE               | GROUP BY | Aggregate             | HAVING |
+| ------------ | ------------------- | -------- | --------------------- | ------ |
+| Artist 有幾人   | `role = 'Artist'`   | 不需要      | `COUNT(*)`            | 不需要    |
+| 每種 Role 有幾人  | 不需要                 | `role`   | `COUNT(*)`            | 不需要    |
+| Engineer 總年資 | `role = 'Engineer'` | 不需要      | `SUM(years_employed)` | 不需要    |
+
+---
+
+### Exercise 1
+
+```text
+Artist 有幾人？
+```
+
+Mental Model：
+
+```text
+FROM
+↓
+WHERE Artist
+↓
+COUNT
+```
+
+---
+
+### Exercise 2
+
+```text
+每種 Role 有幾人？
+```
+
+Mental Model：
+
+```text
+FROM
+↓
+GROUP BY role
+↓
+COUNT 每一組
+```
+
+---
+
+### Exercise 3
+
+```text
+Engineer 總年資？
+```
+
+Mental Model：
+
+```text
+FROM
+↓
+WHERE Engineer
+↓
+SUM
+```
+
+---
+
+## 這一課最容易犯的錯誤
+
+### 錯誤 1：看到 Role 就 GROUP BY
+
+不是。
+
+例如：
+
+> Artist 有多少人？
+
+`role` 是用來：
+
+```text
+篩選我要的 Row
+```
+
+所以是：
+
+```sql
+WHERE role = 'Artist'
+```
+
+不是：
+
+```sql
+GROUP BY role
+```
+
+---
+
+### 錯誤 2：看到 Aggregate 就使用 HAVING
+
+不是。
+
+例如：
+
+```sql
+COUNT(*)
+SUM(years_employed)
+```
+
+本身不代表我要使用 `HAVING`。
+
+`HAVING` 是在：
+
+> 我已經 Group + Aggregate 完之後，還想篩掉某些 Group。
+
+例如：
+
+```text
+每個 Role 有多少人
+↓
+只留下超過 4 人的 Role
+```
+
+這時才是：
+
+```sql
+GROUP BY role
+HAVING COUNT(*) > 4
+```
+
+---
+
+### 錯誤 3：把 WHERE 和 HAVING 當成可以互換
+
+我要記住資料流：
+
+```text
+原始 Row
+   ↓
+WHERE
+   ↓
+留下的 Row
+   ↓
+GROUP BY
+   ↓
+Groups
+   ↓
+Aggregate
+   ↓
+統計結果
+   ↓
+HAVING
+   ↓
+留下的 Groups
+```
+
+所以：
+
+```text
+WHERE → 篩 Row
+HAVING → 篩 Group
+```
+
+它們不在同一個階段。
+
+---
+
+## 一句話總結 {#summary}
+
+這一課我最需要記住的不是 `HAVING` 語法本身。
+
+而是：
+
+```text
+FROM
+資料從哪裡來？
+ ↓
+WHERE
+原始 Row 要留下哪些？
+ ↓
+GROUP BY
+要不要把 Row 分成不同 Group？
+ ↓
+Aggregate
+每一組要 COUNT AVG SUM 什麼？
+ ↓
+HAVING
+統計完成後，哪些 Group 才符合條件？
+ ↓
+SELECT
+最後顯示什麼？
+```
+
+### 我自己的快速判斷
+
+題目說：
+
+```text
+只要 Engineer
+只要 Artist
+building = 1e
+工作超過 5 年
+```
+
+我先想：
+
+```sql
+WHERE
+```
+
+因為這些都是：
+
+> 原始 Row 就已經知道的條件。
+
+---
+
+題目說：
+
+```text
+每個 Role
+每棟 Building
+每個 Department
+```
+
+我先想：
+
+```sql
+GROUP BY
+```
+
+因為它在告訴我：
+
+> 哪些資料要成為同一組。
+
+---
+
+題目說：
+
+```text
+多少人
+平均
+總和
+最大
+最小
+```
+
+我想：
+
+```text
+COUNT
+AVG
+SUM
+MAX
+MIN
+```
+
+---
+
+題目說：
+
+```text
+只留下人數超過 5 的 Role
+平均年資超過 3 年的部門
+總銷售額超過 10000 的店家
+```
+
+我才想：
+
+```sql
+HAVING
+```
+
+因為條件依賴：
+
+> **分組後才計算得出來的 Aggregate Result。**
+
+---
+
+最後我的核心 Mental Model：
+
+```text
+WHERE 看 Row
+GROUP BY 做 Group
+Aggregate 算 Group
+HAVING 篩 Group
+```
+
+如果我忘記要用 `WHERE` 還是 `HAVING`，就不要背語法。
+
+只問自己：
+
+> **現在我要篩選的東西，在 GROUP BY 之前就存在，還是 GROUP BY 之後才算得出來？**
+
+之前就存在：
+
+```sql
+WHERE
+```
+
+分組統計後才知道：
+
+```sql
+HAVING
+```
