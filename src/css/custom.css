@@ -207,6 +207,150 @@ body {
   animation-delay: 140ms;
 }
 
+@media screen and (min-width: 997px) {
+  .mobile-notes-dropdown {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .navbar__brand {
+    margin-right: 0.25rem;
+  }
+
+  .navbar__title {
+    display: none;
+  }
+
+  .navbar__items .mobile-notes-dropdown {
+    display: inline-flex !important;
+    align-items: center;
+  }
+
+  .navbar__items .navbar__link[href*='/docs/claude/intro'] + .navbar__item.dropdown,
+  .navbar__items .navbar__item.dropdown:has(> .mobile-notes-dropdown) {
+    display: inline-flex !important;
+    align-items: center;
+  }
+
+  .navbar__items .navbar__item.dropdown:has(> .mobile-notes-dropdown) .dropdown__menu {
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+    padding: 0.35rem;
+    width: min(92vw, 420px);
+  }
+
+  .navbar__items .mobile-notes-dropdown {
+    display: inline-flex !important;
+    align-items: center;
+    color: var(--ifm-menu-color);
+    font-weight: 700;
+    padding-inline: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .navbar__items--right .navbar__link[href*='github.com'] {
+    display: none;
+  }
+
+  .navbar__items .navbar__link[href*='/docs/claude/intro'] {
+    display: inline-flex !important;
+    align-items: center;
+    color: var(--ifm-menu-color);
+    font-weight: 700;
+    overflow: visible;
+    padding-inline: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .navbar__items .navbar__link[href*='/docs/claude/intro']::before,
+  .navbar__items .navbar__link[href*='/docs/claude/intro']::after {
+    content: none;
+  }
+
+  .navbar-sidebar .navbar__link[href*='/docs/claude/intro'],
+  .navbar-sidebar .menu__link[href*='/docs/claude/intro'] {
+    color: var(--ifm-menu-color);
+    overflow: visible;
+  }
+
+  .navbar-sidebar .navbar__link[href*='/docs/claude/intro']::before,
+  .navbar-sidebar .navbar__link[href*='/docs/claude/intro']::after,
+  .navbar-sidebar .menu__link[href*='/docs/claude/intro']::before,
+  .navbar-sidebar .menu__link[href*='/docs/claude/intro']::after {
+    content: none;
+  }
+}
+
+.mobile-notes-menu {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.mobile-notes-topic {
+  border-radius: 6px;
+}
+
+.mobile-notes-topic-trigger {
+  display: block;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ifm-menu-color);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  list-style: none;
+  padding: 0.55rem 0.7rem;
+}
+
+.mobile-notes-topic-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-notes-topic-trigger::after {
+  content: '›';
+  float: right;
+  color: var(--ifm-color-primary);
+  transition: transform 160ms ease;
+}
+
+.mobile-notes-topic[open] .mobile-notes-topic-trigger,
+.mobile-notes-topic-trigger:hover,
+.mobile-notes-topic-trigger:focus-visible {
+  background: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+}
+
+.mobile-notes-topic[open] .mobile-notes-topic-trigger::after {
+  transform: rotate(90deg);
+}
+
+.mobile-notes-topic-links {
+  display: none;
+  gap: 0.1rem;
+  padding: 0.15rem 0 0.45rem 0.4rem;
+}
+
+.mobile-notes-topic[open] .mobile-notes-topic-links {
+  display: grid;
+}
+
+.mobile-notes-article-link {
+  display: block;
+  border-radius: 6px;
+  color: var(--ifm-menu-color);
+  font-size: 0.88rem;
+  line-height: 1.35;
+  padding: 0.42rem 0.65rem;
+}
+
+.mobile-notes-article-link:hover,
+.mobile-notes-article-link:focus-visible {
+  background: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
 @keyframes navbar-playbook-play-spin {
   0% {
     transform: translateY(-50%) rotate(0deg) scale(1);
