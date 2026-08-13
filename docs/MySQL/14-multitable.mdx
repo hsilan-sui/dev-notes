@@ -1,0 +1,1028 @@
+---
+title: "【多表資料查詢】觀念建立:JOIN 的核心是建立資料關係"
+sidebar_position: 14
+---
+
+> 預估閱讀時間：約 8 分鐘
+
+## 本篇觀念要點
+
+> Multi-table Query｜多表資料查詢：JOIN 的核心是建立資料關係
+
+假如現在有一張 `Employees｜員工資料表`。
+
+我不只是想看到：
+
+* `employee_id｜員工編號`
+* `employee_name｜員工姓名`
+
+我還想同時看到：
+
+* `salary｜薪資`
+
+問題是：
+
+> **這些資料分散在不同的 Table｜資料表裡。**
+
+所以多表查詢真正要解決的問題，不只是：
+
+> 我要從哪些 Table｜資料表拿資料？
+
+而是：
+
+> **這些 Table｜資料表之間的 Row｜資料列，要怎麼互相配對？**
+
+---
+
+# 先看兩張 Table｜資料表
+
+## Employees｜員工資料表
+
+| emp_no | first_name | last_name |
+| -----: | ---------- | --------- |
+|  10001 | Georgi     | Facello   |
+|  10002 | Bezalel    | Simmel    |
+|  10003 | Parto      | Bamford   |
+
+其中：
+
+> `Employees.emp_no` 是 `Primary Key｜主鍵`。
+
+也就是：
+
+```text
+一個 emp_no
+只會識別一位 Employee｜員工
+```
+
+---
+
+## Salaries｜薪資資料表
+
+| emp_no | salary | from_date  | to_date    |
+| -----: | -----: | ---------- | ---------- |
+|  10001 |  60117 | 1986-06-26 | 1987-06-26 |
+|  10001 |  62102 | 1987-06-26 | 1988-06-25 |
+|  10001 |  66074 | 1988-06-25 | 1989-06-25 |
+|  10002 |  65828 | 1996-08-03 | 1997-08-03 |
+
+這裡的：
+
+```text
+Salaries.emp_no
+```
+
+是用來指向：
+
+```text
+Employees.emp_no
+```
+
+所以在這個 `Database Schema｜資料庫結構` 中：
+
+```text
+Employees.emp_no
+Primary Key｜主鍵
+
+↓
+
+Salaries.emp_no
+Foreign Key｜外鍵
+```
+
+`Salaries.emp_no` 扮演的是 **Foreign Key｜外鍵**，讓一筆 `Salary Record｜薪資紀錄` 可以知道自己屬於哪一位 `Employee｜員工`。
+
+---
+
+# 第一個問題：直接把兩張 Table｜資料表放進 FROM
+
+如果我直接寫：
+
+```sql
+SELECT
+    a.emp_no,
+    CONCAT(a.first_name, ' ', a.last_name),
+    b.salary
+FROM employees AS a,
+     salaries AS b;
+```
+
+這裡的：
+
+```sql
+employees AS a
+```
+
+代表替 `employees` 建立：
+
+> `Alias｜別名`
+
+所以：
+
+```sql
+a.emp_no
+```
+
+就是：
+
+```sql
+employees.emp_no
+```
+
+而：
+
+```sql
+b.salary
+```
+
+就是：
+
+```sql
+salaries.salary
+```
+
+但是我要注意：
+
+> **Alias｜別名只是在幫 Table｜資料表取短名字，本身完全沒有建立任何 Relationship｜關聯關係。**
+
+---
+
+# 問題出現：SQL 不知道資料要怎麼配對
+
+目前的 SQL 只知道：
+
+```text
+我要 Employees｜員工資料
+
+也要 Salaries｜薪資資料
+```
+
+但是完全不知道：
+
+```text
+哪一筆 Salary｜薪資
+屬於
+哪一位 Employee｜員工
+```
+
+:::danger Cartesian Product｜笛卡兒積
+
+如果我沒有告訴 SQL 兩張 `Table｜資料表` 的關聯條件，它只能做：
+
+```text
+Employees 每一個 Row｜資料列
+
+×
+
+Salaries 每一個 Row｜資料列
+```
+
+也就是：
+
+> **每一列跟每一列全部配一次。**
+
+這就是 `Cartesian Product｜笛卡兒積`。
+:::
+
+---
+
+# 用小資料理解 Cartesian Product｜笛卡兒積
+
+假設 `Employees｜員工資料表` 只有：
+
+| emp_no |
+| -----: |
+|  10001 |
+|  10002 |
+
+而 `Salaries｜薪資資料表` 有：
+
+| emp_no | salary |
+| -----: | -----: |
+|  10001 |  60000 |
+|  10001 |  65000 |
+|  10002 |  50000 |
+
+如果沒有任何 `Join Condition｜連接條件`，中間結果會變成：
+
+| Employee emp_no | Salary emp_no | salary |
+| --------------: | ------------: | -----: |
+|           10001 |         10001 |  60000 |
+|           10001 |         10001 |  65000 |
+|           10001 |         10002 |  50000 |
+|           10002 |         10001 |  60000 |
+|           10002 |         10001 |  65000 |
+|           10002 |         10002 |  50000 |
+
+所以 `10001` 不只拿到了自己的：
+
+```text
+60000
+65000
+```
+
+連屬於 `10002` 的：
+
+```text
+50000
+```
+
+也被配給 `10001`。
+
+原因不是 SQL 出錯。
+
+而是我根本還沒有告訴 SQL：
+
+> **哪兩個 Row｜資料列才是真的有關係。**
+
+---
+
+# Cartesian Product｜笛卡兒積會讓資料量爆炸
+
+假設：
+
+```text
+Employees = 300,000 Rows｜資料列
+
+Salaries = 2,800,000 Rows｜資料列
+```
+
+如果沒有 `Join Condition｜連接條件`，概念上就可能產生：
+
+```text
+300,000 × 2,800,000
+```
+
+個組合。
+
+這不是 `Database｜資料庫` 壞掉。
+
+而是我真的叫 SQL：
+
+> 幫我把每一位 `Employee｜員工`，跟每一筆 `Salary｜薪資` 都配一次。
+
+所以之後如果做 `Multi-table Query｜多表資料查詢` 時，結果突然異常龐大，我要優先檢查：
+
+> **是不是少了 Join Condition｜連接條件？**
+
+---
+
+# 第二步：建立兩張 Table｜資料表之間的 Link｜連結
+
+我可以先用已經學過的 `WHERE｜條件篩選`：
+
+```sql
+SELECT
+    a.emp_no,
+    CONCAT(a.first_name, ' ', a.last_name),
+    b.salary
+FROM employees AS a,
+     salaries AS b
+WHERE a.emp_no = b.emp_no;
+```
+
+這裡的：
+
+```sql
+WHERE a.emp_no = b.emp_no
+```
+
+和我以前常見的：
+
+```sql
+WHERE salary > 50000
+```
+
+有一點不同。
+
+以前是在做：
+
+> `Value Filtering｜值篩選`
+
+但現在的：
+
+```sql
+a.emp_no = b.emp_no
+```
+
+是在說：
+
+> 只有 `Employees｜員工資料表` 的 `emp_no` 和 `Salaries｜薪資資料表` 的 `emp_no` 相同時，這兩個 `Row｜資料列` 才可以配在一起。
+
+---
+
+# 加入關聯條件後發生什麼？
+
+原本的結果：
+
+| Employee emp_no | Salary emp_no |    salary |
+| --------------: | ------------: | --------: |
+|           10001 |         10001 |     60000 |
+|           10001 |         10001 |     65000 |
+|       ~~10001~~ |     ~~10002~~ | ~~50000~~ |
+|       ~~10002~~ |     ~~10001~~ | ~~60000~~ |
+|       ~~10002~~ |     ~~10001~~ | ~~65000~~ |
+|           10002 |         10002 |     50000 |
+
+加入：
+
+```sql
+WHERE a.emp_no = b.emp_no
+```
+
+之後，只會留下：
+
+| emp_no | salary |
+| -----: | -----: |
+|  10001 |  60000 |
+|  10001 |  65000 |
+|  10002 |  50000 |
+
+這時我才真正建立：
+
+```text
+Employees｜員工資料表
+
+與
+
+Salaries｜薪資資料表
+```
+
+之間的：
+
+> `Relationship｜關聯關係`
+
+---
+
+# 為什麼同一個 Employee｜員工還是會出現很多列？
+
+即使 `JOIN｜資料表連接` 已經正確：
+
+```text
+10001
+```
+
+還是可能出現很多次。
+
+原因是 `Salaries｜薪資資料表` 不是：
+
+```text
+一位 Employee
+=
+一筆 Salary
+```
+
+而是：
+
+```text
+一位 Employee
+=
+多筆 Salary History｜薪資歷史紀錄
+```
+
+例如：
+
+| emp_no | salary | from_date |
+| -----: | -----: | --------- |
+|  10001 |  60117 | 1986      |
+|  10001 |  62102 | 1987      |
+|  10001 |  66074 | 1988      |
+|  10001 |  66596 | 1989      |
+
+這代表：
+
+```text
+Employee｜員工
+
+1
+
+↓
+
+Salary History｜薪資歷史
+
+Many｜多筆
+```
+
+這個 `Relationship｜關聯關係` 就是：
+
+> **One-to-Many｜一對多**
+
+---
+
+## JOIN 後一位 Employee｜員工變很多列，不一定是錯誤
+
+如果：
+
+```text
+Employees 一列
+=
+一位 Employee｜員工
+```
+
+而：
+
+```text
+Salaries 一列
+=
+某位 Employee 在某段期間的一筆 Salary Record｜薪資紀錄
+```
+
+那麼一位 `Employee｜員工` 本來就可能對應多筆 `Salary Record｜薪資紀錄`。
+
+所以 JOIN 後：
+
+```text
+Employee 被展開成很多 Row｜資料列
+```
+
+是合理的。
+
+這不是 `Duplicate Data｜重複資料` 錯誤。
+
+而是 `Data Model｜資料模型` 本來就在表達：
+
+> Georgi 在不同時間有不同的薪資。
+
+---
+
+# 解 JOIN｜資料表連接之前，要先建立 Mental Model｜思考模型
+
+例如：
+
+```text
+Employees 一列
+=
+一位 Employee｜員工
+```
+
+而：
+
+```text
+Salaries 一列
+=
+某位 Employee
+在某一段期間
+的一筆 Salary Record｜薪資紀錄
+```
+
+因此：
+
+```text
+Employee｜員工
+
+1
+
+↓
+
+Salary History｜薪資歷史
+
+Many｜多筆
+```
+
+所以 JOIN 之後：
+
+```text
+同一位 Employee 被展開成很多列
+```
+
+完全合理。
+
+---
+
+# Implicit Join｜隱式連接
+
+下面這種寫法：
+
+```sql
+FROM employees AS a,
+     salaries AS b
+WHERE a.emp_no = b.emp_no;
+```
+
+稱為：
+
+> **Implicit Join｜隱式連接**
+
+也就是把：
+
+```text
+需要的 Table｜資料表
+```
+
+放進：
+
+```sql
+FROM
+```
+
+然後再利用：
+
+```sql
+WHERE
+```
+
+建立兩張 Table｜資料表的關係。
+
+---
+
+# Explicit Join｜顯式連接
+
+現在更常見、也更推薦寫成：
+
+```sql
+SELECT
+    a.emp_no,
+    CONCAT(a.first_name, ' ', a.last_name) AS employee_name,
+    b.salary
+FROM employees AS a
+INNER JOIN salaries AS b
+    ON a.emp_no = b.emp_no;
+```
+
+這種就是：
+
+> **Explicit Join｜顯式連接**
+
+在目前這個案例裡：
+
+```text
+Implicit Join｜隱式連接
+```
+
+和：
+
+```text
+INNER JOIN｜內部連接
+```
+
+得到的結果基本相同。
+
+但 `Explicit Join｜顯式連接` 的語意更清楚。
+
+---
+
+# FROM、JOIN、ON、WHERE 各自在回答什麼？
+
+我可以先把它簡化成：
+
+```text
+FROM
+找資料來源
+
+↓
+
+JOIN
+接另一張 Table
+
+↓
+
+ON
+決定怎麼配對
+
+↓
+
+WHERE
+決定最後留下誰
+```
+
+---
+
+# ON 和 WHERE 不要混在一起理解
+
+例如：
+
+```sql
+SELECT
+    a.emp_no,
+    CONCAT(a.first_name, ' ', a.last_name) AS employee_name,
+    b.salary
+FROM employees AS a
+INNER JOIN salaries AS b
+    ON a.emp_no = b.emp_no
+WHERE b.salary > 70000;
+```
+
+我會拆成兩個完全不同的問題。
+
+---
+
+## ON｜連接條件
+
+```sql
+ON a.emp_no = b.emp_no
+```
+
+回答的是：
+
+> **A Table｜資料表的哪一列，可以跟 B Table｜資料表的哪一列配在一起？**
+
+也就是：
+
+```text
+Employees.emp_no
+=
+Salaries.emp_no
+```
+
+才可以連接。
+
+所以：
+
+> `ON｜連接條件` 是在決定 **Row Mapping｜資料列對應方式**。
+
+---
+
+## WHERE｜條件篩選
+
+```sql
+WHERE b.salary > 70000
+```
+
+回答的是：
+
+> **資料 JOIN｜連接完成之後，我還要留下哪些 Row｜資料列？**
+
+所以：
+
+```text
+ON
+=
+怎麼接
+```
+
+而：
+
+```text
+WHERE
+=
+接完之後留下誰
+```
+
+這兩個概念不要混在一起。
+
+---
+
+# Primary Key｜主鍵 和 Foreign Key｜外鍵在 JOIN 裡的角色
+
+在目前的 `Database Schema｜資料庫結構` 裡：
+
+```text
+Employees.emp_no
+Primary Key｜主鍵
+
+↓
+
+Salaries.emp_no
+Foreign Key｜外鍵
+```
+
+所以：
+
+```sql
+ON employees.emp_no = salaries.emp_no
+```
+
+其實就是把 `Database Schema｜資料庫結構` 中原本就存在的：
+
+> `Relationship｜關聯關係`
+
+重新寫進 `Query｜查詢` 裡。
+
+---
+
+## JOIN 不是把兩張 Table｜資料表亂黏在一起
+
+這是一個我要逐漸建立的重要觀念：
+
+> **JOIN｜資料表連接不是把兩張 Table｜資料表隨便拼在一起。**
+
+而是：
+
+> 把原本因為 `Database Normalization｜資料庫正規化` 而拆開儲存的 `Relationship｜關聯關係`，在查詢時重新組合成我要的 `Query Result｜查詢結果`。
+
+例如：
+
+```text
+Employees
+保存 Employee｜員工本身的資料
+```
+
+```text
+Salaries
+保存 Salary History｜薪資歷史資料
+```
+
+兩張 Table｜資料表沒有把所有資訊塞在一起。
+
+而是利用：
+
+```text
+emp_no
+```
+
+建立彼此的關係。
+
+需要查詢時，再透過：
+
+```sql
+JOIN
+```
+
+把需要的資料組回來。
+
+---
+
+# JOIN 不一定永遠都是 Primary Key → Foreign Key
+
+最常見的確是：
+
+```text
+Primary Key｜主鍵
+
+↓
+
+Foreign Key｜外鍵
+```
+
+例如：
+
+```text
+Employees.emp_no
+
+↓
+
+Salaries.emp_no
+```
+
+但 `JOIN｜資料表連接` 真正需要的是：
+
+> **兩個可以合理 Mapping｜對應的 Column｜欄位。**
+
+例如兩張 Table｜資料表都有：
+
+```text
+city｜城市
+```
+
+SQL 語法上也可能寫：
+
+```sql
+ON a.city = b.city
+```
+
+即使它們不是：
+
+```text
+Primary Key｜主鍵
+```
+
+或：
+
+```text
+Foreign Key｜外鍵
+```
+
+SQL 還是可以進行 JOIN。
+
+---
+
+## 但欄位名稱相同，不代表就應該 JOIN
+
+我要注意：
+
+```text
+Column Name｜欄位名稱一樣
+```
+
+不代表：
+
+```text
+Relationship｜關聯關係一定成立
+```
+
+真正要問的是：
+
+> **這兩個 Column｜欄位，在 Business Meaning｜商業語意上真的具有對應關係嗎？**
+
+所以不是：
+
+```text
+欄位名稱一樣
+=
+可以 JOIN
+```
+
+而是：
+
+```text
+資料語意可以建立 Relationship
+=
+才是合理的 JOIN
+```
+
+---
+
+# 我真正需要建立的 JOIN Mental Model｜連接思考模型
+
+以後遇到 `Multi-table Query｜多表資料查詢`，我可以先走下面這個流程：
+
+```text
+我要的資料在哪些 Table｜資料表
+        ↓
+每張 Table 的一個 Row｜資料列代表什麼
+        ↓
+兩張 Table 是什麼 Relationship｜關聯關係
+        ↓
+是一對一、一對多，還是多對多
+        ↓
+用哪一個 Column｜欄位建立 Mapping｜對應
+        ↓
+JOIN｜連接
+        ↓
+ON｜建立配對條件
+        ↓
+再決定 WHERE｜條件篩選
+        ↓
+再決定 GROUP BY｜分組 等操作
+```
+
+這其實比死背：
+
+```sql
+INNER JOIN ...
+ON ...
+```
+
+重要很多。
+
+---
+
+# 用這個案例重新走一次
+
+假設我的需求是：
+
+> 我要看到員工姓名和薪資。
+
+## Step 1｜資料在哪裡？
+
+```text
+Employee Name｜員工姓名
+→ Employees
+```
+
+```text
+Salary｜薪資
+→ Salaries
+```
+
+---
+
+## Step 2｜一個 Row｜資料列代表什麼？
+
+```text
+Employees 一列
+=
+一位 Employee｜員工
+```
+
+```text
+Salaries 一列
+=
+一位 Employee 某段期間的一筆 Salary Record｜薪資紀錄
+```
+
+---
+
+## Step 3｜Relationship｜關聯關係是什麼？
+
+```text
+Employee｜員工
+
+1
+
+↓
+
+Salary History｜薪資歷史
+
+Many
+```
+
+所以是：
+
+> `One-to-Many｜一對多`
+
+---
+
+## Step 4｜用什麼 Column｜欄位建立 Mapping｜對應？
+
+```text
+Employees.emp_no
+
+=
+
+Salaries.emp_no
+```
+
+---
+
+## Step 5｜建立 JOIN｜資料表連接
+
+```sql
+FROM employees AS a
+INNER JOIN salaries AS b
+    ON a.emp_no = b.emp_no
+```
+
+---
+
+## Step 6｜SELECT 我要的 Column｜欄位
+
+```sql
+SELECT
+    a.emp_no,
+    CONCAT(a.first_name, ' ', a.last_name) AS employee_name,
+    b.salary
+```
+
+完整的 `Query｜查詢`：
+
+```sql
+SELECT
+    a.emp_no,
+    CONCAT(a.first_name, ' ', a.last_name) AS employee_name,
+    b.salary
+FROM employees AS a
+INNER JOIN salaries AS b
+    ON a.emp_no = b.emp_no;
+```
+
+---
+
+# 本篇我真正要記住的核心
+
+當我要從多張 `Table｜資料表` 取得資料時，我不是單純：
+
+> 「同時 SELECT 兩張 Table。」
+
+而是一定要先回答：
+
+> **A Table 的哪一個 Row｜資料列，要跟 B Table 的哪一個 Row｜資料列配在一起？**
+
+這個答案就是：
+
+> **Join Condition｜連接條件**
+
+所以 `JOIN｜資料表連接` 最核心的事情不是語法。
+
+而是：
+
+> **Relationship｜關聯關係。**
+
+---
+
+# Cheat Sheet｜快速複習表
+
+| English｜英文             | 中文     | 我怎麼理解                        |
+| ---------------------- | ------ | ---------------------------- |
+| Table                  | 資料表    | 儲存某一類資料                      |
+| Row                    | 資料列    | 一筆資料                         |
+| Column                 | 欄位     | 一種資料屬性                       |
+| Alias                  | 別名     | 幫 Table 或 Column 取短名字        |
+| Primary Key            | 主鍵     | 唯一識別一筆資料                     |
+| Foreign Key            | 外鍵     | 指向另一張 Table 的 Key            |
+| Relationship           | 關聯關係   | 不同資料之間如何互相關聯                 |
+| Mapping                | 對應     | A 的哪筆資料對到 B 的哪筆資料            |
+| Cartesian Product      | 笛卡兒積   | 每一列跟另一張表的每一列全部配一次            |
+| JOIN                   | 資料表連接  | 把不同 Table 的相關資料組合起來          |
+| Join Condition         | 連接條件   | 決定兩張 Table 的 Row 如何配對        |
+| ON                     | 連接條件   | 決定資料怎麼接                      |
+| WHERE                  | 條件篩選   | 決定最後留下哪些資料                   |
+| One-to-Many            | 一對多    | 一筆資料對應另一張表的多筆資料              |
+| Implicit Join          | 隱式連接   | 使用 `FROM A, B` 搭配 `WHERE`    |
+| Explicit Join          | 顯式連接   | 使用 `JOIN ... ON ...`         |
+| Database Schema        | 資料庫結構  | Table、Key、Relationship 的整體設計 |
+| Database Normalization | 資料庫正規化 | 將資料合理拆分，降低重複                 |
+| Mental Model           | 思考模型   | 我理解問題時使用的內在模型                |
+
+---
+
+## 總結
+
+> **不要問要用哪一種 JOIN。**
+>
+> 先問：
+>
+> **這兩張 Table｜資料表的一個 Row｜資料列分別代表什麼？**
+>
+> **它們之間是什麼 Relationship｜關聯關係？**
+>
+> **A 的哪一列，要跟 B 的哪一列配在一起？**
+
+知道這三件事之後：
+
+```text
+JOIN｜資料表連接
+```
+
+就只是把我已經理解的資料關係寫成 SQL 而已。
+
