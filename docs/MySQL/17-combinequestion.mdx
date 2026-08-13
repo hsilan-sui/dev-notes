@@ -1,0 +1,354 @@
+---
+title: "【組合練習】DISTINCT、WHERE、GROUP BY、ORDER BY"
+sidebar_position: 17
+---
+
+> 預估閱讀時間：約 5 分鐘
+
+## 本篇我要記住
+
+單獨知道 SQL 語法還不夠，我真正要練的是：
+
+> **看到需求後，知道這些語法為什麼要組合在一起。**
+
+這篇使用：
+
+* `DISTINCT`
+* `WHERE`
+* `GROUP BY`
+* `COUNT`
+* `ORDER BY`
+
+---
+
+## 練習資料
+
+### Employees
+
+| employee_id | name  | department | city    |
+| ----------: | ----- | ---------- | ------- |
+|           1 | Amy   | IT         | Taipei  |
+|           2 | Bob   | IT         | Taipei  |
+|           3 | Cindy | HR         | Taoyuan |
+|           4 | David | HR         | Taipei  |
+|           5 | Eric  | IT         | Taoyuan |
+|           6 | Fiona | Sales      | Taipei  |
+|           7 | Grace | Sales      | Taipei  |
+|           8 | Henry | IT         | Taipei  |
+
+---
+
+# 題目 1｜DISTINCT + ORDER BY
+
+## 題目
+
+> 找出公司有哪些不同的城市，按照城市名稱 A → Z 排序。
+
+我先拆需求：
+
+**「不同城市」**
+
+→ `DISTINCT`
+
+**「A → Z」**
+
+→ `ORDER BY ASC`
+
+所以：
+
+```sql
+SELECT DISTINCT city
+FROM Employees
+ORDER BY city ASC;
+```
+
+結果：
+
+| city    |
+| ------- |
+| Taipei  |
+| Taoyuan |
+
+### 我的思考
+
+```text
+我要 city
+→ 重複城市不要
+→ 最後排序
+```
+
+---
+
+# 題目 2｜多欄 DISTINCT + ORDER BY
+
+## 題目
+
+> 找出不同的「部門 + 城市」組合，按照 department A → Z 排序。
+
+需求拆解：
+
+```text
+department + city
+→ 組合不能重複
+→ DISTINCT
+
+按照 department 排序
+→ ORDER BY department ASC
+```
+
+答案：
+
+```sql
+SELECT DISTINCT department, city
+FROM Employees
+ORDER BY department ASC;
+```
+
+結果：
+
+| department | city    |
+| ---------- | ------- |
+| HR         | Taoyuan |
+| HR         | Taipei  |
+| IT         | Taipei  |
+| IT         | Taoyuan |
+| Sales      | Taipei  |
+
+### 關鍵
+
+`DISTINCT` 看的是：
+
+> **SELECT 出來的整列組合。**
+
+---
+
+# 題目 3｜GROUP BY + COUNT + ORDER BY
+
+## 題目
+
+> 統計每個部門有幾位員工，按照員工人數由多到少排列。
+
+這題已經不是：
+
+> 有哪些部門？
+
+而是：
+
+> **每個部門各有幾個人？**
+
+所以我要建立群組。
+
+```sql
+SELECT
+    department,
+    COUNT(*) AS employee_count
+FROM Employees
+GROUP BY department
+ORDER BY employee_count DESC;
+```
+
+結果：
+
+| department | employee_count |
+| ---------- | -------------: |
+| IT         |              4 |
+| HR         |              2 |
+| Sales      |              2 |
+
+### 我的拆題方式
+
+先問自己：
+
+**誰是一組？**
+
+```text
+department
+```
+
+所以：
+
+```sql
+GROUP BY department
+```
+
+**每組算什麼？**
+
+```text
+員工數量
+```
+
+所以：
+
+```sql
+COUNT(*)
+```
+
+**最後按照什麼排序？**
+
+```text
+員工數量，由多到少
+```
+
+所以：
+
+```sql
+ORDER BY employee_count DESC
+```
+
+---
+
+# 題目 4｜WHERE + DISTINCT + ORDER BY
+
+## 題目
+
+> 找出 Taipei 有哪些不同部門，按照部門名稱 Z → A 排序。
+
+需求拆解：
+
+**只看 Taipei**
+
+```sql
+WHERE city = 'Taipei'
+```
+
+**不同部門**
+
+```sql
+DISTINCT department
+```
+
+**Z → A**
+
+```sql
+ORDER BY department DESC
+```
+
+完整：
+
+```sql
+SELECT DISTINCT department
+FROM Employees
+WHERE city = 'Taipei'
+ORDER BY department DESC;
+```
+
+結果：
+
+| department |
+| ---------- |
+| Sales      |
+| IT         |
+| HR         |
+
+---
+
+## 我現在要建立的 SQL 拆題順序
+
+看到題目時，不要急著直接寫 SQL。
+
+先問：
+
+### 1. 我要顯示什麼？
+
+決定：
+
+```sql
+SELECT
+```
+
+### 2. 重複資料要不要消失？
+
+如果要：
+
+```sql
+DISTINCT
+```
+
+### 3. 有沒有先限制哪些資料？
+
+如果有：
+
+```sql
+WHERE
+```
+
+### 4. 題目有沒有「每個」？
+
+例如：
+
+* 每個部門
+* 每個城市
+* 每位員工
+
+而且還要：
+
+* 計算數量
+* 加總
+* 平均
+
+通常開始考慮：
+
+```sql
+GROUP BY
+```
+
+### 5. 最後要不要排序？
+
+```sql
+ORDER BY
+```
+
+---
+
+## 執行順序也要分清楚
+
+SQL 寫：
+
+```sql
+SELECT DISTINCT department
+FROM Employees
+WHERE city = 'Taipei'
+ORDER BY department DESC;
+```
+
+但理解資料時，我可以想成：
+
+```text
+FROM Employees
+↓
+WHERE 篩選 Taipei
+↓
+SELECT department
+↓
+DISTINCT 去除重複
+↓
+ORDER BY 排序
+```
+
+---
+
+## 最後整理
+
+| 題目關鍵字   | 我先想到               |
+| ------- | ------------------ |
+| 有哪些不同的  | `DISTINCT`         |
+| 有幾種不同的  | `COUNT DISTINCT`   |
+| 只看某些資料  | `WHERE`            |
+| 每個部門有幾人 | `GROUP BY + COUNT` |
+| 每組總和    | `GROUP BY + SUM`   |
+| 由大到小    | `ORDER BY DESC`    |
+| 由小到大    | `ORDER BY ASC`     |
+
+### 我的核心 Mental Model
+
+> **DISTINCT：哪些重複資料不要出現？**
+>
+> **WHERE：哪些原始資料我要先留下？**
+>
+> **GROUP BY：我要以誰為一組？**
+>
+> **聚合函數：每一組要算什麼？**
+>
+> **ORDER BY：最後結果要怎麼排列？**
+
+之後看到 SQL 題目，我先把需求翻譯成這五個問題，再開始寫 SQL。

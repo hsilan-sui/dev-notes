@@ -1,0 +1,260 @@
+---
+title: "【SQL DISTINCT】去除重複資料"
+sidebar_position: 16
+---
+
+> 預估閱讀時間：約 4 分鐘
+
+## 本篇我要記住
+
+`DISTINCT`｜去除重複資料，用來讓 `SELECT` 的結果只保留**不重複的值或組合**。
+
+```sql
+SELECT DISTINCT column
+FROM table;
+```
+
+我的核心記法：
+
+> **DISTINCT 不是分組計算，而是「這個 SELECT 結果不要重複」。先SELECT 出來，再DISTINCT去重**
+
+---
+
+## 1. 為什麼需要 DISTINCT
+
+假設有一張員工表：
+
+### Employees
+
+| employee_id | name  | department | city    |
+| ----------: | ----- | ---------- | ------- |
+|           1 | Amy   | IT         | Taipei  |
+|           2 | Bob   | IT         | Taipei  |
+|           3 | Cindy | HR         | Taoyuan |
+|           4 | David | HR         | Taipei  |
+|           5 | Eric  | IT         | Taoyuan |
+|           6 | Fiona | Sales      | Taipei  |
+|           7 | Grace | Sales      | Taipei  |
+|           8 | Henry | IT         | Taipei  |
+
+如果：
+
+```sql
+SELECT department
+FROM Employees;
+```
+
+我會得到：
+
+```text
+IT
+IT
+HR
+HR
+IT
+Sales
+Sales
+IT
+```
+
+但如果需求只是：
+
+> 公司「有哪些部門」？
+
+我根本不需要看到重複的 `IT`。
+
+所以使用：
+
+```sql
+SELECT DISTINCT department
+FROM Employees;
+```
+
+結果：
+
+| department |
+| ---------- |
+| IT         |
+| HR         |
+| Sales      |
+
+---
+
+## 2. DISTINCT 多個欄位
+
+這是我最需要記住的地方。
+
+```sql
+SELECT DISTINCT department, city
+FROM Employees;
+```
+
+不是：
+
+> department 自己去重一次，city 自己去重一次。
+
+而是：
+
+> **department + city 整個組合不能重複。**
+
+例如：
+
+| department | city    |
+| ---------- | ------- |
+| IT         | Taipei  |
+| IT         | Taipei  |
+| HR         | Taoyuan |
+| HR         | Taipei  |
+| IT         | Taoyuan |
+| Sales      | Taipei  |
+
+執行 `DISTINCT` 後：
+
+| department | city    |
+| ---------- | ------- |
+| IT         | Taipei  |
+| HR         | Taoyuan |
+| HR         | Taipei  |
+| IT         | Taoyuan |
+| Sales      | Taipei  |
+
+因此寫法是：
+
+```sql
+SELECT DISTINCT department, city
+FROM Employees;
+```
+
+而不是：
+
+```sql
+SELECT DISTINCT(department, city)
+FROM Employees;
+```
+
+---
+
+## 3. COUNT 搭配 DISTINCT
+
+如果需求變成：
+
+> 公司總共有幾種不同的部門？
+
+這次不只是把部門列出來，而是要「數有幾種」。
+
+```sql
+SELECT COUNT(DISTINCT department)
+FROM Employees;
+```
+
+我的理解流程：
+
+```text
+原始 department
+↓
+DISTINCT 去除重複
+↓
+IT
+HR
+Sales
+↓
+COUNT 計算數量
+↓
+3
+```
+
+---
+
+## 4. DISTINCT vs GROUP BY
+
+這兩個有時候看起來會產生類似結果，但我的目的不同。
+
+### DISTINCT
+
+問題是：
+
+> 「有哪些不同的東西？」
+
+例如：
+
+```sql
+SELECT DISTINCT department
+FROM Employees;
+```
+
+我要的是：
+
+```text
+IT
+HR
+Sales
+```
+
+### GROUP BY
+
+問題通常是：
+
+> 「每一組各自怎麼樣？」
+
+例如：
+
+```sql
+SELECT department, COUNT(*) AS employee_count
+FROM Employees
+GROUP BY department;
+```
+
+我要的是：
+
+| department | employee_count |
+| ---------- | -------------: |
+| IT         |              4 |
+| HR         |              2 |
+| Sales      |              2 |
+
+所以我的判斷方式：
+
+| 我想知道           | 使用                 |
+| -------------- | ------------------ |
+| 有哪些不同的部門？      | `DISTINCT`         |
+| 有哪些不同的城市？      | `DISTINCT`         |
+| 有哪些不同的部門＋城市組合？ | `DISTINCT`         |
+| 有幾種不同部門？       | `COUNT DISTINCT`   |
+| 每個部門有幾個人？      | `GROUP BY + COUNT` |
+| 每個部門的薪資總和？     | `GROUP BY + SUM`   |
+
+---
+
+## 關鍵記憶
+
+```sql
+SELECT DISTINCT department
+```
+
+> department 不重複。
+
+```sql
+SELECT DISTINCT department, city
+```
+
+> department + city 的**組合**不重複。
+
+```sql
+COUNT(DISTINCT department)
+```
+
+> 計算有幾種不同的 department。
+
+而：
+
+```sql
+GROUP BY department
+```
+
+> 是把資料依照 department 分組，準備進行每組的聚合計算。
+
+### 一句話記住
+
+> **DISTINCT = 不要重複。**
+>
+> **GROUP BY = 我要以誰為一組，然後對每組做事情。**
