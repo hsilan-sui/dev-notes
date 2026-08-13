@@ -1,0 +1,173 @@
+---
+title: "【SELF JOIN】同一張表自己 JOIN 自己"
+sidebar_position: 15
+---
+
+
+> 預估閱讀時間：約 3 分鐘
+
+## 本篇我要記住
+
+**Self Join｜自我連接**不是一種新的 `JOIN` 語法。
+
+它代表：
+
+> **同一張 Table 在查詢中扮演兩個不同角色。**
+
+常見情境：
+
+* 員工 → 主管
+* 分類 → 上層分類
+* 留言 → 父留言
+
+---
+
+## 為什麼需要 Self Join？
+
+假設有一張 `Employee`：
+
+| id | name  | manager_id |
+| -: | ----- | ---------: |
+|  1 | Alice |       NULL |
+|  2 | Bob   |          1 |
+|  3 | Carol |          1 |
+|  4 | David |       NULL |
+|  5 | Emma  |          4 |
+|  7 | Grace |          5 |
+
+`manager_id` 指向的其實還是 `Employee.id`。
+
+例如 Grace：
+
+```text
+Grace.manager_id = 5
+Emma.id = 5
+```
+
+所以我可以知道：
+
+> Grace 的主管是 Emma。
+
+這是一種 **Self-referencing Relationship｜自我參照關係**。
+
+---
+
+## Self Join 最重要的思考方式
+
+我要先把同一張表分成兩個角色：
+
+```text
+a = Employee 員工
+b = Manager 主管
+```
+
+接著找出兩者的關係：
+
+```text
+員工.manager_id → 主管.id
+```
+
+所以 JOIN 條件就是：
+
+```sql
+ON a.manager_id = b.id
+```
+
+完整查詢：
+
+```sql
+SELECT
+    a.name AS employee_name,
+    b.name AS manager_name
+FROM Employee AS a
+JOIN Employee AS b
+    ON a.manager_id = b.id;
+```
+
+結果：
+
+| employee_name | manager_name |
+| ------------- | ------------ |
+| Bob           | Alice        |
+| Carol         | Alice        |
+| Emma          | David        |
+| Grace         | Emma         |
+
+---
+
+## 為什麼不是 `a.id = b.manager_id`？
+
+:::info 為什麼不是 `a.id = b.manager_id`
+因為我要問的是：
+
+> **這個員工的 `manager_id` 指向哪一個人的 `id`？**
+
+例如：
+
+```text
+Grace.manager_id = Emma.id
+       5         =    5
+```
+
+因此方向是：
+
+```text
+Employee.manager_id → Manager.id
+```
+:::
+
+---
+
+## Self Join 與正規化
+
+需要 Self Join **不代表資料表沒有做到 3NF｜第三正規化**。
+
+我們沒有在 Grace 那列重複保存：
+
+```text
+manager_name = Emma
+```
+
+而是只保存：
+
+```text
+manager_id = 5
+```
+
+需要主管資料時，再 JOIN 回 `Employee`。
+
+因此可以這樣理解：
+
+> **主管是一個角色，不是另一種 Entity｜實體。**
+
+所以不一定需要另外建立 `Manager` Table。
+
+---
+
+## 關鍵記憶
+
+看到這種 Schema：
+
+```text
+Employee
+├── id
+├── name
+└── manager_id
+        ↓
+    Employee.id
+```
+
+我的第一個反應：
+
+> **同一種 Entity 自己指向自己 → 可能需要 Self Join。**
+
+寫 SQL 前先寫：
+
+```text
+a = 員工
+b = 主管
+
+a.manager_id → b.id
+```
+
+再開始 JOIN。
