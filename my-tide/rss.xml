@@ -57,18 +57,6 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
             <category>Docusaurus</category>
         </item>
         <item>
-            <title><![CDATA[Journal Layout QA Fixture]]></title>
-            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</link>
-            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</guid>
-            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
-            <description><![CDATA[This is a QA fixture for verifying the Journal same-day layout and vertical navigation.]]></description>
-            <content:encoded><![CDATA[<p>This is a QA fixture for verifying the Journal same-day layout and vertical navigation.
-It is not a real journal entry, essay, poem, or site-owner writing.</p>
-<p>This placeholder exists only so the Journal list page can render a day with more than one entry from real Docusaurus blog plugin data.
-Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
-            <category>Docusaurus</category>
-        </item>
-        <item>
             <title><![CDATA[Welcome]]></title>
             <link>https://hsilan-sui.github.io/dev-notes/my-tide/welcome</link>
             <guid>https://hsilan-sui.github.io/dev-notes/my-tide/welcome</guid>
@@ -89,6 +77,18 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
 <p><strong>And if you don't want a blog</strong>: just delete this directory, and use <code>blog: false</code> in your Docusaurus config.</p>]]></content:encoded>
             <category>Facebook</category>
             <category>Hello</category>
+            <category>Docusaurus</category>
+        </item>
+        <item>
+            <title><![CDATA[Journal Layout QA Fixture]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</guid>
+            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[This is a QA fixture for verifying the Journal same-day layout and vertical navigation.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for verifying the Journal same-day layout and vertical navigation.
+It is not a real journal entry, essay, poem, or site-owner writing.</p>
+<p>This placeholder exists only so the Journal list page can render a day with more than one entry from real Docusaurus blog plugin data.
+Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
             <category>Docusaurus</category>
         </item>
         <item>
