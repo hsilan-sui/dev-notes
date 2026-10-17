@@ -98,6 +98,15 @@
   --journal-pager-gray-engrave: #6E757C;
   --journal-pager-gray-model: #A3AAB1;
   --journal-pager-gray-bezel: #3A3F45;
+  /* Molded pager keys and the recessed well they sit in. */
+  --journal-pager-key-top: #33383E;
+  --journal-pager-key-pressed: #16191C;
+  --journal-pager-key-label-strong: #EEF1F3;
+  --journal-pager-well: rgba(0, 0, 0, 0.28);
+  --journal-pager-gray-key-top: #C7CDD2;
+  --journal-pager-gray-key-pressed: #9AA2A9;
+  --journal-pager-gray-key-label-strong: #2F353B;
+  --journal-pager-gray-well: rgba(38, 41, 46, 0.12);
   --journal-lcd: #B9C69B;
   --journal-lcd-off: #4A5145;
   --journal-lcd-ink: #1E2618;

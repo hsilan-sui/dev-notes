@@ -1,8 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {flushSync} from 'react-dom';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import SignalPager from './SignalPager.jsx';
 import SignalLightYears, {replyBankFor} from './SignalLightYears';
-import {firstArrival, recordSignal} from './signalRiver.js';
+import {recordSignal} from './signalRiver.js';
 import {readMsToken} from './useHoverIntent.js';
 import styles from './SignalRiver.module.css';
 
@@ -18,6 +19,7 @@ const BOOT = [
   [2000, 'idle'],
 ];
 const BANK_DELAY = {past: 0, today: 400};
+const BOOTING = ['off', 'boot1', 'boot2', 'boot3'];
 const WRITE_HINT_KEY = 'mytide.signal.wrote';
 
 function prefersReducedMotion() {
@@ -29,7 +31,7 @@ function clockNow() {
   return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 }
 
-function lcdFor(bank, state, clock) {
+function lcdFor(bank, state, clock, apiStatus) {
   switch (state.phase) {
     case 'off':
       return {off: true, main: '', sub: '', bars: 0};
@@ -52,6 +54,9 @@ function lcdFor(bank, state, clock) {
     case 'delivered':
       return {main: '已抵達對岸', sub: 'SENT ✓'};
     default:
+      if (apiStatus === 'offline') {
+        return {main: '儲存未連線', sub: '訊號尚未送出'};
+      }
       return {main: '收訊中', sub: clock};
   }
 }
@@ -80,6 +85,8 @@ const easeInOut = (t) => 0.5 - Math.cos(Math.PI * t) / 2;
 // bank (MT02). A released signal travels along the wave as a red point and
 // arrives, unsigned, at the other bank.
 export default function SignalRiver({onSelectDay}) {
+  const {siteConfig} = useDocusaurusContext();
+  const apiBase = String(siteConfig.customFields?.signalApiBaseUrl || '').replace(/\/$/, '');
   const rootRef = useRef(null);
   const pagerRefs = useRef({past: null, today: null}).current;
   const dotRef = useRef(null);
@@ -96,8 +103,9 @@ export default function SignalRiver({onSelectDay}) {
   const [traveling, setTraveling] = useState(false);
   const [sending, setSending] = useState(false);
   const [history, setHistory] = useState([]);
+  const [apiStatus, setApiStatus] = useState(apiBase ? 'connecting' : 'unconfigured');
   const flightRef = useRef(false);
-  const signalSequence = useRef(0);
+  const seenSignalIds = useRef(new Set());
 
   const later = useCallback((delay, fn) => {
     const timer = window.setTimeout(fn, delay);
@@ -124,7 +132,39 @@ export default function SignalRiver({onSelectDay}) {
     [later, setBank],
   );
 
-  // Boot on every visit, then let the first signal arrive at the today bank.
+  const loadSignals = useCallback(async (announce = false) => {
+    if (!apiBase) {
+      setApiStatus('unconfigured');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${apiBase}/api/signals`, {headers: {Accept: 'application/json'}});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const stored = await response.json();
+      const signals = Array.isArray(stored) ? stored : [];
+      setHistory(signals);
+      setApiStatus('connected');
+
+      const chronological = signals.flatMap(signal => [signal, ...(signal.replies || [])])
+        .sort((a, b) => a.writtenAt - b.writtenAt);
+      const unseen = chronological.filter(signal => !seenSignalIds.current.has(signal.id));
+      chronological.forEach(signal => seenSignalIds.current.add(signal.id));
+      if (announce && unseen.length) {
+        const latest = unseen[unseen.length - 1];
+        const bank = OTHER[latest.from];
+        if (bank) deliver(bank, latest);
+      } else if (!announce && chronological.length) {
+        const latest = chronological[chronological.length - 1];
+        const bank = OTHER[latest.from];
+        if (bank) setBank(bank, {phase: 'waiting', signal: latest});
+      }
+    } catch {
+      setApiStatus('offline');
+    }
+  }, [apiBase, deliver, setBank]);
+
+  // Both pagers boot on entry; persisted messages are loaded separately below.
   useEffect(() => {
     const coarseQuery = window.matchMedia('(max-width: 596px), (pointer: coarse) and (hover: none)');
     setCoarse(coarseQuery.matches);
@@ -146,14 +186,12 @@ export default function SignalRiver({onSelectDay}) {
         setBank(bank, {phase: 'idle'});
         return;
       }
-      BOOT.forEach(([offset, phase]) => later(offset + BANK_DELAY[bank], () => setBank(bank, {phase})));
-    });
-
-    const firstDelay = (reduced ? 0 : 2400) + readMsToken(rootRef.current, '--journal-signal-first-arrival', 6000);
-    later(firstDelay, () => {
-      if (banksRef.current.today.phase === 'idle') {
-        deliver('today', firstArrival);
-      }
+      BOOT.forEach(([offset, phase]) => later(offset + BANK_DELAY[bank], () =>
+        // Boot only advances a bank that is still booting, so a signal restored
+        // from the API before boot ends is not wiped back to idle.
+        setBanks((current) => (BOOTING.includes(current[bank].phase)
+          ? {...current, [bank]: {...current[bank], phase}}
+          : current))));
     });
 
     return () => {
@@ -165,7 +203,29 @@ export default function SignalRiver({onSelectDay}) {
         window.cancelAnimationFrame(travelRef.current);
       }
     };
-  }, [deliver, later, setBank]);
+  }, [later, setBank]);
+
+  useEffect(() => {
+    if (!apiBase) {
+      setApiStatus('unconfigured');
+      return undefined;
+    }
+
+    // Let the pager boot animation finish before restoring the latest inbox.
+    const initialLoad = window.setTimeout(() => loadSignals(false), 2200);
+    const poll = window.setInterval(() => loadSignals(true), 12000);
+    const refreshOnReturn = () => {
+      if (document.visibilityState === 'visible') loadSignals(true);
+    };
+    window.addEventListener('focus', refreshOnReturn);
+    document.addEventListener('visibilitychange', refreshOnReturn);
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(poll);
+      window.removeEventListener('focus', refreshOnReturn);
+      document.removeEventListener('visibilitychange', refreshOnReturn);
+    };
+  }, [apiBase, loadSignals]);
 
   // The red point drifts along the actual wave line, lighting the days it passes.
   const travel = useCallback(
@@ -228,12 +288,35 @@ export default function SignalRiver({onSelectDay}) {
     [pagerRefs],
   );
 
-  function release(bank, text) {
-    if (flightRef.current) return;
+  async function release(bank, text) {
+    if (flightRef.current) return false;
     flightRef.current = true;
     setSending(true);
     const signal = {text, departed: 'today', from: bank, writtenAt: Date.now(),
-      id: `signal-${Date.now()}-${signalSequence.current++}`, threadId: banksRef.current[bank].replyToId || undefined};
+      id: crypto.randomUUID().replaceAll('-', ''), threadId: banksRef.current[bank].replyToId || undefined};
+
+    // Without a configured API (e.g. the static site before a host exists),
+    // signals still travel, but only within this visit.
+    if (apiBase) {
+      try {
+        const response = await fetch(`${apiBase}/api/signals`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', Accept: 'application/json'},
+          body: JSON.stringify({id: signal.id, text, from: bank, threadId: signal.threadId || null}),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const saved = await response.json();
+        signal.id = saved.id;
+        signal.writtenAt = saved.createdAt;
+        seenSignalIds.current.add(signal.id);
+        setApiStatus('connected');
+      } catch {
+        flightRef.current = false;
+        setSending(false);
+        setApiStatus('offline');
+        return false;
+      }
+    }
 
     try {
       window.localStorage.setItem(WRITE_HINT_KEY, '1');
@@ -255,8 +338,6 @@ export default function SignalRiver({onSelectDay}) {
         setSending(false);
         setBank(bank, {phase: 'delivered'});
         setBank(other, {awaiting: false});
-        // Prototype: with no other visitors yet, the line arrives at the far
-        // bank unsigned. Once signals are stored, it will reach someone else.
         deliver(other, signal);
         later(3000, () =>
           setBanks((current) =>
@@ -265,6 +346,7 @@ export default function SignalRiver({onSelectDay}) {
         );
       }),
     );
+    return true;
   }
 
   function beginCompose(bank, replyToId) {
@@ -302,7 +384,7 @@ export default function SignalRiver({onSelectDay}) {
               model={MODEL[bank]}
               gray={bank === 'today'}
               small={isSmall(bank)}
-              lcd={lcdFor(bank, state, clock)}
+              lcd={lcdFor(bank, state, clock, apiStatus)}
               led={ledOn}
               phase={state.phase}
               signal={ledOn || state.phase === 'reading' ? state.signal : null}
@@ -343,6 +425,15 @@ export default function SignalRiver({onSelectDay}) {
           </div>
         );
       })}
+      {apiStatus !== 'connected' ? (
+        <span className={styles.connectionStatus} role="status">
+          {apiStatus === 'connecting'
+            ? '訊號連線中…'
+            : apiStatus === 'offline'
+              ? '訊號暫時送不出去，請稍後再放一次。'
+              : '訊號只留在這次造訪，重新整理後不會保存。'}
+        </span>
+      ) : null}
       <SignalLightYears entries={history} busy={sending} onReply={replyFromHistory} onSource={source => onSelectDay?.(source.dayKey)} />
       <span className={styles.trailLayer} aria-hidden="true">
         {[0, 1, 2, 3, 4].map((index) => (

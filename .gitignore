@@ -1,5 +1,9 @@
 # Dependencies
 /node_modules
+/backend/**/bin
+/backend/**/obj
+/backend/**/data
+/backend/**/publish
 
 # Production
 /build

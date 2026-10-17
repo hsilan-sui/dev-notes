@@ -76,6 +76,17 @@
   white-space: nowrap;
 }
 
+.connectionStatus {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--journal-ink-secondary);
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* Narrower screens: the banks sit side by side under the river. */
 @media screen and (max-width: 1180px) {
   .river {
@@ -90,6 +101,14 @@
   }
 
   .today { justify-self: end; }
+
+  .connectionStatus {
+    position: static;
+    grid-column: 1 / -1;
+    justify-self: center;
+    transform: none;
+    white-space: normal;
+  }
 
   .past,
   .today {

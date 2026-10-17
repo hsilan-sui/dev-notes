@@ -130,7 +130,7 @@ const SignalPager = forwardRef(function SignalPager(
     inputRef.current?.focus({preventScroll: true});
   }
 
-  function finishWriting(send) {
+  async function finishWriting(send) {
     if (send && busy) return;
     const message = text.trim();
     if (send && !message) {
@@ -138,14 +138,24 @@ const SignalPager = forwardRef(function SignalPager(
       return;
     }
 
+    if (send) {
+      let saved = false;
+      try {
+        saved = await onRelease(message);
+      } catch {
+        saved = false;
+      }
+      if (!saved) {
+        inputRef.current?.focus({preventScroll: true});
+        return;
+      }
+    }
+
     setText('');
     setComposition('');
     setEmojiOpen(false);
     inputRef.current?.blur();
-    flushSync(() => {
-      if (send) onRelease(message);
-      else onCancel();
-    });
+    if (!send) flushSync(onCancel);
     writeRef.current?.focus({preventScroll: true});
   }
 
@@ -294,25 +304,34 @@ const SignalPager = forwardRef(function SignalPager(
           <span className={styles.model}>{model}</span>
         </div>
         <div className={styles.controls}>
-          <button
-            type="button"
-            className={clsx(styles.pill, phase === 'reading' && styles.pillOn)}
-            onClick={phase === 'reading' ? onCloseSlip : onRead}
-            disabled={!signal}
-            aria-label={phase === 'reading' ? '收起訊號' : '展開訊號'}
-            aria-expanded={phase === 'reading'}
-          >
-            ↗
-          </button>
-          <button
-            ref={writeRef}
-            type="button"
-            className={clsx(styles.pill, styles.writeButton, writeHint && styles.pillHint, isComposeMode && styles.pillOn)}
-            onClick={isComposeMode ? () => finishWriting(false) : () => startWriting(false)}
-            aria-expanded={isComposeMode}
-          >
-            寫訊號
-          </button>
+          {/* The two keys sit in a recessed well, like molded keys on a real pager. */}
+          <span className={styles.keyWell}>
+            <button
+              type="button"
+              className={clsx(styles.pill, styles.readButton, phase === 'reading' && styles.pillOn)}
+              onClick={phase === 'reading' ? onCloseSlip : onRead}
+              disabled={!signal}
+              aria-label={phase === 'reading' ? '收起訊號' : '展開訊號'}
+              aria-expanded={phase === 'reading'}
+            >
+              <svg className={styles.keyIcon} viewBox="0 0 10 10" aria-hidden="true">
+                <path d="M3 7 7 3M4 3h3v3" />
+              </svg>
+              <span aria-hidden="true">讀</span>
+            </button>
+            <button
+              ref={writeRef}
+              type="button"
+              className={clsx(styles.pill, styles.writeButton, writeHint && styles.pillHint, isComposeMode && styles.pillOn)}
+              onClick={isComposeMode ? () => finishWriting(false) : () => startWriting(false)}
+              aria-expanded={isComposeMode}
+            >
+              <svg className={styles.keyIcon} viewBox="0 0 10 10" aria-hidden="true">
+                <path d="M2 8l.6-2.2L7 1.4 8.6 3 4.2 7.4z" />
+              </svg>
+              寫訊號
+            </button>
+          </span>
           <span className={styles.spacer} />
           <span className={clsx(styles.round, led && styles.roundLit)} aria-hidden="true">
             <span className={styles.led} />

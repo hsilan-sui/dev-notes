@@ -34,6 +34,11 @@ const config = {
   projectName: "dev-notes", //GitHub 專案名稱（會用來部署 GitHub Pages）
   deploymentBranch: "gh-pages",
 
+  customFields: {
+    signalApiBaseUrl: process.env.MYTIDE_SIGNAL_API_URL ||
+      (process.env.NODE_ENV === 'development' ? 'http://localhost:5080' : ''),
+  },
+
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   trailingSlash: false,

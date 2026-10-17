@@ -44,7 +44,7 @@ npm run serve   # 預覽 build/ 的結果
 
 背景文件的第 6 節（Architecture Principles）和第 8 節（Collaboration Guidelines）是完整版，以下是重點。
 
-- **先理解再動手**：先讀背景文件和既有程式碼，分清楚哪些已經實作、哪些還只是規劃。背景文件提到的 ASP.NET Core、SQL Server、`MyTide.Web` / `MyTide.Api` 都是**目標架構**，目前這個 repo 裡還沒有這些東西。
+- **先理解再動手**：先讀背景文件和既有程式碼，分清楚哪些已經實作、哪些還只是規劃。目前已有的後端只有 `backend/MyTide.Api`：BB Call 匿名訊號用的 ASP.NET Core minimal API + SQLite（架構與部署見該資料夾的 README）。背景文件提到的 SQL Server、`MyTide.Web` 與更完整的 API 仍是**目標架構**，還沒有實作。
 - **不要過度設計**：不要因為這是互動文學，就主動引入 Three.js、狀態機、microservices 或複雜的抽象。Narrative Runtime 列出的技術（p5.js、Three.js、Web Audio 等）都只是候選，要依作品需求來選，Three.js 不是必要依賴。
 - **保留創作意圖**：不要把意識潮改成 dashboard、一般社群 feed 或標準部落格首頁，也不要要求每篇作品都套用同一種閱讀模板。互動要為敘事服務。
 - **區分決策與構想**：分清楚哪些是已確立的決策、哪些是候選技術、哪些是還在構思的創作概念（例如潮記、潮語、浮光、留聲、潮境都還是暫定的名稱）。

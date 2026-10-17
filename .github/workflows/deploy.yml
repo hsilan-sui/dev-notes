@@ -24,6 +24,8 @@ jobs:
         run: npm ci
 
       - name: Build website
+        env:
+          MYTIDE_SIGNAL_API_URL: ${{ vars.MYTIDE_SIGNAL_API_URL }}
         run: npm run build
 
       - name: Deploy to gh-pages

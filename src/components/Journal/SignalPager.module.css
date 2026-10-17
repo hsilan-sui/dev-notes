@@ -6,6 +6,10 @@
   --pager-engrave: var(--journal-pager-engrave);
   --pager-model: var(--journal-pager-model);
   --pager-bezel: var(--journal-pager-bezel);
+  --pager-key-top: var(--journal-pager-key-top);
+  --pager-key-pressed: var(--journal-pager-key-pressed);
+  --pager-key-label-hover: var(--journal-pager-key-label-strong);
+  --pager-well: var(--journal-pager-well);
 
   position: relative;
   width: 176px;
@@ -25,6 +29,10 @@
   --pager-engrave: var(--journal-pager-gray-engrave);
   --pager-model: var(--journal-pager-gray-model);
   --pager-bezel: var(--journal-pager-gray-bezel);
+  --pager-key-top: var(--journal-pager-gray-key-top);
+  --pager-key-pressed: var(--journal-pager-gray-key-pressed);
+  --pager-key-label-hover: var(--journal-pager-gray-key-label-strong);
+  --pager-well: var(--journal-pager-gray-well);
 }
 
 /* The far bank waits smaller and quieter until a signal reaches it. */
@@ -219,21 +227,77 @@
   flex: 1 1 auto;
 }
 
+.keyWell {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--pager-well);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* Molded rubber keys: a soft top highlight, a short shadow below, and a
+   press that sinks into the well. They look small; ::after keeps a 44px tap area. */
 .pill {
-  padding: 3px 7px;
-  border: 1px solid var(--pager-edge);
-  border-radius: 8px;
-  background: var(--pager-key);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: linear-gradient(180deg, var(--pager-key-top) 0%, var(--pager-key) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 1px 1px rgba(0, 0, 0, 0.35);
   color: var(--pager-key-label);
-  font-size: 7px;
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 10px;
   font-weight: 600;
-  line-height: 1.2;
+  letter-spacing: 0.04em;
+  line-height: 1;
   cursor: pointer;
+  transition:
+    transform 80ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease;
+}
+
+.pill::after {
+  position: absolute;
+  inset: calc((var(--journal-touch-target) - 24px) / -2) -2px;
+  content: '';
+}
+
+.pill:hover:not(:disabled) {
+  color: var(--pager-key-label-hover);
+}
+
+.pill:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .pill:disabled {
   cursor: default;
-  opacity: 0.55;
+  opacity: 0.45;
+}
+
+.keyIcon {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .pill:focus-visible,
@@ -244,52 +308,39 @@
   outline-offset: 2px;
 }
 
+/* Held down while its slip or the writing keyboard is open. */
 .pillOn {
-  border-color: #7d868f;
-  background: #4a5158;
-  color: #ffffff;
-}
-
-/* "寫訊號" breathes in cool white until the visitor first writes. Red stays
-   reserved for signals in transit. */
-.pillHint {
-  animation: journal-write-hint var(--journal-signal-write-blink) ease-in-out infinite;
+  transform: translateY(1px);
+  background: var(--pager-key-pressed);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
+  color: var(--pager-key-label-hover);
 }
 
 .writeButton {
-  min-width: 72px;
-  min-height: var(--journal-touch-target);
-  padding: var(--journal-space-xs) var(--journal-space-sm);
-  border-color: var(--journal-accent);
-  background: var(--journal-bg-card);
-  color: var(--journal-ink);
-  font-size: 12px;
-  font-weight: 700;
+  padding: 0 10px;
+  color: var(--pager-key-label-hover);
 }
 
-.writeButton.pillHint {
-  animation: none;
-  border-color: var(--journal-accent);
-  box-shadow: 0 0 0 2px var(--journal-accent-soft);
-}
-
-.writeButton:hover,
-.writeButton.pillOn {
-  background: var(--journal-accent-soft);
-  color: var(--journal-ink);
+/* 「寫訊號」 is ringed by a slow, cool halo until the visitor first writes.
+   Red stays reserved for signals in transit. */
+.pillHint {
+  animation: journal-write-hint var(--journal-signal-write-blink) ease-in-out infinite;
 }
 
 @keyframes journal-write-hint {
   0%,
   100% {
-    border-color: var(--pager-edge);
-    box-shadow: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 1px 1px rgba(0, 0, 0, 0.35),
+      0 0 0 0 rgba(150, 175, 196, 0);
   }
 
   50% {
-    border-color: #e6ebef;
-    box-shadow: 0 0 8px rgba(230, 235, 239, 0.45);
-    color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 1px 1px rgba(0, 0, 0, 0.35),
+      0 0 0 3px rgba(150, 175, 196, 0.45);
   }
 }
 
@@ -669,7 +720,10 @@ button.slipSource {
 
   .pillHint {
     animation: none;
-    border-color: #e6ebef;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 1px 1px rgba(0, 0, 0, 0.35),
+      0 0 0 2px rgba(150, 175, 196, 0.45);
   }
 
   .roundLit {
