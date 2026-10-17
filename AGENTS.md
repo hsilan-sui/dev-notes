@@ -12,6 +12,8 @@
 | 技術筆記 | `/dev-notes/docs/...` | `docs/` |
 | **意識潮 My Tide** | `/dev-notes/my-tide` | `blog/`（Docusaurus blog plugin，`routeBasePath: "my-tide"`） |
 
+> **接手前先讀 `ai_workspace/handoff.md`**：目前上線狀態、後端與部署方式、帳號位置、已知問題都在那裡。
+
 **意識潮**是一件持續生長的數位互動文學作品，不是一般的部落格。
 修改意識潮相關程式碼之前，先讀過 `ai_workspace/my-tide-project-context.md`。
 
