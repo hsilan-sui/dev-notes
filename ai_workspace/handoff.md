@@ -83,10 +83,10 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 | 越讀越深（依閱讀進度變深） | 上線 | `readingDepth.js`、tokens `--journal-deep-*` |
 | 返回大爆炸 | 上線（Codex 改成 `CosmicReturn`） | `CosmicReturn.jsx` |
 | 〈一個週五下班的日常〉、熊貓騎士 | 上線（Codex） | `src/components/MyTide/*`、`specs/journal-friday-film-*`、`journal-panda-rider-*` |
-| 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（每天一首，用官方 YouTube 嵌入；「歌單 ▾」可選其他天的歌。目前：10/17〈快高長大〉、10/18〈五月之戀〉Enno 宅錄 demo） |
+| 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（每天一首，用官方 YouTube 嵌入；「歌單 ▾」可選其他天的歌。目前：10/18〈快高長大〉、10/17〈五月之戀〉Enno 宅錄 demo；手機上「歌單 ▾」在播放條旁邊。打開任何文章或影片時，歌會停止、YouTube 視窗會關閉） |
 | BB Call 兩岸、紅點傳送、回訊提示 | 上線，**訊號已保存在 D1** | `SignalRiver.jsx`、`SignalPager.jsx`（表情符號 80 個，鍵盤一次顯示 4 排、可捲動） |
 | 三分鐘內收回自己的訊號 | 上線 | `SignalDeleteButton.jsx`、`signalRiver.js`。放出時產生一次性金鑰存在 localStorage（`mytide.signal.own`），伺服器只存 SHA-256（`delete_key_hash`，migration 0002）；`DELETE` 帶 `X-Delete-Key` |
-| 手機閱讀 | 上線 | 波浪 `touch-action: pan-x pan-y`（之前 `pan-x` 擋住往下滑）、「往下讀」按鈕、文章卡片左右邊緣的前一天／下一天箭頭 |
+| 手機閱讀 | 上線 | 波浪 `touch-action: pan-x pan-y`（之前 `pan-x` 擋住往下滑）、「往下讀」按鈕（往下之後變成「往上 BB Call 留言」）、文章卡片左右邊緣的前一天／下一天箭頭 |
 | 訊號光年（訊號時間線） | 上線（Codex） | `SignalLightYears.jsx`、`specs/journal-signal-lightyears.md` |
 | 訊號摺子（奏摺式 Plurk 時間線） | **只有 Pencil 設計稿（v7），未實作** | `design/component.pen` v7 |
 
@@ -96,7 +96,7 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 
 1. **列表頁只拿得到截斷版 MDX**：〈大爆炸〉靠把 `<!-- truncate -->` 放在全文最後繞過。長期需要讓時間軸取得全文的正式管道。
 2. **YouTube 嵌入的限制**：播放中的播放器必須看得見、至少 200×200，不能被蓋住或調成透明。閱讀時會自動暫停、讓閱讀層蓋住，回來再繼續播。如果要「看不到影片、只有聲音」，必須改用有授權的音檔（`todaySongs.js` 的 `src`）。
-3. **只在 Chromium 測過**：Safari／iOS 實機還沒測，尤其是 mask 動畫、`@property`、手機鍵盤彈出。
+3. **Safari／iOS**：還沒用 iPhone 實機測過。曾經發生過的問題：半徑 0 的 radial-gradient mask（`transparent -6px, #000 0px`）在 WebKit 會被畫成全透明，導致「你我都來自星塵」在 iPhone 上完全看不到（`042e003` 已修）。本機可以用 WebKit 測：這台 Mac 是 macOS 14，Playwright 1.62 的 WebKit 跑不起來，要用 `playwright-core@1.55.1`，搭配已安裝的 `webkit-2203`。
 4. **匿名內容的管理**：目前只有站主手動刪除，沒有自動審核或檢舉功能。
 5. **訊號摺子 v7** 尚未實作；Codex 做的是「訊號光年」，兩者概念相近，實作前要先決定要合併還是取代。
 6. **多個 Agent 同時改檔**：之前 Claude Code 與 Codex 同時修改同一批檔案，差點互相覆蓋。請一次只讓一個 Agent 負責一個區塊，交接時更新本文件。
