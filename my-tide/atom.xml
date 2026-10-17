@@ -45,9 +45,9 @@
 <div class="journal-scope"><section class="cover_XTGW" aria-label="接單出發"><span class="coverLabel_zx7x">一個外送員的夜晚 · 像素敘事</span><div class="coverSprite_ygBy" aria-hidden="true"><canvas width="80" height="80" style="image-rendering:pixelated"></canvas></div><p class="coverText_wVvu">昨天晚上七點<br>接到一個單</p><button type="button" class="start_cFoo">接單出發 →</button><p class="hint_bEJf">逐段前進，隨時折返。聲音由你開啟。</p><a class="return_Op81" href="https://hsilan-sui.github.io/dev-notes/my-tide">← 返回意識潮</a></section></div>]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Journal Density QA Fixture 03]]></title>
-        <id>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</id>
-        <link href="https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03"/>
+        <title type="html"><![CDATA[Journal Density QA Fixture 02]]></title>
+        <id>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02</id>
+        <link href="https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02"/>
         <updated>2021-08-26T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></summary>
         <content type="html"><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
@@ -61,9 +61,9 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
         <category label="Docusaurus" term="Docusaurus"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Journal Density QA Fixture 02]]></title>
-        <id>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02</id>
-        <link href="https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-02"/>
+        <title type="html"><![CDATA[Journal Density QA Fixture 03]]></title>
+        <id>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</id>
+        <link href="https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03"/>
         <updated>2021-08-26T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></summary>
         <content type="html"><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
