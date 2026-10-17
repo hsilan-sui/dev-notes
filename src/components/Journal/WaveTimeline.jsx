@@ -12,7 +12,7 @@ import styles from './WaveTimeline.module.css';
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 const MOBILE_QUERY = '(max-width: 596px)';
 
-export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, onSelectDay}) {
+export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, todayKey, onSelectDay}) {
   const [variant, setVariant] = useState('desktop');
   const [reducedMotion, setReducedMotion] = useState(false);
   const scrollRef = useRef(null);
@@ -247,7 +247,7 @@ export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, onS
                   type="button"
                   className={buttonClassName}
                   aria-current={isViewing ? 'date' : undefined}
-                  aria-label={buildDayAriaLabel(day, isMostRecent)}
+                  aria-label={buildDayAriaLabel(day, day.dayKey === todayKey)}
                   onClick={() => onSelectDay(day.dayKey)}
                   onKeyDown={(event) => handleNodeKeyDown(event, day)}
                   style={{'--node-opacity': day.opacity}}
@@ -282,7 +282,7 @@ function companionDotsForDay(entryCount, position, opacity) {
   }));
 }
 
-function buildDayAriaLabel(day, isMostRecent) {
+function buildDayAriaLabel(day, isToday) {
   const formatter = new Intl.DateTimeFormat('zh-Hant', {
     year: 'numeric',
     month: 'long',
@@ -291,7 +291,7 @@ function buildDayAriaLabel(day, isMostRecent) {
   });
   const parts = [formatter.format(day.date)];
 
-  if (isMostRecent) {
+  if (isToday) {
     parts.push('今天');
   }
 
