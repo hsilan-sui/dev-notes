@@ -1,10 +1,13 @@
 .hero {
+  position: relative;
   display: grid;
   gap: var(--journal-hero-gap);
   padding: var(--journal-hero-padding);
   border-top: 1px solid var(--journal-border);
   border-bottom: 1px solid var(--journal-border);
   background: var(--journal-bg-card);
+  opacity: var(--journal-recede, 1);
+  transition: opacity var(--journal-recede-duration, 0s) var(--journal-motion-ease);
 }
 
 .numeralRow {
@@ -12,6 +15,12 @@
   align-items: center;
   justify-content: center;
   gap: 28px;
+}
+
+.markColumn {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
 }
 
 .numeralRow::before {
@@ -32,4 +41,10 @@
     height: 2px;
     align-self: center;
   }
+}
+
+/* On phones, write above the river and read articles below it. */
+@media screen and (max-width: 596px) {
+  .hero > :nth-child(2) { order: 3; }
+  .hero > :nth-child(3) { order: 2; }
 }

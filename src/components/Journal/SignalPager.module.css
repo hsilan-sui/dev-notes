@@ -1,0 +1,671 @@
+.pager {
+  --pager-body: var(--journal-pager-body);
+  --pager-edge: var(--journal-pager-edge);
+  --pager-key: var(--journal-pager-key);
+  --pager-key-label: var(--journal-pager-key-label);
+  --pager-engrave: var(--journal-pager-engrave);
+  --pager-model: var(--journal-pager-model);
+  --pager-bezel: var(--journal-pager-bezel);
+
+  position: relative;
+  width: 176px;
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  transform-origin: top center;
+  transition:
+    transform var(--journal-motion-duration-card-out) var(--journal-motion-ease),
+    opacity var(--journal-motion-duration-card-out) var(--journal-motion-ease);
+}
+
+/* The today bank: same model, light gray body. */
+.gray {
+  --pager-body: var(--journal-pager-gray-body);
+  --pager-edge: var(--journal-pager-gray-edge);
+  --pager-key: var(--journal-pager-gray-key);
+  --pager-key-label: var(--journal-pager-gray-key-label);
+  --pager-engrave: var(--journal-pager-gray-engrave);
+  --pager-model: var(--journal-pager-gray-model);
+  --pager-bezel: var(--journal-pager-gray-bezel);
+}
+
+/* The far bank waits smaller and quieter until a signal reaches it. */
+.small {
+  opacity: 0.7;
+  transform: scale(0.75);
+}
+
+.body {
+  display: grid;
+  gap: 7px;
+  width: 170px;
+  padding: 10px 10px 9px;
+  border: 1px solid var(--pager-edge);
+  border-radius: 18px;
+  background: var(--pager-body);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(38, 41, 46, 0.2);
+}
+
+.grips {
+  position: absolute;
+  top: 48px;
+  left: 169px;
+  display: grid;
+  gap: 3px;
+}
+
+.grips span {
+  width: 5px;
+  height: 4px;
+  border-radius: 1.5px;
+  background: var(--pager-edge);
+}
+
+.bezel {
+  padding: 5px;
+  border-radius: 10px;
+  background: var(--pager-bezel);
+}
+
+.lcd {
+  display: grid;
+  gap: 3px;
+  height: 50px;
+  padding: 5px 7px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--journal-lcd);
+  box-shadow: inset 0 1px 4px rgba(30, 38, 24, 0.2);
+  color: var(--journal-lcd-ink);
+  transition: background-color 300ms ease;
+}
+
+.lcdOff {
+  background: var(--journal-lcd-off);
+}
+
+.lcdOff .lcdText,
+.lcdOff .lcdSub {
+  visibility: hidden;
+}
+
+.lcdMain {
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+  font-family: var(--journal-font-pixel), var(--journal-font-mono), monospace;
+  font-size: 18px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.lcdCjk {
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.lcdText {
+  display: block;
+}
+
+.lcdMarquee {
+  display: inline-block;
+  padding-left: 100%;
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  animation-name: journal-lcd-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.lcdMarquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes journal-lcd-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* The real text field lives inside the LCD so the system keyboard and IME
+   work as usual; it is invisible until the pager is writing. */
+.lcdInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--journal-lcd-ink);
+  caret-color: var(--journal-lcd-ink);
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.lcdInput::placeholder {
+  color: rgba(30, 38, 24, 0.45);
+}
+
+.lcdInputIdle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lcdSub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--journal-font-pixel), var(--journal-font-mono), monospace;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.subCjk {
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 8px;
+}
+
+.bars {
+  display: inline-flex;
+  gap: 1.5px;
+}
+
+.bar {
+  width: 4px;
+  height: 5px;
+  background: rgba(30, 38, 24, 0.2);
+}
+
+.barOn {
+  background: var(--journal-lcd-ink);
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.engrave {
+  color: var(--pager-engrave);
+  font-size: 5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.model {
+  color: var(--pager-model);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.pill {
+  padding: 3px 7px;
+  border: 1px solid var(--pager-edge);
+  border-radius: 8px;
+  background: var(--pager-key);
+  color: var(--pager-key-label);
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.pill:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.pill:focus-visible,
+.key:focus-visible,
+.slip button:focus-visible,
+.sheetActions button:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 2px;
+}
+
+.pillOn {
+  border-color: #7d868f;
+  background: #4a5158;
+  color: #ffffff;
+}
+
+/* "寫訊號" breathes in cool white until the visitor first writes. Red stays
+   reserved for signals in transit. */
+.pillHint {
+  animation: journal-write-hint var(--journal-signal-write-blink) ease-in-out infinite;
+}
+
+@keyframes journal-write-hint {
+  0%,
+  100% {
+    border-color: var(--pager-edge);
+    box-shadow: none;
+  }
+
+  50% {
+    border-color: #e6ebef;
+    box-shadow: 0 0 8px rgba(230, 235, 239, 0.45);
+    color: #ffffff;
+  }
+}
+
+.round {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid var(--pager-edge);
+  border-radius: 50%;
+  background: var(--pager-key);
+}
+
+.led {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4a5057;
+}
+
+.roundLit {
+  border-color: var(--journal-signal);
+  box-shadow: 0 0 8px rgba(189, 63, 27, 0.5);
+  animation: journal-led-breathe 2.4s ease-in-out infinite;
+}
+
+.roundLit .led {
+  background: var(--journal-signal);
+}
+
+@keyframes journal-led-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(189, 63, 27, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 10px rgba(189, 63, 27, 0.6);
+  }
+}
+
+/* After a signal is read, the receiving pager is where the reply starts:
+   a soft gray-blue halo, a pulsing 「寫訊號」, and a one-line cue. Red stays
+   reserved for signals in transit. */
+.replyReady .body {
+  animation: journal-reply-halo 2.4s ease-in-out infinite;
+}
+
+@keyframes journal-reply-halo {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 2px rgba(255, 255, 255, 0.08),
+      0 10px 24px rgba(38, 41, 46, 0.2),
+      0 0 0 2px rgba(92, 114, 133, 0.25),
+      0 0 14px 4px rgba(92, 114, 133, 0.22);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 1px 2px rgba(255, 255, 255, 0.08),
+      0 10px 24px rgba(38, 41, 46, 0.2),
+      0 0 0 2px rgba(92, 114, 133, 0.6),
+      0 0 24px 8px rgba(92, 114, 133, 0.38);
+  }
+}
+
+.replyCue {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 176px;
+  margin: 0;
+  color: var(--journal-accent);
+  font-family: 'Noto Serif TC', var(--journal-font-heading), serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-align: center;
+  animation: journal-reply-cue 2.4s ease-in-out infinite;
+}
+
+@keyframes journal-reply-cue {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.slipActions .replyButton {
+  padding: 2px 8px;
+  margin: -2px 0 0 -8px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(92, 114, 133, 0.35), 0 0 10px rgba(92, 114, 133, 0.3);
+  animation: journal-reply-cue 2.4s ease-in-out infinite;
+}
+
+/* A printed slip pulled from the pager's lower edge. */
+.slip {
+  position: absolute;
+  top: calc(100% - 4px);
+  left: -8px;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  width: 196px;
+  padding: 18px 18px 14px;
+  border: 1px solid var(--journal-border);
+  background: #fbfbf8;
+  box-shadow: 0 8px 20px rgba(38, 41, 46, 0.12);
+}
+
+.slip p {
+  margin: 0;
+}
+
+.slipTimes {
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 9px;
+}
+
+.slipText {
+  color: var(--journal-ink);
+  font-family: var(--journal-font-heading), 'Noto Serif TC', Georgia, serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.slipSource {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--journal-accent);
+  font-size: 10px;
+  text-align: left;
+}
+
+button.slipSource {
+  cursor: pointer;
+}
+
+.slipActions {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--journal-border);
+}
+
+.slipActions button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--journal-ink);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.slipActions .slipClose {
+  color: var(--journal-ink-secondary);
+  font-weight: 400;
+}
+
+/* Desktop keyboard: visual feedback and English / number input; Chinese is
+   typed through the visitor's own input method. */
+.keyboard {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: -20px;
+  z-index: 20;
+  display: grid;
+  gap: 4px;
+  width: 300px;
+  padding: 10px;
+  border: 1px solid var(--journal-pager-edge);
+  border-radius: 6px 6px 14px 14px;
+  background: var(--journal-pager-body);
+  box-shadow: 0 10px 24px rgba(38, 41, 46, 0.25);
+}
+
+.candidates {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--journal-lcd);
+  color: rgba(30, 38, 24, 0.7);
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 10px;
+}
+
+.composition {
+  color: var(--journal-lcd-ink);
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.keyRow {
+  display: flex;
+  gap: 3px;
+}
+
+.key {
+  display: grid;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 24px;
+  place-items: center;
+  align-content: center;
+  padding: 0;
+  border: 1px solid var(--journal-pager-edge);
+  border-radius: 4px;
+  background: var(--journal-pager-key);
+  color: var(--journal-pager-key-label);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.keySub {
+  color: #7d868f;
+  font-size: 6px;
+  font-weight: 400;
+}
+
+.keyWide {
+  flex: 0 0 30px;
+}
+
+.keyMode {
+  flex: 0 0 36px;
+  font-size: 9px;
+}
+
+.keySpace {
+  flex: 1 1 auto;
+  font-size: 9px;
+}
+
+.keyOn {
+  border-color: #7d868f;
+  background: #454b52;
+  color: #ffffff;
+}
+
+.keyLit {
+  border-color: #e6ebef;
+  background: #5a6168;
+  color: #ffffff;
+}
+
+.keyRelease {
+  flex: 0 0 46px;
+  border-color: #d45a36;
+  background: var(--journal-signal);
+  color: #ffffff;
+}
+
+.keyRelease:disabled,
+.release:disabled {
+  border-color: var(--journal-pager-edge);
+  background: #3a3f45;
+  color: #7d868f;
+  cursor: default;
+}
+
+/* The today bank sits on the right edge: open its slip and keyboard leftward. */
+.gray .slip {
+  right: -8px;
+  left: auto;
+}
+
+.gray .keyboard {
+  right: -20px;
+  left: auto;
+}
+
+/* Mobile writing: the pager becomes a sheet resting just above the system
+   keyboard. The decorative keyboard is not shown. */
+.pager.sheetMode {
+  position: static;
+  opacity: 1;
+  /* A transformed ancestor would trap the fixed sheet inside the pager. */
+  transform: none;
+  transition: none;
+}
+
+.sheetBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  background: rgba(244, 245, 246, 0.6);
+}
+
+.sheetMode .body {
+  position: fixed;
+  right: 8px;
+  bottom: calc(var(--signal-keyboard-inset, 0px) + max(8px, env(safe-area-inset-bottom)));
+  left: 8px;
+  z-index: 1100;
+  width: auto;
+  max-height: calc(100dvh - var(--signal-keyboard-inset, 0px) - var(--journal-space-md));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(38, 41, 46, 0.35);
+}
+
+.sheetMode .lcd {
+  height: 104px;
+  align-content: space-between;
+  padding: 10px 12px;
+}
+
+.sheetMode .lcdMain {
+  height: 64px;
+}
+
+.sheetMode .lcdInput {
+  font-size: 17px;
+}
+
+.sheetMode .lcdSub {
+  font-size: 14px;
+}
+
+.sheetMode .engrave {
+  font-size: 8px;
+}
+
+.sheetMode .model {
+  font-size: 16px;
+}
+
+.sheetMode .controls,
+.sheetMode ~ .grips,
+.sheetMode .grips {
+  display: none;
+}
+
+.sheetActions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sheetClose,
+.release {
+  padding: 10px 18px;
+  border: 1px solid var(--pager-edge);
+  border-radius: 999px;
+  background: var(--pager-key);
+  color: var(--pager-key-label);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.release {
+  padding: 10px 22px;
+  border-color: #d45a36;
+  background: var(--journal-signal);
+  color: #ffffff;
+  font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pager,
+  .lcd {
+    transition: none;
+  }
+
+  .pillHint {
+    animation: none;
+    border-color: #e6ebef;
+  }
+
+  .roundLit {
+    animation: none;
+  }
+
+  .replyReady .body {
+    animation: none;
+    box-shadow:
+      0 10px 24px rgba(38, 41, 46, 0.2),
+      0 0 0 2px rgba(92, 114, 133, 0.6);
+  }
+
+  .replyCue,
+  .slipActions .replyButton {
+    animation: none;
+  }
+
+  .lcdMarquee {
+    animation-duration: 1ms !important;
+  }
+}

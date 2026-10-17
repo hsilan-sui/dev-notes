@@ -120,6 +120,13 @@
   outline-offset: -4px;
 }
 
+/* A 收訊 signal passing along the river lights each day it crosses. */
+.nodeItem[data-signal-lit] .nodeDot {
+  background: var(--journal-signal);
+  opacity: 0.9;
+  box-shadow: 0 0 8px rgba(189, 63, 27, 0.45);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .glow,
   .nodeDot {

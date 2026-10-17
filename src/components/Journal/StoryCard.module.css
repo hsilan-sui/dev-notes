@@ -2,13 +2,32 @@
   width: 100%;
   max-width: var(--journal-card-max-width);
   overflow: hidden;
-  border: 0;
+  border: 1px solid var(--journal-card-edge);
   border-radius: var(--journal-radius-card);
-  background: var(--journal-bg-card);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    inset 0 -18px 34px rgba(38, 41, 46, 0.025),
-    0 18px 44px rgba(38, 41, 46, 0.08);
+  background: var(--journal-card-paper);
+  box-shadow: var(--journal-card-shadow);
+}
+
+.card.immersive {
+  cursor: default;
+  transition: box-shadow var(--journal-motion-duration-card-out) var(--journal-motion-ease);
+}
+
+/* Immediate, quiet response to the pointer: the paper lifts a little off the
+   page. Exception to interaction spec §8, only for `immerse: hover` entries. */
+.card.immersive.approaching {
+  box-shadow: var(--journal-card-shadow-raised);
+}
+
+.card.immersive:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card.immersive {
+    transition: none;
+  }
 }
 
 .image {
@@ -134,4 +153,15 @@
   font-family: var(--journal-font-body), var(--ifm-font-family-base);
   text-align: left;
   line-height: 1.75;
+}
+
+.body { min-width: 0; overflow-wrap: anywhere; }
+.meta { flex-wrap: wrap; justify-content: center; }
+.cta, .backLink { min-height: var(--journal-touch-target); }
+.fullContent { font-size: var(--journal-reader-size-mobile); overflow-wrap: anywhere; }
+.fullContent :global(pre), .fullContent :global(table) { max-width: 100%; overflow-x: auto; }
+@media screen and (max-width: 596px) {
+  .title { font-size: 26px; }
+  .preview { font-size: var(--journal-reader-size-mobile); line-height: var(--journal-reader-leading-mobile); }
+  .fullContent { line-height: var(--journal-reader-leading-mobile); }
 }

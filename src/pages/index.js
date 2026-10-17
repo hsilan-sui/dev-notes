@@ -1,16 +1,6 @@
-import Layout from '@theme/Layout';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import PortfolioHome from '../components/PortfolioHome';
+import {Redirect} from '@docusaurus/router';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 export default function Home() {
-  useDocusaurusContext();
-
-  return (
-    <Layout
-      title="Sui Hsilan Portfolio"
-      description="Sui 的後端、自動化與 AI 專案整合站"
-    >
-      <PortfolioHome />
-    </Layout>
-  );
+  return <Redirect to={useBaseUrl('/my-tide')} />;
 }

@@ -86,6 +86,13 @@ function normalizeEntries(items) {
         imageUrl: frontMatter.image || undefined,
         previewText: metadata.description || frontMatter.description || undefined,
         tags: normalizeTags(metadata.tags || frontMatter.tags),
+        // How this entry asks to be read, e.g. `immerse: hover` (Experiment 001).
+        immerse: frontMatter.immerse || undefined,
+        readingExperience: frontMatter.readingExperience || undefined,
+        // Optional reading-space treatments for immersive entries (Experiment 001).
+        immerseDepth: frontMatter.immerseDepth || undefined,
+        immerseReturn: frontMatter.immerseReturn || undefined,
+        immerseReturnLine: frontMatter.immerseReturnLine || undefined,
         permalink: metadata.permalink,
         date: dateFromDayKey(dayKey),
         dayKey,

@@ -1,5 +1,5 @@
 {
-  "version": "2.15",
+  "version": "2.21",
   "children": [
     {
       "type": "path",
@@ -82,7 +82,7 @@
             "type": "image",
             "enabled": true,
             "url": "https://images.unsplash.com/photo-1591548745573-4e71dc9c4d4c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODU4NDMyNTd8&ixlib=rb-4.1.0&q=80&w=1080",
-            "mode": "fill"
+            "mode": "cover"
           }
         },
         {
@@ -1066,7 +1066,7 @@
             "type": "image",
             "enabled": true,
             "url": "https://images.unsplash.com/photo-1526925539332-aa3b66e35444?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODU4NDM0NjR8&ixlib=rb-4.1.0&q=80&w=1080",
-            "mode": "fill"
+            "mode": "cover"
           }
         },
         {
@@ -3803,6 +3803,16 @@
       "width": 720,
       "fill": "$a-bg-card",
       "cornerRadius": 20,
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#26292E14",
+        "offset": {
+          "x": 0,
+          "y": 18
+        },
+        "blur": 44
+      },
       "layout": "vertical",
       "children": [
         {
@@ -3821,7 +3831,7 @@
             "type": "image",
             "enabled": true,
             "url": "https://images.unsplash.com/photo-1561497268-c3c196c0e28f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODU4NDQyODl8&ixlib=rb-4.1.0&q=80&w=1080",
-            "mode": "fill"
+            "mode": "cover"
           }
         },
         {
@@ -3837,6 +3847,7 @@
             52,
             52
           ],
+          "alignItems": "center",
           "children": [
             {
               "type": "frame",
@@ -3850,7 +3861,7 @@
                   "id": "BWNX5",
                   "name": "Date Text",
                   "fill": "$a-ink-secondary",
-                  "content": "2026 · 08 · 04",
+                  "content": "2026年8月4日",
                   "fontFamily": "$a-body-font",
                   "fontSize": 13,
                   "fontWeight": "normal"
@@ -3859,7 +3870,7 @@
                   "type": "text",
                   "id": "xBX58",
                   "name": "Meta Dot",
-                  "fill": "$a-ink-secondary",
+                  "fill": "$a-border",
                   "content": "·",
                   "fontFamily": "$a-body-font",
                   "fontSize": 13,
@@ -3886,6 +3897,7 @@
               "width": "fill_container",
               "content": "雨天的清邁",
               "lineHeight": 1.3,
+              "textAlign": "center",
               "fontFamily": "$a-heading-font",
               "fontSize": 30,
               "fontWeight": "500"
@@ -3899,6 +3911,7 @@
               "width": "fill_container",
               "content": "雨落在鐵皮屋頂上，像有人在遠處輕輕數著日子。我坐在窗邊，什麼也沒做，只是看著水順著玻璃往下流。",
               "lineHeight": 1.75,
+              "textAlign": "center",
               "fontFamily": "$a-body-font",
               "fontSize": 16,
               "fontWeight": "normal"
@@ -4857,62 +4870,6 @@
       "children": [
         {
           "type": "frame",
-          "id": "nqr7z",
-          "name": "Mini Header",
-          "width": "fill_container",
-          "padding": [
-            40,
-            80,
-            28,
-            80
-          ],
-          "justifyContent": "space_between",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "Ie0JQ",
-              "name": "Wordmark",
-              "gap": 10,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "gwN23",
-                  "name": "Eyebrow",
-                  "fill": "$a-accent",
-                  "content": "JOURNAL",
-                  "fontFamily": "$a-body-font",
-                  "fontSize": 13,
-                  "fontWeight": "600",
-                  "letterSpacing": 3
-                },
-                {
-                  "type": "text",
-                  "id": "I4Oe2V",
-                  "name": "Tagline",
-                  "fill": "$a-ink-secondary",
-                  "content": "· 時間留下的字",
-                  "fontFamily": "$a-body-font",
-                  "fontSize": 13,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "id": "d3j5By",
-              "name": "Index Caption",
-              "fill": "$a-ink-secondary",
-              "content": "詩 · 散文 · 旅行 · 生活",
-              "fontFamily": "$a-body-font",
-              "fontSize": 12,
-              "fontWeight": "normal"
-            }
-          ]
-        },
-        {
-          "type": "frame",
           "id": "W8Ye6",
           "name": "Timeline Hero Zone",
           "width": "fill_container",
@@ -4923,11 +4880,11 @@
             "bottom": 1
           },
           "layout": "vertical",
-          "gap": 26,
+          "gap": 20,
           "padding": [
-            36,
+            28,
             80,
-            30,
+            24,
             80
           ],
           "justifyContent": "center",
@@ -4937,18 +4894,151 @@
               "type": "frame",
               "id": "fePdD",
               "name": "Numeral Row",
-              "gap": 20,
+              "gap": 28,
               "alignItems": "center",
               "children": [
+                {
+                  "type": "rectangle",
+                  "id": "JRgta",
+                  "name": "Divider",
+                  "fill": "$a-border",
+                  "width": 2,
+                  "height": 96
+                },
+                {
+                  "type": "frame",
+                  "id": "O5vKJ",
+                  "name": "Journal Mark",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "KVBs7",
+                      "name": "Lockup",
+                      "gap": 2,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mCIY5",
+                          "name": "Group MY 意識",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "G84pzI",
+                              "name": "MY",
+                              "fill": "$a-accent",
+                              "content": "MY",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 10,
+                              "fontWeight": "600",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "lD6KS",
+                              "name": "意識",
+                              "fill": "$a-accent",
+                              "content": "意識",
+                              "lineHeight": 1,
+                              "fontFamily": "Noto Serif TC",
+                              "fontSize": 22,
+                              "fontWeight": "500",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "X6wPh",
+                          "name": "Group 潮 TIDE",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Jphw8",
+                              "name": "潮",
+                              "fill": "$a-accent",
+                              "content": "潮",
+                              "lineHeight": 1,
+                              "fontFamily": "Noto Serif TC",
+                              "fontSize": 22,
+                              "fontWeight": "500",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "wwlE7",
+                              "name": "TIDE",
+                              "fill": "$a-accent",
+                              "content": "TIDE",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 10,
+                              "fontWeight": "600",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MWJTh",
+                      "name": "Mark Wave",
+                      "width": 96,
+                      "height": 14,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "wRUBp",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Wave Line",
+                          "geometry": "M0 8c14-6 26 4 42-1 16-5 26 4 42-1 4-1 8 0 12-1",
+                          "viewBox": [
+                            0,
+                            0,
+                            96,
+                            14
+                          ],
+                          "width": 96,
+                          "height": 14,
+                          "stroke": "$a-accent",
+                          "strokeWidth": 1,
+                          "strokeLinecap": "round"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "I1AIR",
+                          "x": 37,
+                          "y": 3.2,
+                          "name": "Wave Node",
+                          "width": 8,
+                          "height": 8,
+                          "stroke": "$a-accent",
+                          "strokeWidth": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
                 {
                   "type": "text",
                   "id": "EiPpF",
                   "name": "Big Numeral",
-                  "fill": "$a-ink",
+                  "fill": "$a-accent",
                   "content": "04",
                   "lineHeight": 0.9,
                   "fontFamily": "$a-heading-font",
-                  "fontSize": 128,
+                  "fontSize": 104,
                   "fontWeight": "300"
                 },
                 {
@@ -4968,7 +5058,7 @@
                       "type": "text",
                       "id": "QPtXH",
                       "name": "Month Text",
-                      "fill": "$a-ink",
+                      "fill": "$a-accent",
                       "content": "AUG",
                       "fontFamily": "$a-body-font",
                       "fontSize": 16,
@@ -4979,7 +5069,7 @@
                       "type": "text",
                       "id": "nna4Q",
                       "name": "Year Text",
-                      "fill": "$a-ink-secondary",
+                      "fill": "#6F8494",
                       "content": "2026",
                       "fontFamily": "$a-body-font",
                       "fontSize": 13,
@@ -5654,7 +5744,7 @@
           "layout": "vertical",
           "gap": 18,
           "padding": [
-            44,
+            24,
             80,
             88,
             80
@@ -5699,7 +5789,7 @@
                   "id": "Fnpkd",
                   "name": "Same-Day Caption",
                   "fill": "$a-ink-secondary",
-                  "content": "同一天，還有 2 篇",
+                  "content": "同一天，還有 5 篇",
                   "fontFamily": "$a-body-font",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -5715,6 +5805,114 @@
               "justifyContent": "center",
               "alignItems": "center",
               "children": [
+                {
+                  "type": "frame",
+                  "id": "m9lsoG",
+                  "layoutPosition": "absolute",
+                  "x": 122,
+                  "y": 40,
+                  "name": "Preview Panel — 回到過去",
+                  "opacity": 0.88,
+                  "rotation": 7,
+                  "clip": true,
+                  "width": 176,
+                  "height": 520,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 225,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FAFBFBF5",
+                        "position": 0
+                      },
+                      {
+                        "color": "#E4EAEEE0",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": [
+                    18,
+                    8,
+                    8,
+                    18
+                  ],
+                  "stroke": "#5C72851F",
+                  "strokeWidth": 1,
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#26292E21",
+                      "offset": {
+                        "x": 0,
+                        "y": 24
+                      },
+                      "blur": 48
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#26292E14",
+                      "offset": {
+                        "x": 0,
+                        "y": 8
+                      },
+                      "blur": 18
+                    }
+                  ],
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    24,
+                    20
+                  ],
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Jtvz4",
+                      "layoutPosition": "absolute",
+                      "x": 14,
+                      "y": 210,
+                      "name": "Vertical Label",
+                      "fill": "$a-ink",
+                      "content": "回\n到\n過\n去",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$a-body-font",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KgN9E",
+                      "name": "Kicker",
+                      "fill": "$a-accent",
+                      "content": "上一篇",
+                      "fontFamily": "$a-body-font",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MUBLV",
+                      "name": "Preview Title",
+                      "fill": "$a-ink-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "清晨的河岸",
+                      "lineHeight": 1.25,
+                      "fontFamily": "$a-heading-font",
+                      "fontSize": 17,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
                 {
                   "type": "frame",
                   "id": "C46jP",
@@ -5744,7 +5942,7 @@
                   "type": "ref",
                   "ref": "NeXhk",
                   "name": "Featured Entry",
-                  "width": 680,
+                  "width": 820,
                   "descendants": {
                     "jqgWs": {
                       "height": 250
@@ -5755,6 +5953,7 @@
                   "type": "frame",
                   "id": "S8i7M",
                   "name": "Next Button",
+                  "opacity": 0.35,
                   "width": 38,
                   "height": 38,
                   "cornerRadius": 999,
@@ -5829,6 +6028,19 @@
               "fontWeight": "normal"
             }
           ]
+        },
+        {
+          "type": "text",
+          "id": "hWzqS",
+          "layoutPosition": "absolute",
+          "x": 40,
+          "y": 26,
+          "name": "折返 Back Home",
+          "fill": "$a-ink-secondary",
+          "content": "折返",
+          "fontFamily": "$a-body-font",
+          "fontSize": 13,
+          "fontWeight": "600"
         }
       ]
     },
@@ -6040,62 +6252,6 @@
       "children": [
         {
           "type": "frame",
-          "id": "Sszpp",
-          "name": "Mini Header",
-          "width": "fill_container",
-          "layout": "vertical",
-          "gap": 6,
-          "padding": [
-            32,
-            20,
-            14,
-            20
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "o5sqs",
-              "name": "Wordmark",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "PbjXz",
-                  "name": "Eyebrow",
-                  "fill": "$a-accent",
-                  "content": "JOURNAL",
-                  "fontFamily": "$a-body-font",
-                  "fontSize": 11.5,
-                  "fontWeight": "600",
-                  "letterSpacing": 2.5
-                },
-                {
-                  "type": "text",
-                  "id": "SwBfk",
-                  "name": "Tagline",
-                  "fill": "$a-ink-secondary",
-                  "content": "· 時間留下的字",
-                  "fontFamily": "$a-body-font",
-                  "fontSize": 11.5,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "id": "zkHnQ",
-              "name": "Index Caption",
-              "fill": "$a-ink-secondary",
-              "content": "詩 · 散文 · 旅行 · 生活",
-              "fontFamily": "$a-body-font",
-              "fontSize": 11,
-              "fontWeight": "normal"
-            }
-          ]
-        },
-        {
-          "type": "frame",
           "id": "n4ctI",
           "name": "Timeline Hero Zone",
           "width": "fill_container",
@@ -6106,11 +6262,11 @@
             "bottom": 1
           },
           "layout": "vertical",
-          "gap": 18,
+          "gap": 14,
           "padding": [
-            24,
+            44,
             20,
-            22,
+            18,
             20
           ],
           "justifyContent": "center",
@@ -6120,74 +6276,216 @@
               "type": "frame",
               "id": "MUllR",
               "name": "Numeral Row",
+              "layout": "vertical",
               "gap": 14,
               "alignItems": "center",
               "children": [
                 {
-                  "type": "text",
-                  "id": "kyb1l",
-                  "name": "Big Numeral",
-                  "fill": "$a-ink",
-                  "content": "04",
-                  "lineHeight": 0.9,
-                  "fontFamily": "$a-heading-font",
-                  "fontSize": 84,
-                  "fontWeight": "300"
+                  "type": "rectangle",
+                  "id": "COTpd",
+                  "name": "Divider",
+                  "fill": "$a-border",
+                  "width": 40,
+                  "height": 2
                 },
                 {
                   "type": "frame",
-                  "id": "NwQg2",
-                  "name": "Month Col",
+                  "id": "psZus",
+                  "name": "Journal Mark",
                   "layout": "vertical",
-                  "gap": 3,
-                  "padding": [
-                    6,
-                    0,
-                    0,
-                    0
-                  ],
+                  "gap": 6,
+                  "alignItems": "center",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "G5JCY",
-                      "name": "Month Text",
-                      "fill": "$a-ink",
-                      "content": "AUG",
-                      "fontFamily": "$a-body-font",
-                      "fontSize": 13,
-                      "fontWeight": "600",
-                      "letterSpacing": 2
-                    },
-                    {
-                      "type": "text",
-                      "id": "z1swa",
-                      "name": "Year Text",
-                      "fill": "$a-ink-secondary",
-                      "content": "2026",
-                      "fontFamily": "$a-body-font",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
+                      "type": "frame",
+                      "id": "Dpm2u",
+                      "name": "Lockup",
+                      "gap": 2,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "N60tMw",
+                          "name": "Group MY 意識",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "YL8TA",
+                              "name": "MY",
+                              "fill": "$a-accent",
+                              "content": "MY",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 9,
+                              "fontWeight": "600",
+                              "letterSpacing": 1.5
+                            },
+                            {
+                              "type": "text",
+                              "id": "m4lp3",
+                              "name": "意識",
+                              "fill": "$a-accent",
+                              "content": "意識",
+                              "lineHeight": 1,
+                              "fontFamily": "Noto Serif TC",
+                              "fontSize": 18,
+                              "fontWeight": "500",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DVXbC",
+                          "name": "Group 潮 TIDE",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "b44rS",
+                              "name": "潮",
+                              "fill": "$a-accent",
+                              "content": "潮",
+                              "lineHeight": 1,
+                              "fontFamily": "Noto Serif TC",
+                              "fontSize": 18,
+                              "fontWeight": "500",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "NPaA0",
+                              "name": "TIDE",
+                              "fill": "$a-accent",
+                              "content": "TIDE",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 9,
+                              "fontWeight": "600",
+                              "letterSpacing": 1.5
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       "type": "frame",
-                      "id": "cVSJR",
-                      "name": "Today Tag",
-                      "fill": "$a-accent-soft",
-                      "cornerRadius": 999,
+                      "id": "jQgYq",
+                      "name": "Mark Wave",
+                      "width": 76,
+                      "height": 12,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "dwTDQ",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Wave Line",
+                          "geometry": "M0 8c14-6 26 4 42-1 16-5 26 4 42-1 4-1 8 0 12-1",
+                          "viewBox": [
+                            0,
+                            0,
+                            96,
+                            14
+                          ],
+                          "width": 76,
+                          "height": 12,
+                          "stroke": "$a-accent",
+                          "strokeWidth": 1,
+                          "strokeLinecap": "round"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "WyUvz",
+                          "x": 29,
+                          "y": 2.5,
+                          "name": "Wave Node",
+                          "width": 7,
+                          "height": 7,
+                          "stroke": "$a-accent",
+                          "strokeWidth": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Pw3SW",
+                  "name": "Date Group",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kyb1l",
+                      "name": "Big Numeral",
+                      "fill": "$a-accent",
+                      "content": "04",
+                      "lineHeight": 0.9,
+                      "fontFamily": "$a-heading-font",
+                      "fontSize": 70,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NwQg2",
+                      "name": "Month Col",
+                      "layout": "vertical",
+                      "gap": 3,
                       "padding": [
-                        3,
-                        9
+                        6,
+                        0,
+                        0,
+                        0
                       ],
                       "children": [
                         {
                           "type": "text",
-                          "id": "q3DR9",
-                          "name": "Today Label",
+                          "id": "G5JCY",
+                          "name": "Month Text",
                           "fill": "$a-accent",
-                          "content": "今天",
+                          "content": "AUG",
                           "fontFamily": "$a-body-font",
-                          "fontSize": 10,
-                          "fontWeight": "600"
+                          "fontSize": 13,
+                          "fontWeight": "600",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "z1swa",
+                          "name": "Year Text",
+                          "fill": "#6F8494",
+                          "content": "2026",
+                          "fontFamily": "$a-body-font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cVSJR",
+                          "name": "Today Tag",
+                          "fill": "$a-accent-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            3,
+                            9
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "q3DR9",
+                              "name": "Today Label",
+                              "fill": "$a-accent",
+                              "content": "今天",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -6657,7 +6955,7 @@
           "layout": "vertical",
           "gap": 14,
           "padding": [
-            24,
+            16,
             20,
             40,
             20
@@ -6702,7 +7000,7 @@
                   "id": "gyiLz",
                   "name": "Same-Day Caption",
                   "fill": "$a-ink-secondary",
-                  "content": "同一天，還有 2 篇",
+                  "content": "同一天，還有 5 篇",
                   "fontFamily": "$a-body-font",
                   "fontSize": 11,
                   "fontWeight": "normal"
@@ -6766,6 +7064,7 @@
                   "type": "frame",
                   "id": "Darwv",
                   "name": "Next Button",
+                  "opacity": 0.35,
                   "width": 36,
                   "height": 36,
                   "cornerRadius": 999,
@@ -6843,6 +7142,1220 @@
               "fontWeight": "normal"
             }
           ]
+        },
+        {
+          "type": "text",
+          "id": "IfxC2",
+          "layoutPosition": "absolute",
+          "x": 28,
+          "y": 20,
+          "name": "折返 Back Home",
+          "fill": "$a-ink-secondary",
+          "content": "折返",
+          "fontFamily": "$a-body-font",
+          "fontSize": 12,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bZdzb",
+      "x": 2526.5,
+      "y": 9359,
+      "name": "Journal C — 展開閱讀 Expanded",
+      "clip": true,
+      "width": 1440,
+      "fill": "$a-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "YsbKq",
+          "name": "Timeline Hero Zone",
+          "width": "fill_container",
+          "fill": "$a-bg-card",
+          "stroke": "$a-border",
+          "strokeWidth": {
+            "top": 1,
+            "bottom": 1
+          },
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            28,
+            80,
+            24,
+            80
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "CLj8q",
+              "name": "Numeral Row",
+              "gap": 28,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "GR57U",
+                  "name": "Divider",
+                  "fill": "$a-border",
+                  "width": 2,
+                  "height": 96
+                },
+                {
+                  "type": "frame",
+                  "id": "ijWPj",
+                  "name": "Journal Mark",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sKK7J",
+                      "name": "Lockup",
+                      "gap": 2,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "cE9FF",
+                          "name": "Group MY 意識",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dyBgH",
+                              "name": "MY",
+                              "fill": "$a-accent",
+                              "content": "MY",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 10,
+                              "fontWeight": "600",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "hZypB",
+                              "name": "意識",
+                              "fill": "$a-accent",
+                              "content": "意識",
+                              "lineHeight": 1,
+                              "fontFamily": "Noto Serif TC",
+                              "fontSize": 22,
+                              "fontWeight": "500",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Xc6pc",
+                          "name": "Group 潮 TIDE",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "YJ1Bi",
+                              "name": "潮",
+                              "fill": "$a-accent",
+                              "content": "潮",
+                              "lineHeight": 1,
+                              "fontFamily": "Noto Serif TC",
+                              "fontSize": 22,
+                              "fontWeight": "500",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "x2Zum",
+                              "name": "TIDE",
+                              "fill": "$a-accent",
+                              "content": "TIDE",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 10,
+                              "fontWeight": "600",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gam3P",
+                      "name": "Mark Wave",
+                      "width": 96,
+                      "height": 14,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "lwopu",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Wave Line",
+                          "geometry": "M0 8c14-6 26 4 42-1 16-5 26 4 42-1 4-1 8 0 12-1",
+                          "viewBox": [
+                            0,
+                            0,
+                            96,
+                            14
+                          ],
+                          "width": 96,
+                          "height": 14,
+                          "stroke": "$a-accent",
+                          "strokeWidth": 1,
+                          "strokeLinecap": "round"
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "eXoLF",
+                          "x": 37,
+                          "y": 3.2,
+                          "name": "Wave Node",
+                          "width": 8,
+                          "height": 8,
+                          "stroke": "$a-accent",
+                          "strokeWidth": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "qqW99",
+                  "name": "Big Numeral",
+                  "fill": "$a-accent",
+                  "content": "04",
+                  "lineHeight": 0.9,
+                  "fontFamily": "$a-heading-font",
+                  "fontSize": 104,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "frame",
+                  "id": "ZMOnl",
+                  "name": "Month Col",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jB17x",
+                      "name": "Month Text",
+                      "fill": "$a-accent",
+                      "content": "AUG",
+                      "fontFamily": "$a-body-font",
+                      "fontSize": 16,
+                      "fontWeight": "600",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "xakbP",
+                      "name": "Year Text",
+                      "fill": "#6F8494",
+                      "content": "2026",
+                      "fontFamily": "$a-body-font",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pBUpH",
+                      "name": "Today Tag",
+                      "fill": "$a-accent-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xQABk",
+                          "name": "Today Label",
+                          "fill": "$a-accent",
+                          "content": "今天",
+                          "fontFamily": "$a-body-font",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "TrRUM",
+              "name": "Timeline Window",
+              "clip": true,
+              "width": "fill_container",
+              "height": 110,
+              "justifyContent": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tlKjz",
+                  "name": "Timeline Track",
+                  "width": 1428,
+                  "height": 110,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "j200uK",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Wave Line",
+                      "geometry": "M0 58.4l6 0.5 6 0.6 6 0.4 6 0.4 6 0.4 6 0.3 6 0.2 6 0.1 6 0.1 6 0 6-0.1 6-0.2 6-0.3 6-0.3 6-0.4 6-0.5 6-0.5 6-0.6 6-0.6 6-0.7 6-0.7 6-0.8 6-0.8 6-0.7 6-0.8 6-0.8 6-0.7 6-0.7 6-0.7 6-0.6 6-0.6 6-0.5 6-0.4 6-0.4 6-0.3 6-0.2 6-0.1 6 0 6 0.1 6 0.2 6 0.3 6 0.4 6 0.4 6 0.5 6 0.7 6 0.6 6 0.8 6 0.8 6 0.8 6 0.9 6 0.9 6 0.9 6 0.9 6 0.9 6 0.9 6 0.8 6 0.8 6 0.7 6 0.7 6 0.6 6 0.6 6 0.4 6 0.3 6 0.3 6 0.1 6 0.1 6-0.1 6-0.2 6-0.3 6-0.4 6-0.5 6-0.6 6-0.6 6-0.8 6-0.8 6-0.9 6-1 6-1 6-1 6-1 6-1.1 6-1 6-1 6-1 6-0.9 6-0.9 6-0.8 6-0.7 6-0.6 6-0.5 6-0.5 6-0.3 6-0.2 6 0 6 0 6 0.2 6 0.3 6 0.4 6 0.5 6 0.6 6 0.8 6 0.8 6 0.9 6 1 6 1.1 6 1.1 6 1.1 6 1.2 6 1.2 6 1.1 6 1.2 6 1.1 6 1 6 1 6 1 6 0.8 6 0.7 6 0.7 6 0.5 6 0.3 6 0.3 6 0.1 6 0 6-0.1 6-0.3 6-0.5 6-0.5 6-0.7 6-0.8 6-0.9 6-1 6-1.1 6-1.1 6-1.2 6-1.3 6-1.3 6-1.3 6-1.3 6-1.2 6-1.3 6-1.2 6-1.1 6-1.1 6-0.9 6-0.9 6-0.7 6-0.6 6-0.5 6-0.3 6-0.2 6 0 6 0.1 6 0.3 6 0.4 6 0.6 6 0.7 6 0.8 6 1 6 1 6 1.2 6 1.3 6 1.3 6 1.3 6 1.5 6 1.4 6 1.4 6 1.4 6 1.4 6 1.4 6 1.2 6 1.2 6 1.1 6 1 6 0.8 6 0.7 6 0.6 6 0.4 6 0.2 6 0.1 6-0.1 6-0.2 6-0.4 6-0.6 6-0.7 6-0.9 6-1 6-1.1 6-1.3 6-1.3 6-1.4 6-1.5 6-1.6 6-1.5 6-1.6 6-1.5 6-1.6 6-1.4 6-1.4 6-1.4 6-1.2 6-1.1 6-0.9 6-0.9 6-0.6 6-0.5 6-0.3 6-0.2 6 0 6 0.2 6 0.4 6 0.6 6 0.7 6 0.9 6 1.1 6 1.2 6 1.3 6 1.4 6 1.5 6 1.6 6 1.7 6 1.7 6 1.7 6 1.7 6 1.6 6 1.6 6 1.6 6 1.4 6 1.4 6 1.2 6 1.1 6 1 6 0.7 6 0.6 6 0.4 6 0.3 6 0 6-0.2 6-0.3",
+                      "viewBox": [
+                        0,
+                        0,
+                        1428,
+                        110
+                      ],
+                      "width": 1428,
+                      "height": 110,
+                      "stroke": "$a-timeline-line",
+                      "strokeWidth": 1.5,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "id": "y0hIEj",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 0",
+                      "x": 16.5,
+                      "y": 56.56345269686042,
+                      "opacity": 0.18
+                    },
+                    {
+                      "id": "O8HFl",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 1",
+                      "x": 38.5,
+                      "y": 57.67527036366289,
+                      "opacity": 0.19389830508474576
+                    },
+                    {
+                      "id": "HTP20",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 2",
+                      "x": 60.5,
+                      "y": 57.80392497932736,
+                      "opacity": 0.20779661016949152
+                    },
+                    {
+                      "id": "JpzuI",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 3",
+                      "x": 82.5,
+                      "y": 56.87924651087468,
+                      "opacity": 0.2216949152542373
+                    },
+                    {
+                      "id": "GSJOJ",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 4",
+                      "x": 104.5,
+                      "y": 55.0069638664242,
+                      "opacity": 0.23559322033898306
+                    },
+                    {
+                      "id": "gDY2A",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 5",
+                      "x": 126.5,
+                      "y": 52.45880739623851,
+                      "opacity": 0.2494915254237288
+                    },
+                    {
+                      "id": "Pv95m",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 6",
+                      "x": 148.5,
+                      "y": 49.63367121878348,
+                      "opacity": 0.2633898305084746
+                    },
+                    {
+                      "id": "peJGZ",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 7",
+                      "x": 170.5,
+                      "y": 46.99527656570936,
+                      "opacity": 0.2772881355932203
+                    },
+                    {
+                      "id": "ncQse",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 8",
+                      "x": 192.5,
+                      "y": 44.996059537511954,
+                      "opacity": 0.29118644067796606
+                    },
+                    {
+                      "id": "kpeQS",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 9",
+                      "x": 214.5,
+                      "y": 43.99977527917594,
+                      "opacity": 0.30508474576271183
+                    },
+                    {
+                      "id": "X3kKL",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 10",
+                      "x": 236.5,
+                      "y": 44.216029029422565,
+                      "opacity": 0.3189830508474576
+                    },
+                    {
+                      "id": "w7jOI5",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 11",
+                      "x": 258.5,
+                      "y": 45.65841263236235,
+                      "opacity": 0.33288135593220336
+                    },
+                    {
+                      "id": "Zfrdm",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 12",
+                      "x": 280.5,
+                      "y": 48.134325407750815,
+                      "opacity": 0.3467796610169491
+                    },
+                    {
+                      "id": "PuWRa",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 13",
+                      "x": 302.5,
+                      "y": 51.26943706899283,
+                      "opacity": 0.3606779661016949
+                    },
+                    {
+                      "id": "u36aXa",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 14",
+                      "x": 324.5,
+                      "y": 54.56393534603678,
+                      "opacity": 0.37457627118644066
+                    },
+                    {
+                      "id": "vdcWd",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 15",
+                      "x": 346.5,
+                      "y": 57.47216741795228,
+                      "opacity": 0.3884745762711864
+                    },
+                    {
+                      "id": "kjX51",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 16",
+                      "x": 368.5,
+                      "y": 59.49299165587116,
+                      "opacity": 0.4023728813559322
+                    },
+                    {
+                      "id": "l2vvnr",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 17",
+                      "x": 390.5,
+                      "y": 60.25588238484432,
+                      "opacity": 0.41627118644067795
+                    },
+                    {
+                      "id": "T3i5a",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 18",
+                      "x": 412.5,
+                      "y": 59.588032114502774,
+                      "opacity": 0.4301694915254237
+                    },
+                    {
+                      "id": "i3nHrc",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 19",
+                      "x": 434.5,
+                      "y": 57.55042005911352,
+                      "opacity": 0.44406779661016943
+                    },
+                    {
+                      "id": "BOwlH",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 20",
+                      "x": 456.5,
+                      "y": 54.435679520523315,
+                      "opacity": 0.4579661016949152
+                    },
+                    {
+                      "id": "cTAGi",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 21",
+                      "x": 478.5,
+                      "y": 50.726838803956895,
+                      "opacity": 0.471864406779661
+                    },
+                    {
+                      "id": "FkQZv",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 22",
+                      "x": 500.5,
+                      "y": 47.02261081846935,
+                      "opacity": 0.4857627118644068
+                    },
+                    {
+                      "id": "hvmbh",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 23",
+                      "x": 522.5,
+                      "y": 43.940753163500375,
+                      "opacity": 0.49966101694915255
+                    },
+                    {
+                      "id": "RAmkM",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 24",
+                      "x": 544.5,
+                      "y": 42.015096060157596,
+                      "opacity": 0.5135593220338983
+                    },
+                    {
+                      "id": "l4Qbq",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 25",
+                      "x": 566.5,
+                      "y": 41.603393938116994,
+                      "opacity": 0.527457627118644
+                    },
+                    {
+                      "id": "XTL8J",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 26",
+                      "x": 588.5,
+                      "y": 42.8218579925697,
+                      "opacity": 0.5413559322033898
+                    },
+                    {
+                      "id": "ozori",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 27",
+                      "x": 610.5,
+                      "y": 45.518207292354354,
+                      "opacity": 0.5552542372881355
+                    },
+                    {
+                      "id": "PrdrW",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 28",
+                      "x": 632.5,
+                      "y": 49.28893657949318,
+                      "opacity": 0.5691525423728814
+                    },
+                    {
+                      "id": "O3eYE",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 29",
+                      "x": 654.5,
+                      "y": 53.53921780288408,
+                      "opacity": 0.583050847457627
+                    },
+                    {
+                      "id": "MTKoN",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 30",
+                      "x": 676.5,
+                      "y": 57.57662852320371,
+                      "opacity": 0.5969491525423729
+                    },
+                    {
+                      "id": "t5Zgar",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 31",
+                      "x": 698.5,
+                      "y": 60.723955883984885,
+                      "opacity": 0.6108474576271187
+                    },
+                    {
+                      "id": "NTRmZ",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 32",
+                      "x": 720.5,
+                      "y": 62.43269902972666,
+                      "opacity": 0.6247457627118644
+                    },
+                    {
+                      "id": "Iv13o",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 33",
+                      "x": 742.5,
+                      "y": 62.378260889327876,
+                      "opacity": 0.6386440677966101
+                    },
+                    {
+                      "id": "V5j3l",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 34",
+                      "x": 764.5,
+                      "y": 60.520369621836835,
+                      "opacity": 0.652542372881356
+                    },
+                    {
+                      "id": "vZMAY",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 35",
+                      "x": 786.5,
+                      "y": 57.1176561619463,
+                      "opacity": 0.6664406779661016
+                    },
+                    {
+                      "id": "IYuJG",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 36",
+                      "x": 808.5,
+                      "y": 52.69270515082637,
+                      "opacity": 0.6803389830508475
+                    },
+                    {
+                      "id": "TCyYv",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 37",
+                      "x": 830.5,
+                      "y": 47.95210070815006,
+                      "opacity": 0.6942372881355932
+                    },
+                    {
+                      "id": "h7yA8z",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 38",
+                      "x": 852.5,
+                      "y": 43.673647299839736,
+                      "opacity": 0.7081355932203388
+                    },
+                    {
+                      "id": "gJT6T",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 39",
+                      "x": 874.5,
+                      "y": 40.57875834006673,
+                      "opacity": 0.7220338983050847
+                    },
+                    {
+                      "id": "Sc0PU",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 40",
+                      "x": 896.5,
+                      "y": 39.2109483990391,
+                      "opacity": 0.7359322033898303
+                    },
+                    {
+                      "id": "PtSLf",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 41",
+                      "x": 918.5,
+                      "y": 39.84087352727761,
+                      "opacity": 0.7498305084745762
+                    },
+                    {
+                      "id": "PfB5l",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 42",
+                      "x": 940.5,
+                      "y": 42.414436243118345,
+                      "opacity": 0.7637288135593221
+                    },
+                    {
+                      "id": "Inxqh",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 43",
+                      "x": 962.5,
+                      "y": 46.55368230163,
+                      "opacity": 0.7776271186440677
+                    },
+                    {
+                      "id": "x7KTyy",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 44",
+                      "x": 984.5,
+                      "y": 51.61163462665564,
+                      "opacity": 0.7915254237288136
+                    },
+                    {
+                      "id": "O7K9j",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 45",
+                      "x": 1006.5,
+                      "y": 56.77323076328506,
+                      "opacity": 0.8054237288135593
+                    },
+                    {
+                      "id": "Yj3gb",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 46",
+                      "x": 1028.5,
+                      "y": 61.18664801091364,
+                      "opacity": 0.8193220338983052
+                    },
+                    {
+                      "id": "L5uJN",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 47",
+                      "x": 1050.5,
+                      "y": 64.10385971807793,
+                      "opacity": 0.8332203389830508
+                    },
+                    {
+                      "id": "R9PrA",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 48",
+                      "x": 1072.5,
+                      "y": 65.00723337588458,
+                      "opacity": 0.8471186440677967
+                    },
+                    {
+                      "id": "k7BrU",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 49",
+                      "x": 1094.5,
+                      "y": 63.70077360909164,
+                      "opacity": 0.8610169491525423
+                    },
+                    {
+                      "id": "a0cXlg",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 50",
+                      "x": 1116.5,
+                      "y": 60.35001747065462,
+                      "opacity": 0.874915254237288
+                    },
+                    {
+                      "id": "QQO4s",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 51",
+                      "x": 1138.5,
+                      "y": 55.46278316122196,
+                      "opacity": 0.8888135593220339
+                    },
+                    {
+                      "id": "yL9D7",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 52",
+                      "x": 1160.5,
+                      "y": 49.81264953448513,
+                      "opacity": 0.9027118644067795
+                    },
+                    {
+                      "id": "MOa68",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 53",
+                      "x": 1182.5,
+                      "y": 44.31661952196496,
+                      "opacity": 0.9166101694915254
+                    },
+                    {
+                      "id": "TGhsu",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 54",
+                      "x": 1204.5,
+                      "y": 39.886295788098884,
+                      "opacity": 0.9305084745762711
+                    },
+                    {
+                      "id": "CAWbL",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 55",
+                      "x": 1226.5,
+                      "y": 37.27672146687434,
+                      "opacity": 0.9444067796610169
+                    },
+                    {
+                      "id": "DoMH6",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 56",
+                      "x": 1248.5,
+                      "y": 36.9579436617405,
+                      "opacity": 0.9583050847457626
+                    },
+                    {
+                      "id": "vzqMI",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 57",
+                      "x": 1270.5,
+                      "y": 39.031109545547224,
+                      "opacity": 0.9722033898305085
+                    },
+                    {
+                      "id": "y4SJR",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Day 58",
+                      "x": 1292.5,
+                      "y": 43.20395942941972,
+                      "opacity": 0.9861016949152541
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "oZPDQ",
+                      "x": 1286,
+                      "y": 20.33101909830645,
+                      "name": "Moment Glow",
+                      "opacity": 0.75,
+                      "fill": "$a-accent-soft",
+                      "width": 64,
+                      "height": 64,
+                      "effect": {
+                        "type": "blur",
+                        "radius": 16
+                      }
+                    },
+                    {
+                      "id": "fVfBW",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Current Moment",
+                      "x": 1314.5,
+                      "y": 48.83101909830645,
+                      "fill": "$a-accent",
+                      "opacity": 1
+                    },
+                    {
+                      "id": "f3NP5d",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Companion Dot 14",
+                      "x": 325,
+                      "y": 46.06393534603678,
+                      "width": 5,
+                      "height": 5,
+                      "fill": "$a-timeline-line",
+                      "opacity": 0.3183898305084745
+                    },
+                    {
+                      "id": "N02K9",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Companion Dot 34",
+                      "x": 765,
+                      "y": 52.020369621836835,
+                      "width": 5,
+                      "height": 5,
+                      "fill": "$a-timeline-line",
+                      "opacity": 0.5546610169491526
+                    },
+                    {
+                      "id": "RKDrV",
+                      "type": "ref",
+                      "ref": "c5PEVn",
+                      "name": "Companion Dot 59",
+                      "x": 1315,
+                      "y": 40.33101909830645,
+                      "width": 5,
+                      "height": 5,
+                      "fill": "$a-accent",
+                      "opacity": 0.85
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "c7YvjS",
+          "name": "Content Area",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            24,
+            80,
+            88,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "sUJu6",
+              "name": "Card Nav Row",
+              "width": "fill_container",
+              "gap": 32,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "b8weG",
+                  "name": "Story Card — Expanded",
+                  "clip": true,
+                  "width": 960,
+                  "fill": "$a-bg-card",
+                  "cornerRadius": 20,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#26292E14",
+                    "offset": {
+                      "x": 0,
+                      "y": 18
+                    },
+                    "blur": 44
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "e19XCd",
+                      "name": "Hero Image",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "taypaigey",
+                        "link": "https://unsplash.com/@taypaigey",
+                        "author": "Taylor Flowe"
+                      },
+                      "width": "fill_container",
+                      "height": 250,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1561497268-c3c196c0e28f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODU4NDQyODl8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "cover"
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Wlpo8",
+                      "name": "Card Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 22,
+                      "padding": [
+                        44,
+                        52,
+                        52,
+                        52
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "J7HApW",
+                          "name": "Back Link",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "WRfXL",
+                              "name": "Arrow Left",
+                              "width": 15,
+                              "height": 15,
+                              "icon": "arrow-left",
+                              "library": "lucide",
+                              "fill": "$a-ink-secondary"
+                            },
+                            {
+                              "type": "text",
+                              "id": "YHeca",
+                              "name": "Label",
+                              "fill": "$a-ink-secondary",
+                              "content": "返回意識潮",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "eQO18",
+                          "name": "Meta Row",
+                          "gap": 10,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "j8LXxg",
+                              "name": "Date",
+                              "fill": "$a-ink-secondary",
+                              "content": "2026年8月4日",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "l7kzZC",
+                              "name": "Dot",
+                              "fill": "$a-border",
+                              "content": "·",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "M2CRjX",
+                              "name": "Reading Time",
+                              "fill": "$a-ink-secondary",
+                              "content": "4 分鐘閱讀",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "jsk1G",
+                          "name": "Title",
+                          "fill": "$a-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "雨天的清邁",
+                          "lineHeight": 1.3,
+                          "fontFamily": "$a-heading-font",
+                          "fontSize": 30,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jOvyW",
+                          "name": "Tags Row",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "d6onay",
+                              "name": "Tag 旅行",
+                              "fill": "$a-ink-secondary",
+                              "content": "旅行",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "KmMkm",
+                              "name": "Tag Sep",
+                              "fill": "$a-border",
+                              "content": "·",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "SD51x",
+                              "name": "Tag 散文",
+                              "fill": "$a-ink-secondary",
+                              "content": "散文",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "q4BeXR",
+                              "name": "Tag Sep",
+                              "fill": "$a-border",
+                              "content": "·",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FMBMr",
+                              "name": "Tag 生活觀察",
+                              "fill": "$a-ink-secondary",
+                              "content": "生活觀察",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Q1Z7Zz",
+                          "name": "Full Content",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "padding": [
+                            8,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xxrJb",
+                              "name": "Paragraph",
+                              "fill": "$a-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "雨落在鐵皮屋頂上，像有人在遠處輕輕數著日子。我坐在窗邊，什麼也沒做，只是看著水順著玻璃往下流。",
+                              "lineHeight": 1.75,
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Fl86a",
+                              "name": "Paragraph",
+                              "fill": "$a-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "巷口的麵攤收起了一半的遮雨布，老闆把椅子一張張疊起來。街上的機車少了，只剩下輪胎劃過積水的聲音，一下，又一下。",
+                              "lineHeight": 1.75,
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "coKt6",
+                              "name": "Paragraph",
+                              "fill": "$a-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "我想起出發前那個晚上，也是這樣的雨。那時候以為旅行是為了離開，現在才發現，只是換個地方，把同樣的心事再聽一次。",
+                              "lineHeight": 1.75,
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ZUyHY",
+                          "name": "Back Link",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "OigkP",
+                              "name": "Arrow Left",
+                              "width": 15,
+                              "height": 15,
+                              "icon": "arrow-left",
+                              "library": "lucide",
+                              "fill": "$a-ink-secondary"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FAJ1E",
+                              "name": "Label",
+                              "fill": "$a-ink-secondary",
+                              "content": "返回意識潮",
+                              "fontFamily": "$a-body-font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "a7Dhe",
+          "layoutPosition": "absolute",
+          "x": 40,
+          "y": 26,
+          "name": "折返 Back Home",
+          "fill": "$a-ink-secondary",
+          "content": "折返",
+          "fontFamily": "$a-body-font",
+          "fontSize": 13,
+          "fontWeight": "600"
         }
       ]
     }

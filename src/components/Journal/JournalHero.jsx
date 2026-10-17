@@ -1,5 +1,7 @@
 import JournalMark from './JournalMark.jsx';
 import JournalNumeral from './JournalNumeral.jsx';
+import SignalRiver from './SignalRiver.jsx';
+import TodaySong from './TodaySong.jsx';
 import WaveTimeline from './WaveTimeline.jsx';
 import styles from './JournalHero.module.css';
 
@@ -7,7 +9,10 @@ export default function JournalHero({currentDay, mostRecentDayKey, days, onSelec
   return (
     <section className={styles.hero} aria-label="意識潮時間軸">
       <div className={styles.numeralRow}>
-        <JournalMark />
+        <div className={styles.markColumn}>
+          <JournalMark />
+          <TodaySong />
+        </div>
         <JournalNumeral
           date={currentDay.date}
           isMostRecent={currentDay.dayKey === mostRecentDayKey}
@@ -19,6 +24,7 @@ export default function JournalHero({currentDay, mostRecentDayKey, days, onSelec
         mostRecentDayKey={mostRecentDayKey}
         onSelectDay={onSelectDay}
       />
+      <SignalRiver onSelectDay={onSelectDay} />
     </section>
   );
 }

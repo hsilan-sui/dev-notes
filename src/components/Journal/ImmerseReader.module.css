@@ -1,0 +1,308 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--journal-bg-card);
+  color: var(--journal-ink);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  -webkit-overflow-scrolling: touch;
+}
+
+.column {
+  display: grid;
+  gap: var(--journal-card-body-gap);
+  width: 100%;
+  max-width: calc(var(--journal-immerse-column-width) + 2 * var(--journal-space-lg));
+  margin: 0 auto;
+  padding: var(--journal-space-xl) var(--journal-space-lg) calc(var(--journal-space-xl) * 2);
+}
+
+.backLink {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  gap: 8px;
+  margin: calc(var(--journal-space-sm) * -1) 0 0 calc(var(--journal-space-sm) * -1);
+  padding: var(--journal-space-sm);
+  border: 0;
+  border-radius: var(--journal-radius-pill);
+  background: var(--journal-bg-card);
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: inherit;
+  cursor: pointer;
+  transition: color var(--journal-motion-hover-transition);
+}
+
+.backLink:hover,
+.backLink:focus-visible {
+  color: var(--journal-ink);
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 2px;
+}
+
+.backLinkEnd {
+  position: static;
+  margin-top: var(--journal-space-lg);
+}
+
+.backIcon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+.meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--journal-ink-secondary);
+  font-size: 13px;
+}
+
+.separator {
+  color: var(--journal-border);
+}
+
+.title {
+  margin: 0;
+  color: var(--journal-ink);
+  font-family: var(--journal-font-heading), Georgia, serif;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.title:focus {
+  outline: none;
+}
+
+.text {
+  margin-top: var(--journal-space-md);
+  color: var(--journal-ink);
+  font-size: 18px;
+  line-height: 2;
+}
+
+.text :global(.markdown) p {
+  margin: 0 0 1.6em;
+}
+
+/* ---------- Deeper as You Read (`immerseDepth: deepen`) ---------- */
+
+.layer[data-depth] {
+  transition: background-color 200ms linear;
+}
+
+.layer[data-depth] .column {
+  position: relative;
+  z-index: 1;
+}
+
+.layer[data-depth] .meta,
+.layer[data-depth] .title,
+.layer[data-depth] .text,
+.layer[data-depth] .coordinate,
+.layer[data-depth] .backLink {
+  transition: color 300ms ease;
+}
+
+.layer[data-tone='dark'] .title,
+.layer[data-tone='dark'] .text {
+  color: var(--journal-deep-ink);
+}
+
+.layer[data-tone='dark'] .meta,
+.layer[data-tone='dark'] .coordinate,
+.layer[data-tone='dark'] .backLink {
+  color: var(--journal-deep-ink-secondary);
+}
+
+.layer[data-tone='dark'] .separator {
+  color: var(--journal-deep-ink-secondary);
+}
+
+/* Depth only appears once the space has crossed into the dark: a light
+   vignette, a few still specks of dust, and film grain drifting very slowly. */
+.space {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(1.6px 1.6px at 13% 24%, rgba(232, 238, 242, 0.22), transparent),
+    radial-gradient(1.6px 1.6px at 88% 16%, rgba(232, 238, 242, 0.18), transparent),
+    radial-gradient(1.6px 1.6px at 76% 77%, rgba(232, 238, 242, 0.15), transparent),
+    radial-gradient(1.6px 1.6px at 21% 82%, rgba(232, 238, 242, 0.2), transparent),
+    radial-gradient(1.6px 1.6px at 93% 57%, rgba(232, 238, 242, 0.12), transparent),
+    radial-gradient(1.6px 1.6px at 7% 51%, rgba(232, 238, 242, 0.16), transparent),
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.28) 100%);
+  transition: opacity 1200ms ease;
+}
+
+.layer[data-tone='dark'] .space {
+  opacity: 1;
+}
+
+.grain {
+  position: absolute;
+  inset: -20%;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: journal-grain-drift 90s linear infinite;
+}
+
+@keyframes journal-grain-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(6%, 4%, 0);
+  }
+}
+
+/* The way back reads like a distant coordinate, floating top-left. */
+.coordinate {
+  position: fixed;
+  top: 28px;
+  left: 32px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: var(--journal-radius-pill);
+  background-color: inherit;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.coordinate:hover,
+.coordinate:focus-visible {
+  color: var(--journal-ink);
+}
+
+.layer[data-tone='dark'] .coordinate:hover,
+.layer[data-tone='dark'] .coordinate:focus-visible {
+  color: var(--journal-deep-ink);
+}
+
+.coordinate:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 3px;
+}
+
+.coordinateDate {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.layer[data-depth] .backLinkEnd {
+  margin-top: 50vh;
+  background: transparent;
+}
+
+/* ---------- Return through a singularity (`immerseReturn: singularity`) ---------- */
+
+/* The soft edge sits inside the radius, so at 0px nothing underneath shows through. */
+
+.layer[data-bang] {
+  -webkit-mask-image: radial-gradient(circle at var(--journal-bang-x) var(--journal-bang-y), transparent calc(var(--journal-bang-r) - 6px), #000 var(--journal-bang-r));
+  mask-image: radial-gradient(circle at var(--journal-bang-x) var(--journal-bang-y), transparent calc(var(--journal-bang-r) - 6px), #000 var(--journal-bang-r));
+}
+
+.point {
+  position: fixed;
+  z-index: 3;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--journal-bang-point);
+  box-shadow: 0 0 10px 3px rgba(246, 243, 236, 0.22);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.returnLine {
+  position: fixed;
+  z-index: 3;
+  margin: 0;
+  color: var(--journal-bang-line);
+  font-family: 'Noto Serif TC', var(--journal-font-heading), serif;
+  font-size: 15px;
+  letter-spacing: 0.32em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 28px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer[data-depth],
+  .layer[data-depth] .meta,
+  .layer[data-depth] .title,
+  .layer[data-depth] .text,
+  .space {
+    transition: none;
+  }
+
+  .grain {
+    animation: none;
+  }
+}
+
+@media screen and (max-width: 596px) {
+  .coordinate {
+    top: 16px;
+    left: 16px;
+  }
+
+  .layer[data-depth] .column {
+    padding-top: 72px;
+  }
+
+  .column {
+    padding: var(--journal-space-lg) var(--journal-space-md) var(--journal-space-xl);
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .text {
+    font-size: 17px;
+    line-height: 1.95;
+  }
+}
+
+.column { min-width: 0; overflow-wrap: anywhere; }
+.text :global(pre), .text :global(table) { max-width: 100%; overflow-x: auto; }
+.text :global(img) { max-width: 100%; height: auto; }
+.coordinate, .backLink { min-height: var(--journal-touch-target); }
+@media screen and (max-width: 596px) {
+  .coordinate { top: max(var(--journal-space-sm), env(safe-area-inset-top)); }
+  .layer[data-depth] .column { padding-top: calc(var(--journal-touch-target) + var(--journal-space-lg) + env(safe-area-inset-top)); }
+  .column { padding-bottom: calc(var(--journal-space-xl) + env(safe-area-inset-bottom)); }
+  .text { font-size: var(--journal-reader-size-mobile); line-height: var(--journal-reader-leading-mobile); }
+}

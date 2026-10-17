@@ -20,9 +20,11 @@
   padding: 4px 8px;
   place-items: center;
   text-decoration: none;
+  opacity: var(--journal-recede, 1);
   transition:
     color 180ms ease,
-    text-shadow 180ms ease;
+    text-shadow 180ms ease,
+    opacity var(--journal-recede-duration, 0s) var(--journal-motion-ease);
 }
 
 .backHomeText,
@@ -71,6 +73,32 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+/* Hover to Immerse: the timeline recedes while the reader approaches a memory
+   and stays in the background while it is open. Only the target value and
+   duration change here; each receding element transitions its own opacity or
+   filter, which keeps the per-frame work off the 5000+ timeline nodes. */
+.page {
+  --journal-recede: 1;
+  --journal-recede-duration: var(--journal-immerse-collapse);
+}
+
+.page[data-immerse='approach'] {
+  --journal-recede: var(--journal-immerse-approach-opacity);
+  --journal-recede-duration: var(--journal-immerse-dwell);
+}
+
+.page[data-immerse='open'] {
+  --journal-recede: var(--journal-immerse-backdrop-opacity);
+  --journal-recede-duration: var(--journal-immerse-expand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page,
+  .page[data-immerse] {
+    --journal-recede-duration: var(--journal-immerse-reduced);
+  }
 }
 
 @media screen and (max-width: 596px) {

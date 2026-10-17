@@ -20,6 +20,7 @@ export default function JournalContentArea({
   isExpanded,
   onExpand,
   onCollapse,
+  immerse,
 }) {
   const hasMultipleEntries = currentDay.entries.length > 1;
   const otherEntriesCount = Math.max(0, currentDay.entries.length - 1);
@@ -83,7 +84,7 @@ export default function JournalContentArea({
             </button>
           ) : null}
           <div className={styles.cardShell} key={currentEntry.permalink}>
-            <StoryCard entry={currentEntry} expanded={isExpanded} onExpand={onExpand} onCollapse={onCollapse} />
+            <StoryCard entry={currentEntry} expanded={isExpanded} onExpand={onExpand} onCollapse={onCollapse} immerse={immerse} />
           </div>
         </div>
         {!isExpanded ? (

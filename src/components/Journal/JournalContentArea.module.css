@@ -78,7 +78,8 @@
   transition:
     box-shadow 420ms var(--journal-motion-ease),
     opacity 420ms var(--journal-motion-ease),
-    transform 420ms var(--journal-motion-ease);
+    transform 420ms var(--journal-motion-ease),
+    filter var(--journal-recede-duration, 0s) var(--journal-motion-ease);
   will-change: transform;
 }
 
@@ -227,6 +228,23 @@
   -webkit-line-clamp: 3;
 }
 
+/* Recede behind an immersed entry (Experiment 001). Elements with their own
+   opacity use filter so the two don't fight. */
+.sameDayControl,
+.navCaption {
+  opacity: var(--journal-recede, 1);
+  transition: opacity var(--journal-recede-duration, 0s) var(--journal-motion-ease);
+}
+
+.cardRow > :not(.carouselStage) {
+  filter: opacity(var(--journal-recede, 1));
+  transition: filter var(--journal-recede-duration, 0s) var(--journal-motion-ease);
+}
+
+.previewPanel {
+  filter: opacity(var(--journal-recede, 1));
+}
+
 @keyframes journal-card-in {
   from {
     opacity: 0;
@@ -241,8 +259,15 @@
 
 @media screen and (max-width: 596px) {
   .cardRow {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--journal-space-sm);
   }
+
+  /* Keep the card wide; navigation sits below it on a phone. */
+  .carouselStage { grid-column: 1 / -1; grid-row: 1; min-width: 0; }
+  .cardRow > button { grid-row: 2; }
+  .cardRow > button:first-child { grid-column: 1; justify-self: end; }
+  .cardRow > button:last-child { grid-column: 2; justify-self: start; }
 
   .previewPanel {
     display: none;

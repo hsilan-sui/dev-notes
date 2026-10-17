@@ -1,8 +1,9 @@
-import {useEffect, useMemo, useState} from 'react';
-import Link from '@docusaurus/Link';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import clsx from 'clsx';
 import JournalContentArea from './JournalContentArea.jsx';
 import JournalHero from './JournalHero.jsx';
+import ImmerseReader from './ImmerseReader.jsx';
+import useHoverIntent from './useHoverIntent.js';
 import useJournalTimeline from './useJournalTimeline.js';
 import './tokens.css';
 import styles from './JournalPage.module.css';
@@ -13,6 +14,30 @@ export default function JournalPage({items = [], metadata}) {
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
   const [announcement, setAnnouncement] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
+  // Hover to Immerse (Experiment 001): null → 'approach' → 'open' → 'closing' → null.
+  const [immersePhase, setImmersePhase] = useState(null);
+  const immerseCardRef = useRef(null);
+
+  const handleApproachChange = useCallback((isApproaching) => {
+    setImmersePhase((phase) => {
+      if (phase === 'open' || phase === 'closing') {
+        return phase;
+      }
+      return isApproaching ? 'approach' : null;
+    });
+  }, []);
+  const handleImmerseOpen = useCallback(() => setImmersePhase('open'), []);
+  const {onPointerEnter, onPointerLeave, cancel: cancelHoverIntent, rearmAfterClose} = useHoverIntent({
+    onApproachChange: handleApproachChange,
+    onIntent: handleImmerseOpen,
+  });
+  const handleImmerseCloseStart = useCallback(() => setImmersePhase('closing'), []);
+  const handleImmerseClosed = useCallback(() => {
+    setImmersePhase(null);
+    rearmAfterClose(immerseCardRef.current);
+    immerseCardRef.current?.focus({preventScroll: true});
+  }, [rearmAfterClose]);
+  const isImmersed = immersePhase === 'open' || immersePhase === 'closing';
 
   useEffect(() => {
     setIsExpanded(false);
@@ -99,11 +124,11 @@ export default function JournalPage({items = [], metadata}) {
   }
 
   return (
-    <main className={clsx('journal-scope', styles.page)}>
-      <Link className={styles.backHomeLink} to="/" aria-label="折返首頁">
-        <span className={styles.backHomeText} aria-hidden="true">折返</span>
-        <span className={styles.backHomeTextHover} aria-hidden="true">返折</span>
-      </Link>
+    <main
+      className={clsx('journal-scope', styles.page)}
+      data-immerse={immersePhase || undefined}
+      inert={immersePhase === 'open' ? true : undefined}
+    >
       <JournalHero
         currentDay={currentDay}
         mostRecentDayKey={timeline.mostRecentDayKey}
@@ -126,7 +151,25 @@ export default function JournalPage({items = [], metadata}) {
         isExpanded={isExpanded}
         onExpand={() => setIsExpanded(true)}
         onCollapse={() => setIsExpanded(false)}
+        immerse={{
+          cardRef: immerseCardRef,
+          approaching: immersePhase === 'approach',
+          onPointerEnter,
+          onPointerLeave,
+          onOpen: () => {
+            cancelHoverIntent();
+            handleImmerseOpen();
+          },
+        }}
       />
+      {isImmersed ? (
+        <ImmerseReader
+          entry={currentEntry}
+          originRef={immerseCardRef}
+          onCloseStart={handleImmerseCloseStart}
+          onClosed={handleImmerseClosed}
+        />
+      ) : null}
       <div className={styles.liveRegion} aria-live="polite" aria-atomic="true">{announcement}</div>
     </main>
   );

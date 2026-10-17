@@ -180,7 +180,7 @@ export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, onS
           viewBox={`0 0 ${width} ${opts.centerY * 2}`}
           width={width}
         >
-          <path className={styles.wavePath} d={pathD} />
+          <path className={styles.wavePath} d={pathD} data-wave-path="" />
           {activePosition ? (
             <circle
               className={styles.glow}
@@ -237,6 +237,7 @@ export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, onS
               <li
                 className={styles.nodeItem}
                 key={day.dayKey}
+                data-day-node=""
                 style={{
                   left: position.x,
                   top: position.y,

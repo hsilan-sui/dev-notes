@@ -1,3 +1,10 @@
+/* Animatable radius for the return expansion mask (Experiment 001). */
+@property --journal-bang-r {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
 .journal-scope {
   --journal-bg: #F4F5F6;
   --journal-bg-card: #FAFBFB;
@@ -46,6 +53,70 @@
   --journal-motion-wave-drift-period: 18000ms;
   --journal-motion-wave-drift-amplitude: 0.05rad;
   --journal-motion-hover-transition: 180ms linear;
+
+  /* Experiment 001 — Hover to Immerse (only entries with `immerse: hover`) */
+  --journal-immerse-dwell: 650ms;
+  --journal-immerse-expand: 900ms;
+  --journal-immerse-collapse: 650ms;
+  --journal-immerse-reduced: 150ms;
+  --journal-immerse-approach-opacity: 0.55;
+  --journal-immerse-backdrop-opacity: 0.12;
+  --journal-immerse-column-width: 34em;
+
+  /* Experiment 001 — Deeper as You Read (`immerseDepth: deepen`).
+     Background depth by reading progress (0–1 through the text, not pixels).
+     The text tone flips at the threshold, inside the short band where neither
+     dark nor light ink reaches 4.5:1 against the background. */
+  --journal-deep-stops: 0 #EEF2F4, 0.2 #E8EDF0, 0.38 #C9D3DA, 0.405 #9AA8B4, 0.42 #3B4753, 0.58 #263039, 0.8 #1A2129, 1 #10151A;
+  --journal-deep-threshold: 0.412;
+  --journal-deep-ink: #D3D9DE;
+  --journal-deep-ink-secondary: #8C98A3;
+  --journal-deep-enter: 1600ms;
+  --journal-deep-stagger: 800ms;
+
+  /* Experiment 001 — return through a singularity (`immerseReturn: singularity`). */
+  --journal-bang-bg: #10151A;
+  --journal-bang-recede: 400ms;
+  --journal-bang-hold: 400ms;
+  --journal-bang-expand: 700ms;
+  --journal-bang-point: #F6F3EC;
+  --journal-bang-line: #E6ECEF;
+  --journal-bang-line-hold: 1600ms;
+
+  /* 收訊 Signal — two BB Call pagers on the river (past bank / today bank). */
+  --journal-pager-body: #2A2E33;
+  --journal-pager-edge: #3B4046;
+  --journal-pager-key: #1F2327;
+  --journal-pager-key-label: #C7CDD2;
+  --journal-pager-engrave: #9AA2AA;
+  --journal-pager-model: #1E2125;
+  --journal-pager-bezel: #16191C;
+  --journal-pager-gray-body: #B9BFC5;
+  --journal-pager-gray-edge: #A3AAB1;
+  --journal-pager-gray-key: #A9B0B7;
+  --journal-pager-gray-key-label: #4A5057;
+  --journal-pager-gray-engrave: #6E757C;
+  --journal-pager-gray-model: #A3AAB1;
+  --journal-pager-gray-bezel: #3A3F45;
+  --journal-lcd: #B9C69B;
+  --journal-lcd-off: #4A5145;
+  --journal-lcd-ink: #1E2618;
+  --journal-signal: #BD3F1B;
+  --journal-font-pixel: VT323;
+  --journal-font-mono: 'IBM Plex Mono';
+  --journal-signal-travel: 3600ms;
+  --journal-signal-first-arrival: 6000ms;
+  --journal-signal-write-blink: 1600ms;
+
+  /* 送給『今天』的歌 — the small embedded player under JournalMark. */
+  --journal-player-blue: #3F6F9C;
+  --journal-player-blue-soft: #5E8FBA;
+  --journal-player-line: #A9C1D6;
+  --journal-player-divider: #BCD0E0;
+  --journal-player-rail: #B9CDDE;
+  --journal-player-time: #3E5A74;
+  --journal-player-bar: linear-gradient(180deg, #F6FAFD 0%, #E1ECF5 55%, #CCDDEB 100%);
+  --journal-player-play: linear-gradient(180deg, #EDF4FA 0%, #C5D9EB 100%);
 
   --journal-opacity-day-oldest: 0.18;
   --journal-opacity-day-current: 1;
@@ -105,4 +176,124 @@
     --journal-nav-row-gap: var(--journal-nav-row-gap-mobile);
     --journal-same-day-gap: var(--journal-same-day-gap-mobile);
   }
+}
+
+/* 接單出發 — scoped pixel scene and interface palette. */
+.journal-scope {
+  --rider-bg: #080810;
+  --rider-panel: #10121c;
+  --rider-ink: #f3eee5;
+  --rider-muted: #aeb4c7;
+  --rider-border: #6d7893;
+  --rider-warm-border: #aa9269;
+  --rider-accent: #ffad70;
+  --rider-skin: #F4C591;
+  --rider-hair: #2C1810;
+  --rider-jacket: #FF6B35;
+  --rider-trousers: #2C3E50;
+  --rider-shoe: #1a1a1a;
+  --rider-bag: #E74C3C;
+  --rider-metal: #888;
+  --rider-wheel: #222;
+  --rider-cash: #FFE4A0;
+  --rider-shirt: #fff;
+  --rider-paint-1: #080810;
+  --rider-paint-2: #0d0d20;
+  --rider-paint-3: rgba(255,220,100,0.6);
+  --rider-paint-4: rgba(100,100,180,0.2);
+  --rider-paint-5: #111122;
+  --rider-paint-6: rgba(255,255,100,0.4);
+  --rider-paint-7: #333;
+  --rider-paint-8: #445;
+  --rider-paint-9: rgba(255,200,80,0.4);
+  --rider-paint-10: rgba(255,200,80,0);
+  --rider-paint-11: #FFE090;
+  --rider-paint-12: #0a0a0a;
+  --rider-paint-13: #111;
+  --rider-paint-14: #0d0d0d;
+  --rider-paint-15: #0f0f14;
+  --rider-paint-16: rgba(180,200,255,0);
+  --rider-paint-17: #222428;
+  --rider-paint-18: #FF6B35;
+  --rider-paint-19: #080808;
+  --rider-paint-20: #0f0f10;
+  --rider-paint-21: rgba(30,30,35,0.8);
+  --rider-paint-22: #0d0d12;
+  --rider-paint-23: #1a1a22;
+  --rider-paint-24: #2a2a35;
+  --rider-paint-25: rgba(180,200,255,0.15);
+  --rider-paint-26: #0a0a0e;
+  --rider-paint-27: #121218;
+  --rider-paint-28: #0e0e14;
+  --rider-paint-29: #111116;
+  --rider-paint-30: #151520;
+  --rider-paint-31: #88aaff;
+  --rider-paint-32: #1e1e28;
+  --rider-paint-33: rgba(180,200,255,0.02);
+  --rider-paint-34: rgba(255,255,255,0.01);
+  --rider-paint-35: #07070a;
+  --rider-paint-36: #0d0d10;
+  --rider-paint-37: #090910;
+  --rider-paint-38: rgba(160,170,220,0);
+  --rider-paint-39: #222;
+  --rider-paint-40: #07070c;
+  --rider-paint-41: #0a0a10;
+  --rider-paint-42: rgba(255,220,140,0.12);
+  --rider-paint-43: rgba(255,220,140,0);
+  --rider-paint-44: #0f0f0a;
+  --rider-paint-45: rgba(255,200,80,0.0);
+  --rider-paint-46: rgba(255,200,80,0.08);
+  --rider-paint-47: rgba(255,200,80,0.18);
+}
+
+.journal-scope {
+  --rider-rgb-1: 255,255,255;
+  --rider-rgb-2: 40,40,50;
+  --rider-rgb-3: 60,60,60;
+  --rider-rgb-4: 200,220,255;
+  --rider-rgb-5: 180,200,255;
+  --rider-rgb-6: 200,200,220;
+  --rider-rgb-7: 50,50,55;
+  --rider-rgb-8: 200,210,230;
+  --rider-rgb-9: 180,190,220;
+  --rider-rgb-10: 160,170,220;
+  --rider-rgb-11: 210,215,230;
+  --rider-rgb-12: 255,240,220;
+  --rider-rain: rgba(150,170,220,0.15);
+}
+
+/* Returning to the tide through one softly flickering star. */
+.journal-scope {
+  --journal-cosmic-fall: 1300ms;
+  --journal-cosmic-words: 1400ms;
+  --journal-cosmic-hold: 1600ms;
+  --journal-cosmic-glow: rgba(246, 243, 236, 0.3);
+  --journal-cosmic-star-size: 3.5px;
+  --journal-cosmic-star-halo: 9px;
+  --journal-cosmic-star-glow: rgba(222, 234, 255, 0.75);
+  --journal-cosmic-twinkle: 2200ms;
+}
+
+/* Warm paper cards and comfortable handheld reading. */
+.journal-scope {
+  --journal-card-paper: #FBF8F3;
+  --journal-card-edge: #D5C3AE;
+  --journal-card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 12px 32px rgba(100, 73, 45, 0.1), 0 2px 6px rgba(100, 73, 45, 0.05);
+  --journal-card-shadow-raised: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 20px 48px rgba(100, 73, 45, 0.15), 0 3px 8px rgba(100, 73, 45, 0.07);
+  --journal-touch-target: 44px;
+  --journal-reader-size-mobile: 17px;
+  --journal-reader-leading-mobile: 1.95;
+  --journal-rider-scene-mobile: 16 / 10;
+}
+
+/* 訊號光年 — the anonymous accordion timeline, shared by both BB Calls. */
+.journal-scope {
+  --journal-lightyears-paper: #FAF8F1;
+  --journal-lightyears-edge: #D9D4C5;
+  --journal-lightyears-fold: rgba(110, 100, 78, 0.07);
+  --journal-lightyears-reply: #F0F1ED;
+  --journal-lightyears-shadow: rgba(38, 41, 46, 0.16);
+  --journal-lightyears-backdrop: rgba(38, 41, 46, 0.14);
+  --journal-lightyears-unfold: 280ms;
+  --journal-lightyears-stagger: 60ms;
 }

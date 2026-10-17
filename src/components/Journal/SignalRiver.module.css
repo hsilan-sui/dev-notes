@@ -1,0 +1,111 @@
+/* Wide screens: the two banks hang in the hero's upper corners, above the
+   river; the large date and JournalMark stay clear in the middle. */
+.river {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.past,
+.today {
+  position: absolute;
+  top: 58px;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.past {
+  left: 40px;
+}
+
+/* A bank that is writing (and its mobile sheet) rises above the other. */
+.past[data-composing],
+.today[data-composing] {
+  z-index: 1100;
+}
+
+.today {
+  right: 40px;
+}
+
+.today > * {
+  transform-origin: top right;
+}
+
+.past > * {
+  transform-origin: top left;
+}
+
+/* The red point and its short trail, positioned along the wave in JS. */
+.trailLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.dot,
+.trail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: var(--journal-signal);
+  transition: opacity 300ms ease;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  box-shadow: 0 0 12px 3px rgba(189, 63, 27, 0.3);
+}
+
+.trail {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* Narrower screens: the banks sit side by side under the river. */
+@media screen and (max-width: 1180px) {
+  .river {
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--journal-space-sm);
+    align-items: start;
+    min-height: 140px;
+    pointer-events: auto;
+  }
+
+  .today { justify-self: end; }
+
+  .past,
+  .today {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+  }
+}
+
+@media screen and (max-width: 596px) {
+  .river {
+    min-height: 132px;
+  }
+
+  .past > :not([data-phase='compose']) {
+    transform: scale(0.9);
+  }
+}

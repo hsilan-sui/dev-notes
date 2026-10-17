@@ -54,6 +54,13 @@ Describes *behavior*. For visual states referenced here, see `journal-02-ui-spec
 - Day-nodes with an entry: on hover, opacity animates toward 1 if it wasn't already (a small, non-committal preview cue) and the pointer becomes a pointer/hand cursor. No tooltip, no date label appears on hover — the design explicitly rejects date-picker affordances (see PRD §6).
 - Nav circle buttons (Prev/Next/Up/Down): on hover, the 1px border transitions toward `$a-ink-secondary` (from `$a-border`) and the icon color deepens slightly toward `$a-ink`. No background fill on hover, no scale-transform on hover (would read as a "bouncy button," rejected by Motion Philosophy).
 - The Story Card itself has no hover state — it is not a clickable card-as-a-whole (only the explicit "繼續閱讀" link inside it is a link). Do not add a whole-card hover-lift/shadow; that is News-Card language this design rejects (UI Spec §4).
+- **Exception — `immerse: hover` entries (Experiment 001〈大爆炸〉).** An entry whose front matter sets `immerse: hover` opts out of the rule above; every other entry keeps the original behavior. For such an entry only:
+  - The whole card is the activation target (`role="button"`, focusable). It shows no "繼續閱讀" link and no hover hint text.
+  - On pointer enter (mouse/pen), the card gives an immediate, quiet response (a slightly deeper shadow) and the rest of the timeline begins to recede. Resting for `--journal-immerse-dwell` (650ms) opens the reading space; leaving before that cancels it.
+  - The card expands from its own on-screen rect into a full-viewport reading layer (`ImmerseReader`, `clip-path` inset animation, `--journal-immerse-expand`), and collapses back into the same rect (`--journal-immerse-collapse`). No route change.
+  - Once open, moving the pointer away does not close it. Close via "返回意識潮" or Escape; focus returns to the card and the current day / timeline scroll position is unchanged.
+  - Touch: tap opens. Keyboard: Enter / Space opens. Reduced motion: dwell still applies, the expand/collapse becomes a `--journal-immerse-reduced` cross-fade.
+  - Optional, per entry: `immerseDepth: deepen` makes the reading space darken with reading progress (the middle of the viewport through the text, not pixel positions), using `--journal-deep-stops`; text flips to light ink at `--journal-deep-threshold`. `immerseReturn: singularity` (+ optional `immerseReturnLine`) replaces the collapse: the text recedes into deep space, a single point appears at the card's center with the closing line beneath it, and the timeline is revealed by a circle expanding from that point. Reduced motion keeps the depth color but uses the plain cross-fade to return.
 
 ## 9. Focus (keyboard, non-pointer)
 

@@ -1,0 +1,51 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  overflow: hidden;
+  background: var(--journal-bang-bg);
+  color: var(--journal-bang-line);
+  outline: none;
+  -webkit-mask-image: radial-gradient(circle at var(--journal-bang-x, 50%) var(--journal-bang-y, 50%), transparent calc(var(--journal-bang-r) - 6px), #000 var(--journal-bang-r));
+  mask-image: radial-gradient(circle at var(--journal-bang-x, 50%) var(--journal-bang-y, 50%), transparent calc(var(--journal-bang-r) - 6px), #000 var(--journal-bang-r));
+}
+.line {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max-content;
+  max-width: calc(100% - 40px);
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: var(--journal-space-md);
+  opacity: 0;
+  font-family: 'Noto Serif TC', var(--journal-font-heading), serif;
+  font-size: clamp(16px, 2.5vw, 24px);
+  letter-spacing: 0.32em;
+  text-align: center;
+}
+.point {
+  position: absolute;
+  width: var(--journal-cosmic-star-size);
+  height: var(--journal-cosmic-star-size);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+.starlight {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--journal-bang-point);
+  box-shadow: 0 0 var(--journal-cosmic-star-halo) var(--journal-cosmic-star-glow);
+  animation: cosmic-starlight var(--journal-cosmic-twinkle) ease-in-out infinite;
+}
+@keyframes cosmic-starlight {
+  0%, 100% { opacity: 0.65; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .starlight { animation: none; }
+  .layer { mask-image: none; -webkit-mask-image: none; }
+}
