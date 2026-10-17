@@ -6,8 +6,10 @@
   background: var(--journal-bang-bg);
   color: var(--journal-bang-line);
   outline: none;
-  -webkit-mask-image: radial-gradient(circle at var(--journal-bang-x, 50%) var(--journal-bang-y, 50%), transparent calc(var(--journal-bang-r) - 6px), #000 var(--journal-bang-r));
-  mask-image: radial-gradient(circle at var(--journal-bang-x, 50%) var(--journal-bang-y, 50%), transparent calc(var(--journal-bang-r) - 6px), #000 var(--journal-bang-r));
+  /* The hole's edge ends 1px past the radius: at radius 0 a zero-length gradient
+     paints nothing in WebKit (iPhone), which hid the whole layer. */
+  -webkit-mask-image: radial-gradient(circle at var(--journal-bang-x, 50%) var(--journal-bang-y, 50%), transparent calc(var(--journal-bang-r) - 6px), #000 calc(var(--journal-bang-r) + 1px));
+  mask-image: radial-gradient(circle at var(--journal-bang-x, 50%) var(--journal-bang-y, 50%), transparent calc(var(--journal-bang-r) - 6px), #000 calc(var(--journal-bang-r) + 1px));
 }
 .line {
   position: absolute;
