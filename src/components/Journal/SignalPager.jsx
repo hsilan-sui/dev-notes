@@ -307,7 +307,7 @@ const SignalPager = forwardRef(function SignalPager(
           <button
             ref={writeRef}
             type="button"
-            className={clsx(styles.pill, writeHint && styles.pillHint, isComposeMode && styles.pillOn)}
+            className={clsx(styles.pill, styles.writeButton, writeHint && styles.pillHint, isComposeMode && styles.pillOn)}
             onClick={isComposeMode ? () => finishWriting(false) : () => startWriting(false)}
             aria-expanded={isComposeMode}
           >

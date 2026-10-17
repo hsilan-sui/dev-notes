@@ -256,6 +256,29 @@
   animation: journal-write-hint var(--journal-signal-write-blink) ease-in-out infinite;
 }
 
+.writeButton {
+  min-width: 72px;
+  min-height: var(--journal-touch-target);
+  padding: var(--journal-space-xs) var(--journal-space-sm);
+  border-color: var(--journal-accent);
+  background: var(--journal-bg-card);
+  color: var(--journal-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.writeButton.pillHint {
+  animation: none;
+  border-color: var(--journal-accent);
+  box-shadow: 0 0 0 2px var(--journal-accent-soft);
+}
+
+.writeButton:hover,
+.writeButton.pillOn {
+  background: var(--journal-accent-soft);
+  color: var(--journal-ink);
+}
+
 @keyframes journal-write-hint {
   0%,
   100% {
