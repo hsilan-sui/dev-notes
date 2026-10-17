@@ -62,7 +62,6 @@ export default function TodaySong() {
   const [duration, setDuration] = useState(NaN);
   const [volume, setVolume] = useState(0.6);
   const [notice, setNotice] = useState('');
-  const [compactOpen, setCompactOpen] = useState(false);
   const song = songsByDate[index];
   const resolvedSrc = useBaseUrl(song.src || '/');
   const src = song.src ? resolvedSrc : '';
@@ -148,6 +147,23 @@ export default function TodaySong() {
     return () => window.removeEventListener('mytide:immerse', handleImmerse);
     // `command` reads the iframe ref at call time.
   }, [youtubeId]);
+
+  // A film owns its quiet room. Pause both possible music sources and do
+  // not restart music when the film ends or the reader returns through space.
+  useEffect(() => {
+    function handleFilm(event) {
+      const open = Boolean(event.detail?.open);
+      if (open) {
+        resumeRef.current = false;
+        audioRef.current?.pause();
+        command('pauseVideo');
+        setPlaying(false);
+      }
+      setCovered(open);
+    }
+    window.addEventListener('mytide:film', handleFilm);
+    return () => window.removeEventListener('mytide:film', handleFilm);
+  }, []);
 
   // YouTube's embedded player is driven through its postMessage protocol, so
   // the strip's controls stay in sync without loading the full IFrame API.
@@ -266,7 +282,7 @@ export default function TodaySong() {
   const level = Math.round(volume * VOLUME_STEPS);
 
   return (
-    <div className={clsx(styles.player, compactOpen && styles.compactOpen)}>
+    <div className={styles.player}>
       <audio
         ref={audioRef}
         src={src || undefined}
@@ -279,16 +295,16 @@ export default function TodaySong() {
         onError={() => src && setNotice('暫時無法播放')}
       />
 
-      {/* Mobile: a single line until the reader opens it. */}
+      {/* Mobile: one line also controls playback; it never expands. */}
       <button
         type="button"
         className={styles.compact}
-        aria-expanded={compactOpen}
-        onClick={() => setCompactOpen((open) => !open)}
+        aria-label={playing ? `暫停：${label}` : `播放：${label}`}
+        onClick={togglePlay}
       >
         {playing ? <Equalizer /> : <PlayIcon playing={false} />}
         <span className={styles.compactLabel}>
-          {playing ? <Marquee text={label} /> : heading}
+          {notice || (playing ? <Marquee text={label} /> : heading)}
         </span>
       </button>
 

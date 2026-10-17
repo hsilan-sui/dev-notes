@@ -2,7 +2,7 @@
 slug: big-bang
 title: 大爆炸
 description: 我數學一直都不好。
-immerse: hover
+immerse: click
 immerseDepth: deepen
 immerseReturn: singularity
 immerseReturnLine: 你我都來自星塵

@@ -2,12 +2,16 @@ import {useEffect, useRef, useState} from 'react';
 import {BlogPostProvider} from '@docusaurus/plugin-content-blog/client';
 import MDXContent from '@theme/MDXContent';
 import clsx from 'clsx';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import {FridayFilmExperience} from '../MyTide/FridayFilm/FridayFilm';
 import Icon from './Icon.jsx';
 import CosmicReturn from './CosmicReturn';
 import styles from './StoryCard.module.css';
 import {RiderExperience} from '../MyTide/PandaRider/PandaRider';
 
 export default function StoryCard({entry, expanded, onExpand, onCollapse, immerse}) {
+  const imageUrl = useBaseUrl(entry?.imageUrl || '/');
+  const isFilm = entry?.readingExperience === 'friday-film';
   const departureButton = useRef(null);
   const cardOrigin = useRef(null);
   const [cosmicReturning, setCosmicReturning] = useState(false);
@@ -23,20 +27,21 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
     return null;
   }
 
-  // This work has its own departure, pacing and return. It does not use the
-  // prose article shell: closing the ride returns directly to its timeline card.
+  function returnFromExperience() {
+    returningFromRide.current = true;
+    setCosmicReturning(true);
+    onCollapse();
+  }
+
+  if (expanded && isFilm) return <FridayFilmExperience onClose={returnFromExperience} />;
   if (expanded && entry.readingExperience === 'panda-rider') {
-    return <RiderExperience intro onClose={() => {
-      returningFromRide.current = true;
-      setCosmicReturning(true);
-      onCollapse();
-    }} />;
+    return <RiderExperience intro onClose={returnFromExperience} />;
   }
 
   if (expanded) {
     return (
       <article className={`${styles.card} ${styles.expanded}`}>
-        {entry.imageUrl ? <img className={styles.image} src={entry.imageUrl} alt="" loading="lazy" /> : null}
+        {entry.imageUrl ? <img className={styles.image} src={imageUrl} alt="" loading="lazy" /> : null}
         <div className={`${styles.body} ${styles.expandedBody}`}>
           <button type="button" className={styles.backLink} onClick={onCollapse}>
             <Icon name="arrow-left" className={styles.ctaIcon} />
@@ -44,8 +49,8 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
           </button>
           <div className={styles.meta}>
             {entry.formattedDate ? <span>{entry.formattedDate}</span> : null}
-            {entry.formattedDate && entry.readingTimeMinutes ? <span className={styles.separator}>·</span> : null}
-            {entry.readingTimeMinutes ? <span>{entry.readingTimeMinutes} 分鐘閱讀</span> : null}
+            {entry.formattedDate && (isFilm || entry.readingTimeMinutes) ? <span className={styles.separator}>·</span> : null}
+            {isFilm ? <span>2 分 45 秒</span> : entry.readingTimeMinutes ? <span>{entry.readingTimeMinutes} 分鐘閱讀</span> : null}
           </div>
           <h2 className={styles.title}>{entry.title}</h2>
           {entry.tags.length > 0 ? (
@@ -78,9 +83,9 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
     );
   }
 
-  // `immerse: hover` entries open by resting on the whole card (or tap / Enter /
-  // Space), so they carry no "繼續閱讀" link — see interaction spec §8.
-  const isImmersive = entry.immerse === 'hover' && immerse;
+  // Immersive cards open on click / tap / Enter / Space. Hover intent is
+  // opt-in only; 〈大爆炸〉 uses `immerse: click` to avoid accidental openings.
+  const isImmersive = ['click', 'hover'].includes(entry.immerse) && immerse;
 
   function handleImmersiveKeyDown(event) {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -96,8 +101,8 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
         tabIndex: 0,
         'aria-label': `閱讀〈${entry.title}〉`,
         'aria-haspopup': 'dialog',
-        onPointerEnter: immerse.onPointerEnter,
-        onPointerLeave: immerse.onPointerLeave,
+        onPointerEnter: entry.immerse === 'hover' ? immerse.onPointerEnter : undefined,
+        onPointerLeave: entry.immerse === 'hover' ? immerse.onPointerLeave : undefined,
         onClick: immerse.onOpen,
         onKeyDown: handleImmersiveKeyDown,
       }
@@ -110,14 +115,11 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
       className={clsx(styles.card, isImmersive && styles.immersive, isImmersive && immerse.approaching && styles.approaching)}
       {...immersiveProps}
     >
-      {entry.imageUrl ? (
-        <img className={styles.image} src={entry.imageUrl} alt="" loading="lazy" />
-      ) : null}
       <div className={styles.body}>
         <div className={styles.meta}>
           {entry.formattedDate ? <span>{entry.formattedDate}</span> : null}
-          {entry.formattedDate && entry.readingTimeMinutes ? <span className={styles.separator}>·</span> : null}
-          {entry.readingTimeMinutes ? <span>{entry.readingTimeMinutes} 分鐘閱讀</span> : null}
+          {entry.formattedDate && (isFilm || entry.readingTimeMinutes) ? <span className={styles.separator}>·</span> : null}
+          {isFilm ? <span>2 分 45 秒</span> : entry.readingTimeMinutes ? <span>{entry.readingTimeMinutes} 分鐘閱讀</span> : null}
         </div>
         <h2 className={styles.title}>{entry.title}</h2>
         {entry.previewText ? <p className={styles.preview}>{entry.previewText}</p> : null}
@@ -133,7 +135,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
         ) : null}
         {!isImmersive ? (
           <button ref={departureButton} type="button" className={styles.cta} onClick={onExpand}>
-            <span>{entry.readingExperience === 'panda-rider' ? '接單出發' : '繼續閱讀'}</span>
+            <span>{isFilm ? '坐一會' : entry.readingExperience === 'panda-rider' ? '接單出發' : '繼續閱讀'}</span>
             <Icon name="arrow-right" className={styles.ctaIcon} />
           </button>
         ) : null}

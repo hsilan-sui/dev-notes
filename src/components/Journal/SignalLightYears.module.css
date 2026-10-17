@@ -14,19 +14,19 @@
 .header button, .source, .replyAction { min-height: var(--journal-touch-target); background: transparent; border: 0; padding: var(--journal-space-xs) var(--journal-space-sm); }
 .header button { flex-shrink: 0; font-size: 13px; }
 .timeline { position: relative; display: flex; gap: 0; overflow: auto; overscroll-behavior: contain; padding: 0 var(--journal-space-md) var(--journal-space-lg); min-height: 240px; touch-action: pan-x pan-y; scrollbar-width: thin; }
-.page { position: relative; flex: 0 0 300px; padding: var(--journal-space-sm) var(--journal-space-md) var(--journal-space-md); border-right: 1px solid var(--journal-lightyears-fold); transform-origin: left center; background: linear-gradient(90deg, var(--journal-lightyears-fold), transparent 12%, transparent 90%, var(--journal-lightyears-fold)); }
+.page { position: relative; flex: 0 0 240px; padding: var(--journal-space-sm) var(--journal-space-md) var(--journal-space-md); border-right: 1px solid var(--journal-lightyears-fold); transform-origin: left center; background: linear-gradient(90deg, var(--journal-lightyears-fold), transparent 12%, transparent 90%, var(--journal-lightyears-fold)); }
 .date { min-height: 36px; font: 12px var(--journal-font-mono), monospace; color: var(--journal-accent); }
 .node { position: absolute; top: 44px; left: 0; right: 0; height: 1px; background: var(--journal-lightyears-edge); }
 .node::after { content: ''; position: absolute; left: var(--journal-space-md); top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--journal-accent); }
-.message { display: grid; gap: var(--journal-space-sm); width: 100%; margin-top: var(--journal-space-sm); padding: var(--journal-space-sm); border: 1px solid var(--journal-border); border-radius: 8px; background: var(--journal-bg-card); text-align: left; box-shadow: 0 3px 9px var(--journal-lightyears-fold); }
+.message { display: grid; gap: var(--journal-space-xs); width: fit-content; max-width: 100%; margin-top: var(--journal-space-sm); padding: var(--journal-space-xs); border: 1px solid var(--journal-border); border-radius: 8px; background: var(--journal-bg-card); text-align: left; box-shadow: 0 3px 9px var(--journal-lightyears-fold); }
 .message[aria-expanded='true'] { border-color: var(--journal-accent); }
 .meta { display: flex; align-items: center; gap: var(--journal-space-xs); font: 11px var(--journal-font-mono), monospace; color: var(--journal-ink-secondary); }
 .meta i { width: 7px; height: 7px; border-radius: 50%; background: var(--journal-pager-body); }
 .meta i[data-bank='today'] { background: var(--journal-pager-gray-body); border: 1px solid var(--journal-pager-gray-edge); }
-.sentence { font: 16px/1.8 'Noto Serif TC', serif; overflow-wrap: anywhere; }
+.sentence { font: 14px/1.65 'Noto Serif TC', serif; overflow-wrap: anywhere; }
 .count { display: flex; justify-content: space-between; gap: var(--journal-space-xs); font-size: 11px; color: var(--journal-ink-secondary); }
 .thread { padding-top: var(--journal-space-xs); }
-.reply { margin: var(--journal-space-sm) 0 0 var(--journal-space-sm); padding: var(--journal-space-sm); border-left: 2px solid var(--journal-lightyears-edge); background: var(--journal-lightyears-reply); }
+.reply { margin: var(--journal-space-sm) 0 0 var(--journal-space-sm); padding: var(--journal-space-xs); border-left: 2px solid var(--journal-lightyears-edge); background: var(--journal-lightyears-reply); }
 .reply p { margin: var(--journal-space-xs) 0 0; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
 .source { color: var(--journal-accent) !important; font-size: 12px !important; text-align: left; }
 .replyAction { width: 100%; text-align: left; margin-top: var(--journal-space-xs); font-size: 12px !important; color: var(--journal-accent) !important; }

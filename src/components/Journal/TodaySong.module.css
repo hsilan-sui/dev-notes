@@ -376,11 +376,6 @@
 
   .full {
     display: none;
-    margin-top: 6px;
-  }
-
-  .compactOpen .full {
-    display: grid;
   }
 }
 

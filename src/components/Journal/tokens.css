@@ -297,3 +297,12 @@
   --journal-lightyears-unfold: 280ms;
   --journal-lightyears-stagger: 60ms;
 }
+
+/* 一個週五下班的日常 — a quiet seat beside a portrait window. */
+.journal-scope {
+  --journal-film-bg: #08090B;
+  --journal-film-ink: #E8E5DF;
+  --journal-film-muted: #A9A6A1;
+  --journal-film-edge: #53504C;
+  --journal-film-width: 460px;
+}

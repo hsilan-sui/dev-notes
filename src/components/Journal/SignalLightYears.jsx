@@ -123,7 +123,7 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy}) {
               <button type="button" className={styles.message} aria-expanded={expanded} aria-controls={`signal-thread-${entry.id}`} onClick={() => setSelected(expanded ? null : entry.id)}>
                 <span className={styles.meta}><i data-bank={entry.from} />{MODEL[entry.from]} · {formatTime(entry.writtenAt)}</span>
                 <span className={styles.sentence}>{entry.text}</span>
-                <span className={styles.count}>{entry.replies.length ? `↩ ${entry.replies.length} 句回應` : '還沒有人回'}<span>{expanded ? '收起 ↑' : '展開 ↓'}</span></span>
+                {entry.replies.length > 0 ? <span className={styles.count}>↩ {entry.replies.length}</span> : null}
               </button>
               {expanded ? <div id={`signal-thread-${entry.id}`} className={styles.thread}>
                 {entry.source ? <button type="button" className={styles.source} onClick={() => close(() => onSource(entry.source))}>出自〈{entry.source.title}〉 ›</button> : null}

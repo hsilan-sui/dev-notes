@@ -9,7 +9,7 @@
 }
 
 .card.immersive {
-  cursor: default;
+  cursor: pointer;
   transition: box-shadow var(--journal-motion-duration-card-out) var(--journal-motion-ease);
 }
 

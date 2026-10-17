@@ -75,3 +75,7 @@ See `journal-05-accessibility-spec.md` for the authoritative focus-order and key
 ## 11. Scroll (page-level, not timeline-level)
 
 - The page itself has no scroll-driven effects (no parallax, no reveal-on-scroll for the Card, no sticky header-shrink-on-scroll). The Hero band is not `position: sticky` — the site owner's earlier note that "Timeline 永遠保持在畫面上方" described its role in the *layout order* (always first, always dominant), not a request for scroll-pinning. If this is ever revisited, it must go back through a design step — do not silently add `position: sticky` during implementation.
+
+## 2026-10-18 修正：大爆炸只點擊開啟
+
+作者確認：〈大爆炸〉改用 `immerse: click`。滑鼠停留不觸發 approach 或開啟；點擊、觸碰、Enter、空白鍵才開啟，返回的單星效果維持。此決策取代本篇先前的 hover-to-immerse 規則。

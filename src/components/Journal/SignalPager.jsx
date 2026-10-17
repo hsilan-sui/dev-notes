@@ -15,9 +15,11 @@ const ZHUYIN = {
   KeyZ: 'ㄈ', KeyX: 'ㄌ', KeyC: 'ㄏ', KeyV: 'ㄒ', KeyB: 'ㄖ', KeyN: 'ㄙ', KeyM: 'ㄩ', Comma: 'ㄝ', Period: 'ㄡ', Slash: 'ㄥ',
   Digit1: 'ㄅ', Digit2: 'ㄉ', Digit3: 'ˇ', Digit4: 'ˋ', Digit5: 'ㄓ', Digit6: 'ˊ', Digit7: '˙', Digit8: 'ㄚ', Digit9: 'ㄞ', Digit0: 'ㄢ', Minus: 'ㄦ',
 };
+const EMOJI = ['😊', '🥹', '🙂', '😂', '🤍', '❤️', '✨', '🌟', '🌙', '🌊', '📟', '💬', '🚆', '🏠', '☕', '🌃', '🌅', '🌧️', '🌸', '🍃', '🎵', '💭', '🙏', '👋'];
 const letterRow = (letters) => [...letters].map((ch) => ({label: ch, code: `Key${ch}`}));
 const digitRow = [...'1234567890'].map((ch) => ({label: ch, code: `Digit${ch}`}));
 const LAYERS = {
+  emoji: Array.from({length: 4}, (_, index) => EMOJI.slice(index * 6, index * 6 + 6).map(label => ({label}))),
   zh: [
     [...digitRow, {label: '-', code: 'Minus'}],
     letterRow('QWERTYUIOP'),
@@ -81,6 +83,7 @@ const SignalPager = forwardRef(function SignalPager(
   const [composing, setComposing] = useState(false);
   const [composition, setComposition] = useState('');
   const [layer, setLayer] = useState('zh');
+  const [emojiOpen, setEmojiOpen] = useState(false);
   const [shift, setShift] = useState(false);
   const [litKey, setLitKey] = useState(null);
   const isComposeMode = phase === 'compose';
@@ -137,6 +140,7 @@ const SignalPager = forwardRef(function SignalPager(
 
     setText('');
     setComposition('');
+    setEmojiOpen(false);
     inputRef.current?.blur();
     flushSync(() => {
       if (send) onRelease(message);
@@ -184,7 +188,8 @@ const SignalPager = forwardRef(function SignalPager(
       return;
     }
 
-    const from = start === end ? start - 1 : start;
+    const previousCharacter = Array.from(text.slice(0, start)).at(-1) || '';
+    const from = start === end ? start - previousCharacter.length : start;
     setText(text.slice(0, from) + text.slice(end));
     input.focus();
     window.requestAnimationFrame(() => input.setSelectionRange(from, from));
@@ -245,7 +250,6 @@ const SignalPager = forwardRef(function SignalPager(
                 className={clsx(styles.lcdInput, !isComposeMode && styles.lcdInputIdle)}
                 type="text"
                 value={text}
-                maxLength={SIGNAL_MAX_LENGTH}
                 placeholder="不需要寫給誰"
                 enterKeyHint="send"
                 inputMode="text"
@@ -254,10 +258,11 @@ const SignalPager = forwardRef(function SignalPager(
                 aria-hidden={isComposeMode ? undefined : true}
                 tabIndex={isComposeMode ? 0 : -1}
                 readOnly={!isComposeMode}
-                onChange={(event) => setText(event.target.value)}
+                onChange={event => setText(composing ? event.target.value : Array.from(event.target.value).slice(0, SIGNAL_MAX_LENGTH).join(''))}
                 onCompositionStart={() => setComposing(true)}
                 onCompositionUpdate={(event) => setComposition(event.data)}
-                onCompositionEnd={() => {
+                onCompositionEnd={event => {
+                  setText(Array.from(event.currentTarget.value).slice(0, SIGNAL_MAX_LENGTH).join(''));
                   setComposing(false);
                   setComposition('');
                 }}
@@ -313,9 +318,15 @@ const SignalPager = forwardRef(function SignalPager(
             <span className={styles.led} />
           </span>
         </div>
+        {sheet && emojiOpen ? <div className={styles.emojiPalette} role="group" aria-label="表情符號">
+          {EMOJI.map(emoji => <button type="button" key={emoji} disabled={composing}
+            onMouseDown={event => event.preventDefault()} onClick={() => insert(emoji)} aria-label={`插入 ${emoji}`}>{emoji}</button>)}
+        </div> : null}
         {sheet ? (
           <div className={styles.sheetActions}>
             <button type="button" className={styles.sheetClose} onClick={() => finishWriting(false)}>收起</button>
+            <button type="button" className={styles.sheetClose} aria-label="選擇表情符號" aria-expanded={emojiOpen}
+              onMouseDown={event => event.preventDefault()} onClick={() => setEmojiOpen(value => !value)}>😊</button>
             <button
               type="button"
               className={styles.release}
@@ -367,7 +378,7 @@ const SignalPager = forwardRef(function SignalPager(
           ) : null}
           {LAYERS[layer].map((row, rowIndex) => (
             <div className={styles.keyRow} key={`${layer}-${rowIndex}`}>
-              {rowIndex === 3 && layer !== 'num' ? (
+              {rowIndex === 3 && (layer === 'zh' || layer === 'en') ? (
                 <button
                   type="button"
                   tabIndex={-1}
@@ -408,10 +419,12 @@ const SignalPager = forwardRef(function SignalPager(
             </div>
           ))}
           <div className={styles.keyRow}>
+            <button type="button" className={clsx(styles.key, styles.keyMode, layer === 'emoji' && styles.keyOn)}
+              aria-label="切換表情符號鍵盤" aria-pressed={layer === 'emoji'} onClick={() => setLayer(value => value === 'emoji' ? 'zh' : 'emoji')}>😊</button>
             <button
               type="button"
               tabIndex={-1}
-              className={clsx(styles.key, styles.keyMode, layer !== 'num' && styles.keyOn)}
+              className={clsx(styles.key, styles.keyMode, (layer === 'zh' || layer === 'en') && styles.keyOn)}
               onClick={() => setLayer(layer === 'zh' ? 'en' : 'zh')}
             >
               {layer === 'en' ? '英' : '中'}
