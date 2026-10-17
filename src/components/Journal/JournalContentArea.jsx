@@ -98,9 +98,6 @@ export default function JournalContentArea({
         </div>
       ) : null}
 
-      {!isExpanded ? (
-        <p className={styles.navCaption}>沿著時間軸往前，翻閱更早以前寫下的字。</p>
-      ) : null}
     </section>
   );
 }
