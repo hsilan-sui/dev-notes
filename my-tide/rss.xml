@@ -4,10 +4,18 @@
         <title>意識潮 | My Tide Blog</title>
         <link>https://hsilan-sui.github.io/dev-notes/my-tide</link>
         <description>意識潮 | My Tide Blog</description>
-        <lastBuildDate>Fri, 02 Oct 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 08 Oct 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-Hant</language>
+        <item>
+            <title><![CDATA[一個週五下班的日常]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/friday-after-work</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/friday-after-work</guid>
+            <pubDate>Thu, 08 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[跟著人群一路南下。]]></description>
+            <content:encoded><![CDATA[<div class="journal-scope"><div class="entry_hdO0"><button type="button">坐一會 · 2 分 45 秒</button><a href="https://hsilan-sui.github.io/dev-notes/my-tide">返回意識潮</a></div></div>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[大爆炸]]></title>
             <link>https://hsilan-sui.github.io/dev-notes/my-tide/big-bang</link>
