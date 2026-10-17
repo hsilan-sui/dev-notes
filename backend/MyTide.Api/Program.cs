@@ -13,7 +13,7 @@ var allowedOrigins = (builder.Configuration["AllowedOrigins"]
 builder.Services.AddSingleton(SignalStore.ForDirectory(dataDirectory));
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-    policy.WithOrigins(allowedOrigins).AllowAnyHeader().WithMethods("GET", "POST")));
+    policy.WithOrigins(allowedOrigins).AllowAnyHeader().WithMethods("GET", "POST", "DELETE")));
 
 // Hosts terminate TLS in a proxy; trust its X-Forwarded-For so each visitor
 // gets their own rate limit instead of sharing the proxy's address.

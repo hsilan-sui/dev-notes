@@ -2,6 +2,16 @@ using Microsoft.Data.Sqlite;
 
 namespace MyTide.Api.Signals;
 
+public enum SelfDeleteOutcome
+{
+    Deleted,
+    NotFound,
+    /// <summary>The key does not match, or the signal was stored without one.</summary>
+    WrongKey,
+    /// <summary>The take-back window has passed.</summary>
+    Expired,
+}
+
 public enum InsertOutcome
 {
     Created,
@@ -48,6 +58,16 @@ public sealed class SignalStore(string connectionString)
             CREATE INDEX IF NOT EXISTS ix_signals_created ON signals(created_at);
             """;
         await command.ExecuteNonQueryAsync();
+
+        // Added later (same as the Worker's 0002 migration): writers may take a signal back.
+        await using var columns = connection.CreateCommand();
+        columns.CommandText = "SELECT COUNT(*) FROM pragma_table_info('signals') WHERE name = 'delete_key_hash'";
+        if (Convert.ToInt64(await columns.ExecuteScalarAsync()) == 0)
+        {
+            await using var alter = connection.CreateCommand();
+            alter.CommandText = "ALTER TABLE signals ADD COLUMN delete_key_hash TEXT NULL";
+            await alter.ExecuteNonQueryAsync();
+        }
     }
 
     public async Task<bool> IsReachableAsync()
@@ -119,7 +139,7 @@ public sealed class SignalStore(string connectionString)
     }
 
     public async Task<(InsertOutcome Outcome, SignalCreated? Signal)> InsertAsync(
-        string id, string? threadId, string text, string from, long createdAt)
+        string id, string? threadId, string text, string from, long createdAt, string? deleteKeyHash = null)
     {
         await using var connection = await OpenAsync();
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
@@ -156,19 +176,41 @@ public sealed class SignalStore(string connectionString)
         {
             insert.Transaction = transaction;
             insert.CommandText = """
-                INSERT INTO signals (id, thread_id, text, from_bank, created_at, departed)
-                VALUES ($id, $threadId, $text, $from, $createdAt, 'today')
+                INSERT INTO signals (id, thread_id, text, from_bank, created_at, departed, delete_key_hash)
+                VALUES ($id, $threadId, $text, $from, $createdAt, 'today', $deleteKeyHash)
                 """;
             insert.Parameters.AddWithValue("$id", id);
             insert.Parameters.AddWithValue("$threadId", (object?)threadId ?? DBNull.Value);
             insert.Parameters.AddWithValue("$text", text);
             insert.Parameters.AddWithValue("$from", from);
             insert.Parameters.AddWithValue("$createdAt", createdAt);
+            insert.Parameters.AddWithValue("$deleteKeyHash", (object?)deleteKeyHash ?? DBNull.Value);
             await insert.ExecuteNonQueryAsync();
         }
 
         await transaction.CommitAsync();
         return (InsertOutcome.Created, new SignalCreated(id, createdAt));
+    }
+
+    /// <summary>Lets a writer take back their own signal while the window is open.</summary>
+    public async Task<SelfDeleteOutcome> DeleteOwnAsync(string id, string deleteKeyHash, long now, long windowMs)
+    {
+        await using (var connection = await OpenAsync())
+        await using (var command = connection.CreateCommand())
+        {
+            command.CommandText = "SELECT created_at, delete_key_hash FROM signals WHERE id = $id";
+            command.Parameters.AddWithValue("$id", id);
+            await using var reader = await command.ExecuteReaderAsync();
+            if (!await reader.ReadAsync()) return SelfDeleteOutcome.NotFound;
+
+            var stored = reader.IsDBNull(1) ? null : reader.GetString(1);
+            var matches = stored is not null && System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
+                System.Text.Encoding.ASCII.GetBytes(stored), System.Text.Encoding.ASCII.GetBytes(deleteKeyHash));
+            if (!matches) return SelfDeleteOutcome.WrongKey;
+            if (now - reader.GetInt64(0) > windowMs) return SelfDeleteOutcome.Expired;
+        }
+
+        return await DeleteAsync(id) ? SelfDeleteOutcome.Deleted : SelfDeleteOutcome.NotFound;
     }
 
     /// <summary>Removes a signal and, for an original signal, all of its replies.</summary>

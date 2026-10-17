@@ -460,6 +460,13 @@
   margin: 0;
 }
 
+.slipHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .slipTimes {
   color: var(--journal-ink-secondary);
   font-family: var(--journal-font-mono), ui-monospace, monospace;
@@ -572,6 +579,27 @@ button.slipSource {
 
 .keyWide {
   flex: 0 0 30px;
+}
+
+.keyEmoji {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* 80 emoji: four rows show at a time, the rest scroll. */
+.emojiRows {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-height: calc(24px * 4 + 3px * 3);
+  gap: 3px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.keyTall {
+  height: auto;
 }
 
 .keyMode {

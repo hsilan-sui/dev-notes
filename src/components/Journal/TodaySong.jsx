@@ -334,7 +334,7 @@ export default function TodaySong() {
               ))}
             </select>
             <span className={styles.dayLabel} aria-hidden="true">
-              {isToday ? '今天' : shortDate(song.date)} ▾
+              歌單 ▾
             </span>
           </span>
         </div>

@@ -5,6 +5,8 @@
 const MAX_TEXT_ELEMENTS = 40;
 const RECENT_THREAD_LIMIT = 100;
 const WRITES_PER_MINUTE = 10;
+// How long a writer can take back their own signal.
+const SELF_DELETE_WINDOW_MS = 3 * 60_000;
 const BANKS = new Set(['past', 'today']);
 const SIGNAL_ID = /^[0-9a-f]{32}$/;
 const segmenter = new Intl.Segmenter('zh-Hant', {granularity: 'grapheme'});
@@ -116,18 +118,32 @@ async function createSignal(request, env) {
   }
 
   const createdAt = Date.now();
+  const deleteKeyHash = body.deleteKey ? await sha256Hex(body.deleteKey) : null;
   await env.DB.prepare(`
-    INSERT INTO signals (id, thread_id, text, from_bank, created_at, departed)
-    VALUES (?1, ?2, ?3, ?4, ?5, 'today')`).bind(id, threadId, text, body.from, createdAt).run();
+    INSERT INTO signals (id, thread_id, text, from_bank, created_at, departed, delete_key_hash)
+    VALUES (?1, ?2, ?3, ?4, ?5, 'today', ?6)`).bind(id, threadId, text, body.from, createdAt, deleteKeyHash).run();
 
   return json({id, createdAt}, 201);
 }
 
-// Moderation: only the site owner, and only when ADMIN_TOKEN is set.
+// Two ways to remove a signal (and its replies):
+// - its writer, with the one-time delete key, within SELF_DELETE_WINDOW_MS;
+// - the site owner, with ADMIN_TOKEN, at any time.
 async function deleteSignal(request, env, id) {
-  if (!env.ADMIN_TOKEN) return json({error: 'not found'}, 404);
-  if (!(await isAuthorized(request, env.ADMIN_TOKEN))) return json({error: 'unauthorized'}, 401);
   if (!SIGNAL_ID.test(id)) return json({error: '訊號識別碼格式無效'}, 400);
+
+  if (request.headers.has('Authorization')) {
+    if (!env.ADMIN_TOKEN || !(await isAuthorized(request, env.ADMIN_TOKEN))) return json({error: 'unauthorized'}, 401);
+  } else {
+    const key = request.headers.get('X-Delete-Key') ?? '';
+    if (!SIGNAL_ID.test(key)) return json({error: 'not found'}, 404);
+    const row = await env.DB.prepare('SELECT created_at, delete_key_hash FROM signals WHERE id = ?1').bind(id).first();
+    if (!row) return json({error: 'not found'}, 404);
+    if (!row.delete_key_hash || !timingSafeEqualText(row.delete_key_hash, await sha256Hex(key))) {
+      return json({error: '只能收回自己放出的訊號'}, 403);
+    }
+    if (Date.now() - row.created_at > SELF_DELETE_WINDOW_MS) return json({error: '已經超過可以收回的時間'}, 403);
+  }
 
   const [, removed] = await env.DB.batch([
     env.DB.prepare('DELETE FROM signals WHERE thread_id = ?1').bind(id),
@@ -142,6 +158,9 @@ function validate(body) {
   if (body.id != null && !(typeof body.id === 'string' && SIGNAL_ID.test(body.id))) return {error: '訊號識別碼格式無效'};
   if (body.threadId != null && !(typeof body.threadId === 'string' && SIGNAL_ID.test(body.threadId))) {
     return {error: '回覆訊號格式無效'};
+  }
+  if (body.deleteKey != null && !(typeof body.deleteKey === 'string' && SIGNAL_ID.test(body.deleteKey))) {
+    return {error: '收回金鑰格式無效'};
   }
 
   const text = clean(body.text);
@@ -186,14 +205,26 @@ async function isAuthorized(request, adminToken) {
   return crypto.subtle.timingSafeEqual(supplied, expected);
 }
 
+async function sha256Hex(value) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function timingSafeEqualText(a, b) {
+  const encoder = new TextEncoder();
+  const left = encoder.encode(a);
+  const right = encoder.encode(b);
+  return left.length === right.length && crypto.subtle.timingSafeEqual(left, right);
+}
+
 function corsHeaders(request, env) {
   const origin = request.headers.get('Origin');
   const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim()).filter(Boolean);
   if (!origin || !allowed.includes(origin)) return {};
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, POST',
-    'Access-Control-Allow-Headers': 'Content-Type, Accept',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept, X-Delete-Key',
     'Access-Control-Max-Age': '86400',
     Vary: 'Origin',
   };

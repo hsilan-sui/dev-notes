@@ -3,6 +3,7 @@ import {flushSync} from 'react-dom';
 import clsx from 'clsx';
 import lockJournalScroll from './lockJournalScroll';
 import {SIGNAL_MAX_LENGTH} from './signalRiver.js';
+import SignalDeleteButton from './SignalDeleteButton.jsx';
 import styles from './SignalPager.module.css';
 
 const hasCjk = (text) => /[^\x00-\x7F]/.test(text);
@@ -15,11 +16,22 @@ const ZHUYIN = {
   KeyZ: 'ㄈ', KeyX: 'ㄌ', KeyC: 'ㄏ', KeyV: 'ㄒ', KeyB: 'ㄖ', KeyN: 'ㄙ', KeyM: 'ㄩ', Comma: 'ㄝ', Period: 'ㄡ', Slash: 'ㄥ',
   Digit1: 'ㄅ', Digit2: 'ㄉ', Digit3: 'ˇ', Digit4: 'ˋ', Digit5: 'ㄓ', Digit6: 'ˊ', Digit7: '˙', Digit8: 'ㄚ', Digit9: 'ㄞ', Digit0: 'ㄢ', Minus: 'ㄦ',
 };
-const EMOJI = ['😊', '🥹', '🙂', '😂', '🤍', '❤️', '✨', '🌟', '🌙', '🌊', '📟', '💬', '🚆', '🏠', '☕', '🌃', '🌅', '🌧️', '🌸', '🍃', '🎵', '💭', '🙏', '👋'];
+// Grouped by feeling, so a row reads like one mood: faces, hearts, sky and sea,
+// seasons, the city at night, small things in a day, gestures, little signals.
+const EMOJI = [
+  '😊', '🥹', '🙂', '😂', '🥲', '😌', '😴', '🥺', '😮‍💨', '🫠',
+  '🤍', '❤️', '🩵', '💙', '🩶', '💛', '🧡', '💜', '💔', '❤️‍🩹',
+  '✨', '🌟', '⭐', '🌙', '🌕', '🌌', '☁️', '🌧️', '⛈️', '🌈',
+  '🌊', '🐚', '🫧', '🌅', '🌄', '🌸', '🍃', '🍂', '❄️', '🌻',
+  '🌃', '🏙️', '🚆', '🚌', '🛵', '🏠', '🪟', '🕯️', '💡', '🛏️',
+  '☕', '🍵', '🍜', '🍰', '🍺', '📟', '💬', '✉️', '📷', '📖',
+  '🎵', '🎧', '🎸', '🎹', '💭', '🫶', '🙏', '👋', '🤝', '🫂',
+  '🔔', '⏳', '🕰️', '🗝️', '🧭', '🎈', '🪐', '🌠', '🐈', '🐕',
+];
 const letterRow = (letters) => [...letters].map((ch) => ({label: ch, code: `Key${ch}`}));
 const digitRow = [...'1234567890'].map((ch) => ({label: ch, code: `Digit${ch}`}));
 const LAYERS = {
-  emoji: Array.from({length: 4}, (_, index) => EMOJI.slice(index * 6, index * 6 + 6).map(label => ({label}))),
+  emoji: Array.from({length: EMOJI.length / 10}, (_, index) => EMOJI.slice(index * 10, index * 10 + 10).map(label => ({label}))),
   zh: [
     [...digitRow, {label: '-', code: 'Minus'}],
     letterRow('QWERTYUIOP'),
@@ -73,6 +85,8 @@ const SignalPager = forwardRef(function SignalPager(
     onRelease,
     onPreviewEnd,
     onSource,
+    ownSignal,
+    onDeleteOwn,
   },
   ref,
 ) {
@@ -370,7 +384,10 @@ const SignalPager = forwardRef(function SignalPager(
 
       {phase === 'reading' && signal ? (
         <div className={styles.slip} role="region" aria-label="收到的訊號">
-          <p className={styles.slipTimes}>{formatDeparted(signal.departed)}</p>
+          <div className={styles.slipHead}>
+            <p className={styles.slipTimes}>{formatDeparted(signal.departed)}</p>
+            {ownSignal ? <SignalDeleteButton writtenAt={ownSignal.writtenAt} onDelete={onDeleteOwn} /> : null}
+          </div>
           <p className={styles.slipText}>{signal.text}</p>
           {signal.source ? (
             <button type="button" className={styles.slipSource} onClick={() => onSource(signal.source)}>
@@ -395,7 +412,36 @@ const SignalPager = forwardRef(function SignalPager(
               {composition ? <span className={styles.composition}>{composition}</span> : '注音請用鍵盤輸入，選字交給你的輸入法'}
             </div>
           ) : null}
-          {LAYERS[layer].map((row, rowIndex) => (
+          {layer === 'emoji' ? (
+            <div className={styles.keyRow}>
+              <div className={styles.emojiRows} role="group" aria-label="表情符號">
+                {LAYERS.emoji.map((row, rowIndex) => (
+                  <div className={styles.keyRow} key={`emoji-${rowIndex}`}>
+                    {row.map((key) => (
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        key={key.label}
+                        className={clsx(styles.key, styles.keyEmoji, litKey === key.label && styles.keyLit)}
+                        onClick={() => pressKey(key)}
+                      >
+                        {key.label}
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                tabIndex={-1}
+                className={clsx(styles.key, styles.keyWide, styles.keyTall, litKey === 'Backspace' && styles.keyLit)}
+                onClick={backspace}
+                aria-label="刪除"
+              >
+                ⌫
+              </button>
+            </div>
+          ) : LAYERS[layer].map((row, rowIndex) => (
             <div className={styles.keyRow} key={`${layer}-${rowIndex}`}>
               {rowIndex === 3 && (layer === 'zh' || layer === 'en') ? (
                 <button

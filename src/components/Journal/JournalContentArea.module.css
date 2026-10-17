@@ -259,15 +259,28 @@
 
 @media screen and (max-width: 596px) {
   .cardRow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--journal-space-sm);
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Keep the card wide; navigation sits below it on a phone. */
-  .carouselStage { grid-column: 1 / -1; grid-row: 1; min-width: 0; }
-  .cardRow > button { grid-row: 2; }
-  .cardRow > button:first-child { grid-column: 1; justify-self: end; }
-  .cardRow > button:last-child { grid-column: 2; justify-self: start; }
+  /* Keep the card wide; the day arrows sit on its left and right edges,
+     solid so readers can tell they are tappable. */
+  .carouselStage { grid-column: 1; grid-row: 1; min-width: 0; }
+  .cardRow > button {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    min-width: 40px;
+    color: var(--journal-ink);
+    transform: translateY(-50%);
+  }
+  .cardRow > button:first-child { left: -20px; }
+  .cardRow > button:last-child { right: -20px; }
+  .cardRow > button > span {
+    border-color: var(--journal-card-edge);
+    background: var(--journal-card-paper);
+    box-shadow: var(--journal-card-shadow);
+  }
 
   .previewPanel {
     display: none;

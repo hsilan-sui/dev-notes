@@ -8,6 +8,8 @@ public static class SignalEndpoints
     /// <summary>Original signals returned per request (each with all its replies).</summary>
     public const int RecentThreadLimit = 100;
     public const string WritePolicy = "signal-write";
+    /// <summary>How long a writer can take back their own signal.</summary>
+    public const long SelfDeleteWindowMs = 3 * 60_000;
 
     public static IEndpointRouteBuilder MapSignalEndpoints(this IEndpointRouteBuilder app)
     {
@@ -26,7 +28,8 @@ public static class SignalEndpoints
 
             var id = request.Id ?? Guid.NewGuid().ToString("N");
             var createdAt = clock.GetUtcNow().ToUnixTimeMilliseconds();
-            var (outcome, signal) = await store.InsertAsync(id, request.ThreadId, text!, request.From!, createdAt);
+            var deleteKeyHash = request.DeleteKey is null ? null : Sha256Hex(request.DeleteKey);
+            var (outcome, signal) = await store.InsertAsync(id, request.ThreadId, text!, request.From!, createdAt, deleteKeyHash);
 
             return outcome switch
             {
@@ -38,20 +41,38 @@ public static class SignalEndpoints
             };
         }).RequireRateLimiting(WritePolicy);
 
-        // Moderation: anonymous signals can be removed by the site owner only.
-        // Disabled unless the AdminToken setting is configured.
-        app.MapDelete("/api/signals/{id}", async (string id, HttpRequest http, SignalStore store, IConfiguration config) =>
+        // Two ways to remove a signal (and its replies):
+        // - its writer, with the one-time X-Delete-Key, within SelfDeleteWindowMs;
+        // - the site owner, with the AdminToken bearer token, at any time.
+        app.MapDelete("/api/signals/{id}", async (string id, HttpRequest http, SignalStore store, IConfiguration config, TimeProvider clock) =>
         {
-            var adminToken = config["AdminToken"];
-            if (string.IsNullOrEmpty(adminToken)) return Results.NotFound();
-            if (!IsAuthorized(http, adminToken)) return Results.Unauthorized();
             if (!SignalValidator.IsSignalId(id)) return Results.BadRequest(new { error = "訊號識別碼格式無效" });
 
-            return await store.DeleteAsync(id) ? Results.NoContent() : Results.NotFound();
+            if (http.Headers.ContainsKey("Authorization"))
+            {
+                var adminToken = config["AdminToken"];
+                if (string.IsNullOrEmpty(adminToken) || !IsAuthorized(http, adminToken)) return Results.Unauthorized();
+                return await store.DeleteAsync(id) ? Results.NoContent() : Results.NotFound();
+            }
+
+            var key = http.Headers["X-Delete-Key"].ToString();
+            if (!SignalValidator.IsSignalId(key)) return Results.NotFound();
+
+            var outcome = await store.DeleteOwnAsync(id, Sha256Hex(key), clock.GetUtcNow().ToUnixTimeMilliseconds(), SelfDeleteWindowMs);
+            return outcome switch
+            {
+                SelfDeleteOutcome.Deleted => Results.NoContent(),
+                SelfDeleteOutcome.WrongKey => Results.Json(new { error = "只能收回自己放出的訊號" }, statusCode: StatusCodes.Status403Forbidden),
+                SelfDeleteOutcome.Expired => Results.Json(new { error = "已經超過可以收回的時間" }, statusCode: StatusCodes.Status403Forbidden),
+                _ => Results.NotFound(),
+            };
         });
 
         return app;
     }
+
+    static string Sha256Hex(string value) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
 
     static bool IsAuthorized(HttpRequest http, string adminToken)
     {

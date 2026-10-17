@@ -15,6 +15,14 @@ const todaySongs = [
     youtubeId: 'RT13ASRl67A',
     src: '',
   },
+  {
+    date: '2026-10-18',
+    title: '五月之戀',
+    artist: 'Enno',
+    // Home-recorded demo, uploaded to Enno Cheng's own official channel (@enno_cheng).
+    youtubeId: '_5dZ38uLEBY',
+    src: '',
+  },
 ];
 
 export default todaySongs;

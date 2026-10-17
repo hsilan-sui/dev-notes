@@ -1,0 +1,51 @@
+.button {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: var(--journal-radius-pill);
+  background: transparent;
+  color: var(--journal-ink-secondary);
+  font-family: var(--journal-font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+/* Small to look at, comfortable to tap. */
+.button::after {
+  position: absolute;
+  inset: -12px -6px;
+  content: '';
+}
+
+.button:hover,
+.button:focus-visible {
+  color: var(--journal-ink);
+  opacity: 1;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.button svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

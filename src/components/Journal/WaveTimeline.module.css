@@ -8,7 +8,14 @@
   overflow-y: hidden;
   padding-block: var(--timeline-glow-padding);
   scrollbar-width: none;
-  touch-action: pan-x;
+  /* Horizontal swipes move along the river; vertical swipes still scroll the page. */
+  touch-action: pan-x pan-y;
+}
+
+@media screen and (max-width: 596px) {
+  .window {
+    --timeline-glow-padding: 8px;
+  }
 }
 
 .window::-webkit-scrollbar {

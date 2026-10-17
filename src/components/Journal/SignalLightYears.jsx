@@ -2,6 +2,7 @@ import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import styles from './SignalLightYears.module.css';
 import lockJournalScroll from './lockJournalScroll';
+import SignalDeleteButton from './SignalDeleteButton.jsx';
 
 const MODEL = {past: 'MT01', today: 'MT02'};
 const OTHER = {past: 'today', today: 'past'};
@@ -9,7 +10,7 @@ const formatTime = value => new Intl.DateTimeFormat('zh-TW', {hour: '2-digit', m
 const formatDay = value => new Intl.DateTimeFormat('zh-TW', {month: '2-digit', day: '2-digit'}).format(new Date(value));
 export const replyBankFor = entry => OTHER[entry.replies.at(-1)?.from || entry.from];
 
-function SignalSheet({entries, onReply, onSource, onClosed, busy}) {
+function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, onDeleteOwn}) {
   const [selected, setSelected] = useState(null);
   const [closing, setClosing] = useState(false);
   const panel = useRef(null);
@@ -120,15 +121,25 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy}) {
             return <article ref={node => { pages.current[index] = node; }} key={entry.id} className={styles.page}>
               <div className={styles.date}>{startsDay ? day : <span aria-hidden="true">·</span>}</div>
               <span className={styles.node} aria-hidden="true" />
-              <button type="button" className={styles.message} aria-expanded={expanded} aria-controls={`signal-thread-${entry.id}`} onClick={() => setSelected(expanded ? null : entry.id)}>
-                <span className={styles.meta}><i data-bank={entry.from} />{MODEL[entry.from]} · {formatTime(entry.writtenAt)}</span>
-                <span className={styles.sentence}>{entry.text}</span>
-                {entry.replies.length > 0 ? <span className={styles.count}>↩ {entry.replies.length}</span> : null}
-              </button>
+              <div className={styles.messageRow}>
+                <button type="button" className={styles.message} aria-expanded={expanded} aria-controls={`signal-thread-${entry.id}`} onClick={() => setSelected(expanded ? null : entry.id)}>
+                  <span className={styles.meta}><i data-bank={entry.from} />{MODEL[entry.from]} · {formatTime(entry.writtenAt)}</span>
+                  <span className={styles.sentence}>{entry.text}</span>
+                  {entry.replies.length > 0 ? <span className={styles.count}>↩ {entry.replies.length}</span> : null}
+                </button>
+                {ownSignals[entry.id] ? (
+                  <SignalDeleteButton writtenAt={ownSignals[entry.id].writtenAt} onDelete={() => onDeleteOwn(entry.id)} />
+                ) : null}
+              </div>
               {expanded ? <div id={`signal-thread-${entry.id}`} className={styles.thread}>
                 {entry.source ? <button type="button" className={styles.source} onClick={() => close(() => onSource(entry.source))}>出自〈{entry.source.title}〉 ›</button> : null}
                 {entry.replies.map(reply => <div className={styles.reply} key={reply.id}>
-                  <span className={styles.meta}><i data-bank={reply.from} />{MODEL[reply.from]} · {formatTime(reply.writtenAt)}</span>
+                  <span className={styles.meta}>
+                    <i data-bank={reply.from} />{MODEL[reply.from]} · {formatTime(reply.writtenAt)}
+                    {ownSignals[reply.id] ? (
+                      <SignalDeleteButton writtenAt={ownSignals[reply.id].writtenAt} onDelete={() => onDeleteOwn(reply.id)} />
+                    ) : null}
+                  </span>
                   <p>{reply.text}</p>
                 </div>)}
                 <button type="button" className={styles.replyAction} disabled={busy} onClick={() => {
@@ -146,7 +157,7 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy}) {
   );
 }
 
-export default function SignalLightYears({entries, onReply, onSource, busy}) {
+export default function SignalLightYears({entries, onReply, onSource, busy, ownSignals = {}, onDeleteOwn}) {
   const [open, setOpen] = useState(false);
   const [seen, setSeen] = useState(0);
   const trigger = useRef(null);
@@ -158,7 +169,7 @@ export default function SignalLightYears({entries, onReply, onSource, busy}) {
       <span>訊號光年 · {count}</span><span aria-hidden="true">›</span>
       {count > seen ? <span className={styles.unread} aria-label="有新訊號" /> : null}
     </button>
-    {open ? <SignalSheet entries={entries} busy={busy} onReply={entry => { if (!busy) onReply(entry); }} onSource={onSource} onClosed={callback => {
+    {open ? <SignalSheet entries={entries} busy={busy} ownSignals={ownSignals} onDeleteOwn={onDeleteOwn} onReply={entry => { if (!busy) onReply(entry); }} onSource={onSource} onClosed={callback => {
       setOpen(false);
       if (callback) callback();
       else trigger.current?.focus({preventScroll: true});

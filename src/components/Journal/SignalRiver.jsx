@@ -3,7 +3,7 @@ import {flushSync} from 'react-dom';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import SignalPager from './SignalPager.jsx';
 import SignalLightYears, {replyBankFor} from './SignalLightYears';
-import {recordSignal} from './signalRiver.js';
+import {loadOwnSignals, recordSignal, removeSignal, saveOwnSignals} from './signalRiver.js';
 import {readMsToken} from './useHoverIntent.js';
 import styles from './SignalRiver.module.css';
 
@@ -106,6 +106,27 @@ export default function SignalRiver({onSelectDay}) {
   const [apiStatus, setApiStatus] = useState(apiBase ? 'connecting' : 'unconfigured');
   const flightRef = useRef(false);
   const seenSignalIds = useRef(new Set());
+  // Signals this visitor sent and can still take back: {id: {key, writtenAt}}.
+  const [ownSignals, setOwnSignals] = useState({});
+
+  useEffect(() => setOwnSignals(loadOwnSignals()), []);
+
+  const rememberOwnSignal = useCallback((id, own) => {
+    setOwnSignals(current => {
+      const next = {...loadOwnSignals(), ...current, [id]: own};
+      saveOwnSignals(next);
+      return next;
+    });
+  }, []);
+
+  const forgetOwnSignal = useCallback((id) => {
+    setOwnSignals(current => {
+      const next = {...current};
+      delete next[id];
+      saveOwnSignals(next);
+      return next;
+    });
+  }, []);
 
   const later = useCallback((delay, fn) => {
     const timer = window.setTimeout(fn, delay);
@@ -294,6 +315,8 @@ export default function SignalRiver({onSelectDay}) {
     setSending(true);
     const signal = {text, departed: 'today', from: bank, writtenAt: Date.now(),
       id: crypto.randomUUID().replaceAll('-', ''), threadId: banksRef.current[bank].replyToId || undefined};
+    // Counted from before the request, so the countdown never outlives the server's window.
+    const own = {key: crypto.randomUUID().replaceAll('-', ''), writtenAt: Date.now()};
 
     // Without a configured API (e.g. the static site before a host exists),
     // signals still travel, but only within this visit.
@@ -302,7 +325,7 @@ export default function SignalRiver({onSelectDay}) {
         const response = await fetch(`${apiBase}/api/signals`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json', Accept: 'application/json'},
-          body: JSON.stringify({id: signal.id, text, from: bank, threadId: signal.threadId || null}),
+          body: JSON.stringify({id: signal.id, text, from: bank, threadId: signal.threadId || null, deleteKey: own.key}),
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const saved = await response.json();
@@ -317,6 +340,8 @@ export default function SignalRiver({onSelectDay}) {
         return false;
       }
     }
+
+    rememberOwnSignal(signal.id, own);
 
     try {
       window.localStorage.setItem(WRITE_HINT_KEY, '1');
@@ -358,6 +383,34 @@ export default function SignalRiver({onSelectDay}) {
         [bank]: {...current[bank], phase: 'compose', replyHint: false, replyToId: replyToId || null},
       };
     });
+  }
+
+  // Take back one of this visitor's own signals (and any replies to it).
+  async function deleteOwnSignal(id) {
+    const own = ownSignals[id];
+    if (!own) return false;
+    if (apiBase) {
+      try {
+        const response = await fetch(`${apiBase}/api/signals/${id}`, {
+          method: 'DELETE',
+          headers: {'X-Delete-Key': own.key},
+        });
+        // 404: already gone. 403: the window closed; stop offering it.
+        if (response.status === 403) forgetOwnSignal(id);
+        if (!response.ok && response.status !== 404) return false;
+      } catch {
+        setApiStatus('offline');
+        return false;
+      }
+    }
+
+    forgetOwnSignal(id);
+    setHistory(current => removeSignal(current, id));
+    setBanks(current => Object.fromEntries(Object.entries(current).map(([bank, state]) =>
+      [bank, state.signal?.id === id || state.signal?.threadId === id
+        ? {...state, phase: ['incoming', 'preview', 'waiting', 'reading'].includes(state.phase) ? 'idle' : state.phase, signal: null}
+        : state])));
+    return true;
   }
 
   function replyFromHistory(entry) {
@@ -421,6 +474,8 @@ export default function SignalRiver({onSelectDay}) {
                 )
               }
               onSource={(source) => onSelectDay?.(source.dayKey)}
+              ownSignal={state.signal ? ownSignals[state.signal.id] : null}
+              onDeleteOwn={() => deleteOwnSignal(state.signal.id)}
             />
           </div>
         );
@@ -434,7 +489,14 @@ export default function SignalRiver({onSelectDay}) {
               : '訊號只留在這次造訪，重新整理後不會保存。'}
         </span>
       ) : null}
-      <SignalLightYears entries={history} busy={sending} onReply={replyFromHistory} onSource={source => onSelectDay?.(source.dayKey)} />
+      <SignalLightYears
+        entries={history}
+        busy={sending}
+        ownSignals={ownSignals}
+        onDeleteOwn={deleteOwnSignal}
+        onReply={replyFromHistory}
+        onSource={source => onSelectDay?.(source.dayKey)}
+      />
       <span className={styles.trailLayer} aria-hidden="true">
         {[0, 1, 2, 3, 4].map((index) => (
           <span

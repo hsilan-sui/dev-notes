@@ -18,6 +18,8 @@
 .date { min-height: 36px; font: 12px var(--journal-font-mono), monospace; color: var(--journal-accent); }
 .node { position: absolute; top: 44px; left: 0; right: 0; height: 1px; background: var(--journal-lightyears-edge); }
 .node::after { content: ''; position: absolute; left: var(--journal-space-md); top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--journal-accent); }
+.messageRow { display: flex; align-items: flex-start; gap: var(--journal-space-xs); margin-top: var(--journal-space-sm); }
+.messageRow .message { margin-top: 0; }
 .message { display: grid; gap: var(--journal-space-xs); width: fit-content; max-width: 100%; margin-top: var(--journal-space-sm); padding: var(--journal-space-xs); border: 1px solid var(--journal-border); border-radius: 8px; background: var(--journal-bg-card); text-align: left; box-shadow: 0 3px 9px var(--journal-lightyears-fold); }
 .message[aria-expanded='true'] { border-color: var(--journal-accent); }
 .meta { display: flex; align-items: center; gap: var(--journal-space-xs); font: 11px var(--journal-font-mono), monospace; color: var(--journal-ink-secondary); }

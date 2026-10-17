@@ -55,6 +55,14 @@
   font-family: var(--journal-font-mono), ui-monospace, monospace;
   font-size: 10px;
   white-space: nowrap;
+  /* A small pill, so readers notice they can pick another song. */
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+.days:hover .dayLabel {
+  background: color-mix(in srgb, var(--journal-player-blue) 12%, transparent);
 }
 
 .days:focus-within .dayLabel {
@@ -293,31 +301,39 @@
 
 .embedClose {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -12px;
+  right: -12px;
+  z-index: 1;
   display: grid;
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   place-items: center;
   padding: 0;
-  border: 1px solid var(--journal-player-line);
+  border: 2px solid var(--journal-bg-card);
   border-radius: 50%;
-  background: var(--journal-player-bar);
-  color: var(--journal-player-blue);
-  font-size: 8px;
+  background: var(--journal-ink);
+  box-shadow: 0 2px 6px rgba(38, 41, 46, 0.3);
+  color: var(--journal-bg-card);
+  font-size: 11px;
+  font-weight: 700;
   line-height: 1;
   cursor: pointer;
-  opacity: 0.7;
 }
 
-.embedClose:hover,
-.embedClose:focus-visible {
-  opacity: 1;
+/* Small to look at, comfortable to tap. */
+.embedClose::after {
+  position: absolute;
+  inset: -10px;
+  content: '';
+}
+
+.embedClose:hover {
+  background: var(--journal-accent);
 }
 
 .embedClose:focus-visible {
   outline: 2px solid var(--journal-accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 .embed iframe {

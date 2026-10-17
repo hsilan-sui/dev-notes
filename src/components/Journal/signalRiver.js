@@ -12,3 +12,34 @@ export function recordSignal(entries, signal) {
   }
   return [...entries, {...signal, replies: []}];
 }
+
+// A writer can take back their own signal for a few minutes. The one-time
+// delete key stays in this browser only; the server keeps just its hash.
+export const SELF_DELETE_WINDOW_MS = 3 * 60_000;
+const OWN_SIGNALS_KEY = 'mytide.signal.own';
+
+export function loadOwnSignals(now = Date.now()) {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(OWN_SIGNALS_KEY) || '{}');
+    return Object.fromEntries(Object.entries(stored)
+      .filter(([, own]) => own && now - own.writtenAt < SELF_DELETE_WINDOW_MS));
+  } catch {
+    return {};
+  }
+}
+
+export function saveOwnSignals(own) {
+  try {
+    window.localStorage.setItem(OWN_SIGNALS_KEY, JSON.stringify(own));
+  } catch {
+    // A private window simply forgets them on reload.
+  }
+}
+
+export function removeSignal(entries, id) {
+  return entries
+    .filter(entry => entry.id !== id)
+    .map(entry => entry.replies.some(reply => reply.id === id)
+      ? {...entry, replies: entry.replies.filter(reply => reply.id !== id)}
+      : entry);
+}

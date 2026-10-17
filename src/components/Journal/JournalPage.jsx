@@ -10,6 +10,7 @@ import styles from './JournalPage.module.css';
 
 export default function JournalPage({items = [], metadata}) {
   const timeline = useJournalTimeline(items);
+  const contentRef = useRef(null);
   const [currentDayKey, setCurrentDayKey] = useState(timeline.mostRecentDayKey);
   const [currentEntryIndex, setCurrentEntryIndex] = useState(0);
   const [announcement, setAnnouncement] = useState('');
@@ -135,6 +136,21 @@ export default function JournalPage({items = [], metadata}) {
         days={timeline.days}
         onSelectDay={selectDay}
       />
+      {/* Phones: the banner is tall, so offer a gentle way down to the story. */}
+      <button
+        type="button"
+        className={styles.scrollCue}
+        onClick={() => {
+          const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          contentRef.current?.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'});
+        }}
+      >
+        <span>往下讀</span>
+        <svg viewBox="0 0 12 12" aria-hidden="true">
+          <path d="M3 4.5 6 7.5 9 4.5" />
+        </svg>
+      </button>
+      <div ref={contentRef} className={styles.contentAnchor} />
       <JournalContentArea
         currentDay={currentDay}
         currentEntry={currentEntry}

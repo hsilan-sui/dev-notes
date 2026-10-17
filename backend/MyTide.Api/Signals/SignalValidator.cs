@@ -17,6 +17,7 @@ public static class SignalValidator
         if (!SignalBanks.IsValid(request.From)) return (null, "訊號來源無效");
         if (request.Id is not null && !IsSignalId(request.Id)) return (null, "訊號識別碼格式無效");
         if (request.ThreadId is not null && !IsSignalId(request.ThreadId)) return (null, "回覆訊號格式無效");
+        if (request.DeleteKey is not null && !IsSignalId(request.DeleteKey)) return (null, "收回金鑰格式無效");
 
         var text = Clean(request.Text);
         if (text.Length == 0) return (null, "請先寫下一句話");

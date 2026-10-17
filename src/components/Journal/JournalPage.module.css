@@ -101,7 +101,69 @@
   }
 }
 
+/* 「往下讀」: only on phones, straddling the line between banner and story. */
+.scrollCue {
+  display: none;
+}
+
+.contentAnchor {
+  scroll-margin-top: 8px;
+}
+
+@keyframes journal-scroll-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollCue svg {
+    animation: none;
+  }
+}
+
 @media screen and (max-width: 596px) {
+  .scrollCue {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 4px;
+    min-height: var(--journal-touch-target);
+    margin: calc(var(--journal-touch-target) / -2) auto 0;
+    padding: 0 16px;
+    border: 1px solid var(--journal-border);
+    border-radius: var(--journal-radius-pill);
+    background: var(--journal-bg-card);
+    box-shadow: 0 4px 12px rgba(38, 41, 46, 0.08);
+    color: var(--journal-ink-secondary);
+    font-family: var(--journal-font-body), var(--ifm-font-family-base);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .scrollCue svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: journal-scroll-cue 2.4s ease-in-out infinite;
+  }
+
+  .scrollCue:focus-visible {
+    outline: 2px solid var(--journal-accent);
+    outline-offset: 3px;
+  }
+
   .backHomeLink {
     left: 20px;
     top: 16px;
