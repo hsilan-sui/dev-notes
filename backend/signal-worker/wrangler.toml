@@ -9,5 +9,5 @@ ALLOWED_ORIGINS = "https://hsilan-sui.github.io,http://localhost:3003,http://127
 [[d1_databases]]
 binding = "DB"
 database_name = "mytide-signals"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "7305ef77-74f5-4a9f-9819-9a1b470f2cac"
 migrations_dir = "migrations"
