@@ -2,6 +2,8 @@
 
 BB Call（收訊）的匿名訊號後端：ASP.NET Core minimal API + SQLite。網站本身仍是 GitHub Pages 上的靜態 Docusaurus；這個 API 另外部署在一台有永久磁碟的主機上。
 
+> 目前正式站使用的是免費的 Cloudflare 版本 `backend/signal-worker`（Workers + D1），端點和格式與本專案相同。本專案保留給之後自架主機（例如 GCP、VPS）使用。
+
 ## 架構
 
 ```

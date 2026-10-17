@@ -32,3 +32,5 @@ yarn-error.log*
 
 
 .claude/settings.local.json
+/backend/**/node_modules
+/backend/**/.wrangler

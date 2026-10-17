@@ -1,0 +1,13 @@
+name = "mytide-signal-api"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://hsilan-sui.github.io,http://localhost:3003,http://127.0.0.1:3003"
+
+# `database_id` comes from `npx wrangler d1 create mytide-signals` (see README).
+[[d1_databases]]
+binding = "DB"
+database_name = "mytide-signals"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
