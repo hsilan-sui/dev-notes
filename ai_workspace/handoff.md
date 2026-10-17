@@ -83,8 +83,10 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 | 越讀越深（依閱讀進度變深） | 上線 | `readingDepth.js`、tokens `--journal-deep-*` |
 | 返回大爆炸 | 上線（Codex 改成 `CosmicReturn`） | `CosmicReturn.jsx` |
 | 〈一個週五下班的日常〉、熊貓騎士 | 上線（Codex） | `src/components/MyTide/*`、`specs/journal-friday-film-*`、`journal-panda-rider-*` |
-| 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（每天一首，用官方 YouTube 嵌入） |
-| BB Call 兩岸、紅點傳送、回訊提示 | 上線，**訊號已保存在 D1** | `SignalRiver.jsx`、`SignalPager.jsx` |
+| 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（每天一首，用官方 YouTube 嵌入；「歌單 ▾」可選其他天的歌。目前：10/17〈快高長大〉、10/18〈五月之戀〉Enno 宅錄 demo） |
+| BB Call 兩岸、紅點傳送、回訊提示 | 上線，**訊號已保存在 D1** | `SignalRiver.jsx`、`SignalPager.jsx`（表情符號 80 個，鍵盤一次顯示 4 排、可捲動） |
+| 三分鐘內收回自己的訊號 | 上線 | `SignalDeleteButton.jsx`、`signalRiver.js`。放出時產生一次性金鑰存在 localStorage（`mytide.signal.own`），伺服器只存 SHA-256（`delete_key_hash`，migration 0002）；`DELETE` 帶 `X-Delete-Key` |
+| 手機閱讀 | 上線 | 波浪 `touch-action: pan-x pan-y`（之前 `pan-x` 擋住往下滑）、「往下讀」按鈕、文章卡片左右邊緣的前一天／下一天箭頭 |
 | 訊號光年（訊號時間線） | 上線（Codex） | `SignalLightYears.jsx`、`specs/journal-signal-lightyears.md` |
 | 訊號摺子（奏摺式 Plurk 時間線） | **只有 Pencil 設計稿（v7），未實作** | `design/component.pen` v7 |
 
@@ -103,4 +105,5 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 
 - 用 iPhone Safari 實機走一遍：首頁、BB Call 寫訊號（原生鍵盤）、〈大爆炸〉閱讀與返回。
 - 決定「訊號摺子」和「訊號光年」的關係，再實作。
+- 新增每日一首歌：在 `todaySongs.js` 加一筆 `{date, title, artist, youtubeId}`，影片要來自官方頻道（用 `https://www.youtube.com/oembed?url=…` 確認 author）。
 - 視流量決定是否需要移到自架主機：`backend/MyTide.Api` 和 Dockerfile 已經準備好；改用 GCP 時，要先設 NT$300 的預算提醒（提醒只會通知、不會自動停止扣款）。
