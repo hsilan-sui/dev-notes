@@ -44,6 +44,32 @@ export default function JournalPage({items = [], metadata}) {
     setIsExpanded(false);
   }, [currentDayKey, currentEntryIndex]);
 
+  // An expanded card is reading too: let the song player stop and close.
+  useEffect(() => {
+    if (isExpanded) {
+      window.dispatchEvent(new CustomEvent('mytide:immerse', {detail: {open: true}}));
+    }
+  }, [isExpanded]);
+
+  // The phone cue flips once the reader has gone down: 「往上 BB Call 留言」.
+  const [cueUp, setCueUp] = useState(false);
+  useEffect(() => {
+    if (!cueUp) {
+      return undefined;
+    }
+    // Back near the top by any means (after having left it): offer the way down again.
+    let leftTop = window.scrollY >= 24;
+    const onScroll = () => {
+      if (window.scrollY >= 24) {
+        leftTop = true;
+      } else if (leftTop) {
+        setCueUp(false);
+      }
+    };
+    window.addEventListener('scroll', onScroll, {passive: true});
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [cueUp]);
+
   useEffect(() => {
     if (timeline.mostRecentDayKey) {
       setCurrentDayKey(timeline.mostRecentDayKey);
@@ -136,18 +162,25 @@ export default function JournalPage({items = [], metadata}) {
         days={timeline.days}
         onSelectDay={selectDay}
       />
-      {/* Phones: the banner is tall, so offer a gentle way down to the story. */}
+      {/* Phones: the banner is tall, so offer a gentle way down to the story,
+          and once there, a way back up to the BB Calls. */}
       <button
         type="button"
         className={styles.scrollCue}
         onClick={() => {
           const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          contentRef.current?.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'});
+          const behavior = reduced ? 'auto' : 'smooth';
+          if (cueUp) {
+            document.querySelector('[data-phase]')?.scrollIntoView({behavior, block: 'center'});
+          } else {
+            contentRef.current?.scrollIntoView({behavior, block: 'start'});
+          }
+          setCueUp(!cueUp);
         }}
       >
-        <span>往下讀</span>
+        <span>{cueUp ? '往上 BB Call 留言' : '往下讀'}</span>
         <svg viewBox="0 0 12 12" aria-hidden="true">
-          <path d="M3 4.5 6 7.5 9 4.5" />
+          <path d={cueUp ? 'M3 7.5 6 4.5 9 7.5' : 'M3 4.5 6 7.5 9 4.5'} />
         </svg>
       </button>
       <div ref={contentRef} className={styles.contentAnchor} />

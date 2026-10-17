@@ -8,7 +8,7 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
-    date: '2026-10-17',
+    date: '2026-10-18',
     title: '快高長大',
     artist: '陳奕迅',
     // Official audio from the "Eason Chan - Topic" channel.
@@ -16,7 +16,7 @@ const todaySongs = [
     src: '',
   },
   {
-    date: '2026-10-18',
+    date: '2026-10-17',
     title: '五月之戀',
     artist: 'Enno',
     // Home-recorded demo, uploaded to Enno Cheng's own official channel (@enno_cheng).

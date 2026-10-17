@@ -8,13 +8,17 @@
   border: 0;
   border-radius: var(--journal-radius-pill);
   background: transparent;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+/* Doubled class: stays small and light inside sheets that set `button { font: inherit }`. */
+.button.button {
   color: var(--journal-ink-secondary);
   font-family: var(--journal-font-mono), ui-monospace, monospace;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  opacity: 0.75;
-  cursor: pointer;
 }
 
 /* Small to look at, comfortable to tap. */
@@ -24,8 +28,8 @@
   content: '';
 }
 
-.button:hover,
-.button:focus-visible {
+.button.button:hover,
+.button.button:focus-visible {
   color: var(--journal-ink);
   opacity: 1;
 }

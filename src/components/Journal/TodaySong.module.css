@@ -8,7 +8,7 @@
   gap: 5px;
 }
 
-.compact {
+.compactRow {
   display: none;
 }
 
@@ -51,18 +51,24 @@
 }
 
 .dayLabel {
-  color: var(--journal-player-blue);
-  font-family: var(--journal-font-mono), ui-monospace, monospace;
-  font-size: 10px;
+  /* A solid pill, so readers can see there are more songs to pick. */
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 8px;
+  border-radius: var(--journal-radius-pill);
+  background: var(--journal-player-blue);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--journal-player-blue) 35%, transparent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   white-space: nowrap;
-  /* A small pill, so readers notice they can pick another song. */
-  display: inline-block;
-  padding: 1px 6px;
-  border: 1px solid currentColor;
-  border-radius: 999px;
+  transition: background var(--journal-motion-hover-transition);
 }
+
 .days:hover .dayLabel {
-  background: color-mix(in srgb, var(--journal-player-blue) 12%, transparent);
+  background: var(--journal-player-blue-soft);
 }
 
 .days:focus-within .dayLabel {
@@ -287,11 +293,6 @@
   outline: 1px solid rgba(169, 193, 214, 0.45);
 }
 
-/* Paused while a diary entry is open, so the reading layer may cover it. */
-.embed[data-covered] {
-  z-index: 40;
-}
-
 /* Moved just below the 「未來之來」 tab / card (page coordinates, set in JS). */
 .embed[data-below-tab] {
   position: absolute;
@@ -355,7 +356,7 @@
 
 @media screen and (max-width: 596px) {
   .player {
-    width: 180px;
+    width: 220px;
   }
 
   /* Phones: top-right, clear of the BB Call writing sheet at the bottom. */
@@ -365,8 +366,27 @@
     bottom: auto;
   }
 
+  .compactRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .compactRow .dayLabel {
+    height: 22px;
+  }
+
+  /* Phones: a larger invisible tap area over the small pill. */
+  .compactRow .daySelect {
+    inset: -11px -4px;
+    width: auto;
+    height: auto;
+  }
+
   .compact {
     display: inline-flex;
+    flex: 1 1 auto;
+    min-width: 0;
     align-items: center;
     gap: 6px;
     width: 100%;

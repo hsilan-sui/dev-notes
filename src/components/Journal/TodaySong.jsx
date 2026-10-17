@@ -116,53 +116,28 @@ export default function TodaySong() {
   }, []);
   const youtubeId = song.youtubeId || '';
 
-  // A YouTube player may not be covered while it plays. When a diary entry
-  // opens over the page, pause it and let the reading layer cover it; resume
-  // when the reader returns to the timeline.
-  const [covered, setCovered] = useState(false);
-  const resumeRef = useRef(false);
-  const playingRef = useRef(false);
-  playingRef.current = playing;
-
+  // Reading owns the room: opening any story (the immersive reader, an
+  // expanded card or the film) stops the song and closes the YouTube window.
+  // Music only starts again when the reader presses play.
   useEffect(() => {
-    if (!youtubeId) {
-      return undefined;
-    }
-
-    function handleImmerse(event) {
-      const open = Boolean(event.detail?.open);
-      if (open) {
-        resumeRef.current = playingRef.current;
-        if (playingRef.current) {
-          command('pauseVideo');
-        }
-      } else if (resumeRef.current) {
-        resumeRef.current = false;
-        command('playVideo');
+    function stopForReading(event) {
+      if (!event.detail?.open) {
+        return;
       }
-      setCovered(open);
+      audioRef.current?.pause();
+      command('pauseVideo');
+      setShowEmbed(false);
+      setPlaying(false);
+      setCurrent(0);
     }
 
-    window.addEventListener('mytide:immerse', handleImmerse);
-    return () => window.removeEventListener('mytide:immerse', handleImmerse);
+    window.addEventListener('mytide:immerse', stopForReading);
+    window.addEventListener('mytide:film', stopForReading);
+    return () => {
+      window.removeEventListener('mytide:immerse', stopForReading);
+      window.removeEventListener('mytide:film', stopForReading);
+    };
     // `command` reads the iframe ref at call time.
-  }, [youtubeId]);
-
-  // A film owns its quiet room. Pause both possible music sources and do
-  // not restart music when the film ends or the reader returns through space.
-  useEffect(() => {
-    function handleFilm(event) {
-      const open = Boolean(event.detail?.open);
-      if (open) {
-        resumeRef.current = false;
-        audioRef.current?.pause();
-        command('pauseVideo');
-        setPlaying(false);
-      }
-      setCovered(open);
-    }
-    window.addEventListener('mytide:film', handleFilm);
-    return () => window.removeEventListener('mytide:film', handleFilm);
   }, []);
 
   // YouTube's embedded player is driven through its postMessage protocol, so
@@ -281,6 +256,27 @@ export default function TodaySong() {
   const showMarquee = playing;
   const level = Math.round(volume * VOLUME_STEPS);
 
+  // 「歌單 ▾」: a native select laid invisibly over the pill, shown on phones too.
+  const dayPicker = (
+    <span className={styles.days}>
+      <select
+        className={styles.daySelect}
+        value={index}
+        aria-label="選擇哪一天的歌"
+        onChange={(event) => chooseDay(Number(event.target.value))}
+      >
+        {songsByDate.map((item, i) => (
+          <option key={item.date} value={i}>
+            {`${item.date === todayKey ? '今天' : shortDate(item.date)}　${item.title} — ${item.artist}`}
+          </option>
+        ))}
+      </select>
+      <span className={styles.dayLabel} aria-hidden="true">
+        歌單 ▾
+      </span>
+    </span>
+  );
+
   return (
     <div className={styles.player}>
       <audio
@@ -296,17 +292,20 @@ export default function TodaySong() {
       />
 
       {/* Mobile: one line also controls playback; it never expands. */}
-      <button
-        type="button"
-        className={styles.compact}
-        aria-label={playing ? `暫停：${label}` : `播放：${label}`}
-        onClick={togglePlay}
-      >
-        {playing ? <Equalizer /> : <PlayIcon playing={false} />}
-        <span className={styles.compactLabel}>
-          {notice || (playing ? <Marquee text={label} /> : heading)}
-        </span>
-      </button>
+      <div className={styles.compactRow}>
+        <button
+          type="button"
+          className={styles.compact}
+          aria-label={playing ? `暫停：${label}` : `播放：${label}`}
+          onClick={togglePlay}
+        >
+          {playing ? <Equalizer /> : <PlayIcon playing={false} />}
+          <span className={styles.compactLabel}>
+            {notice || (playing ? <Marquee text={label} /> : heading)}
+          </span>
+        </button>
+        {dayPicker}
+      </div>
 
       <div className={styles.full}>
         <div className={styles.titleRow}>
@@ -320,23 +319,7 @@ export default function TodaySong() {
               heading
             )}
           </span>
-          <span className={styles.days}>
-            <select
-              className={styles.daySelect}
-              value={index}
-              aria-label="選擇哪一天的歌"
-              onChange={(event) => chooseDay(Number(event.target.value))}
-            >
-              {songsByDate.map((item, i) => (
-                <option key={item.date} value={i}>
-                  {`${item.date === todayKey ? '今天' : shortDate(item.date)}　${item.title} — ${item.artist}`}
-                </option>
-              ))}
-            </select>
-            <span className={styles.dayLabel} aria-hidden="true">
-              歌單 ▾
-            </span>
-          </span>
+          {dayPicker}
         </div>
 
         <div className={styles.bar}>
@@ -403,7 +386,7 @@ export default function TodaySong() {
           ? createPortal(
               // Rendered on <body> so no clipping ancestor can hide the player.
               <div className="journal-scope">
-                <div ref={embedRef} className={styles.embed} data-covered={covered ? '' : undefined} role="region" aria-label={`${heading}：YouTube 播放器`}>
+                <div ref={embedRef} className={styles.embed} role="region" aria-label={`${heading}：YouTube 播放器`}>
                   <button
                     type="button"
                     className={styles.embedClose}

@@ -49,11 +49,14 @@
   .header { padding: 0 var(--journal-space-md) var(--journal-space-sm); }
   .header h2 { font-size: 21px; }
   .header p { font-size: 11px; }
-  .timeline { display: block; min-height: 0; padding: 0 var(--journal-space-md) var(--journal-space-lg); touch-action: pan-y; }
-  .page { padding: var(--journal-space-sm) 0 var(--journal-space-md) var(--journal-space-md); border-right: 0; border-left: 1px solid var(--journal-lightyears-edge); background: transparent; transform-origin: center bottom; }
-  .date { min-height: 28px; }
-  .node { top: 48px; left: -4px; width: 7px; height: 7px; border-radius: 50%; background: var(--journal-accent); }
+  /* Phones: tighter, so more signals fit on one screen. */
+  .timeline { display: block; min-height: 0; padding: 0 var(--journal-space-sm) var(--journal-space-md); touch-action: pan-y; }
+  .page { padding: var(--journal-space-xs) 0 var(--journal-space-xs) var(--journal-space-sm); border-right: 0; border-left: 1px solid var(--journal-lightyears-edge); background: transparent; transform-origin: center bottom; }
+  .date { min-height: 20px; }
+  .node { top: 12px; left: -4px; width: 7px; height: 7px; border-radius: 50%; background: var(--journal-accent); }
   .node::after { display: none; }
-  .message { margin-top: 0; min-height: var(--journal-touch-target); }
+  .messageRow { margin-top: var(--journal-space-xs); }
+  .message { margin-top: var(--journal-space-xs); min-height: var(--journal-touch-target); padding: var(--journal-space-xs) var(--journal-space-sm); }
+  .reply { margin: var(--journal-space-xs) 0 0 var(--journal-space-xs); }
   .replyAction { font-size: 14px !important; }
 }
