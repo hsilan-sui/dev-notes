@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunksui_dev_notes=globalThis.webpackChunksui_dev_notes||[]).push([[2634],{192(e,s,t){t.r(s),t.d(s,{default:()=>a});var u=t(6347),i=t(6025),n=t(4848);function a(){return(0,n.jsx)(u.rd,{to:(0,i.Ay)("/my-tide")})}}}]);

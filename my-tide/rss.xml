@@ -1,17 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="rss.xsl"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
-        <title>關於我 Blog</title>
+        <title>意識潮 | My Tide Blog</title>
         <link>https://hsilan-sui.github.io/dev-notes/my-tide</link>
-        <description>關於我 Blog</description>
-        <lastBuildDate>Thu, 26 Aug 2021 00:00:00 GMT</lastBuildDate>
+        <description>意識潮 | My Tide Blog</description>
+        <lastBuildDate>Fri, 02 Oct 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-Hant</language>
         <item>
-            <title><![CDATA[Journal Density QA Fixture 01]]></title>
-            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-01</link>
-            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-01</guid>
+            <title><![CDATA[大爆炸]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/big-bang</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/big-bang</guid>
+            <pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[我數學一直都不好。]]></description>
+            <content:encoded><![CDATA[<p>我數學一直都不好。</p>
+<p>但我的理解是，月亮距離我1.3光秒，所以我現在看到的月亮是1.3秒之前的月亮；而太陽距離我八光分多一點，所以所謂的此刻落在我身上的陽光，其實已經在太空裡先走了八分多鐘。</p>
+<p>如果一個人站在兩光年（距離）之外看地球，他所看見的，也會是兩年前從地球出發的光、兩年前地球的模樣。</p>
+<p>這幾年爸媽都離開了。媽媽離開也快兩年了。</p>
+<p>我再想起這一段篇章，有了完全不同的感覺。</p>
+<p>她還在的那些日子，太陽、夕陽的光曾經落在她笑著的臉上。</p>
+<p>那些光碰到她的臉、頭髮、衣服，有一些進入我的眼睛，所以我看見了她。當然，也有一些光往別的方向去了。</p>
+<p>其中微小的一部分的光，可能離開地球，繼續往宇宙走。</p>
+<p>一年，一光年……兩年，兩光年……</p>
+<p>消逝發生之後，那些早已從地球出發的光，它們只是繼續地走。</p>
+<p>所以在很遙遠的地方，如果有一個幾乎不可能存在的另一端的人類，擁有一具也幾乎不可能存在的望遠鏡——他可能還沒有看見他們的離去。</p>
+<p>反而，他此刻才剛收到很多年前，從地球出發的光。</p>
+<p>那裡的他們與我，可能還在一起走路、吃飯、曬太陽，過著一個當時誰也不知道，有一天會如此想念的普通下午。</p>
+<p>也不是在追溯消逝與存在的相抵。</p>
+<p>我只是純粹在想，他們存在的「曾經」，還正在宇宙的某處抵達著。</p>
+<p>在地球上已經消逝的時刻，它曾經發出的光，卻仍往宇宙的某些方向前進。</p>
+<p>因為已經發生過，並不等於它留下的一切都從宇宙裡消逝了。</p>
+<p>光年明明是距離的單位，卻讓人看見了時間。</p>
+<p>我們的存在——五歲的自己、十歲的模樣、二十二歲的稚氣……每一個已經回不去的自己，都曾經有光從那裡出發。</p>
+<p>而那些光，都還在宇宙裡走著。</p>
+<p>再次看《蘇菲的世界》〈大爆炸〉這個篇章，像是很多年前出發，直到某個光年後，才抵達我的一個擁抱。</p>]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[接單出發]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/panda-rider</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/panda-rider</guid>
+            <pubDate>Thu, 01 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[昨天晚上七點，接到一個單。在主街轉進中巷，再拐進小巷的巷尾。]]></description>
+            <content:encoded><![CDATA[<p>昨天晚上七點，接到一個單。</p>
+<div class="journal-scope"><section class="cover_XTGW" aria-label="接單出發"><span class="coverLabel_zx7x">一個外送員的夜晚 · 像素敘事</span><div class="coverSprite_ygBy" aria-hidden="true"><canvas width="80" height="80" style="image-rendering:pixelated"></canvas></div><p class="coverText_wVvu">昨天晚上七點<br>接到一個單</p><button type="button" class="start_cFoo">接單出發 →</button><p class="hint_bEJf">逐段前進，隨時折返。聲音由你開啟。</p><a class="return_Op81" href="https://hsilan-sui.github.io/dev-notes/my-tide">← 返回意識潮</a></section></div>]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[Journal Density QA Fixture 03]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</guid>
             <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
             <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
             <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
@@ -33,9 +70,9 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
             <category>Docusaurus</category>
         </item>
         <item>
-            <title><![CDATA[Journal Density QA Fixture 03]]></title>
-            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</link>
-            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-03</guid>
+            <title><![CDATA[Journal Density QA Fixture 04]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-04</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-04</guid>
             <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
             <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
             <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
@@ -45,14 +82,14 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
             <category>Docusaurus</category>
         </item>
         <item>
-            <title><![CDATA[Journal Density QA Fixture 04]]></title>
-            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-04</link>
-            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-density-test-04</guid>
+            <title><![CDATA[Journal Layout QA Fixture]]></title>
+            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</link>
+            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</guid>
             <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
-            <description><![CDATA[This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.]]></description>
-            <content:encoded><![CDATA[<p>This is a QA fixture for checking how the Journal timeline renders a dense same-day cluster.
+            <description><![CDATA[This is a QA fixture for verifying the Journal same-day layout and vertical navigation.]]></description>
+            <content:encoded><![CDATA[<p>This is a QA fixture for verifying the Journal same-day layout and vertical navigation.
 It is not a real journal entry, essay, poem, or site-owner writing.</p>
-<p>This placeholder exists only to make the 2021-08-26 timeline node visibly denser during layout review.
+<p>This placeholder exists only so the Journal list page can render a day with more than one entry from real Docusaurus blog plugin data.
 Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
             <category>Docusaurus</category>
         </item>
@@ -77,18 +114,6 @@ Delete this file before publishing the Journal as personal writing.</p>]]></cont
 <p><strong>And if you don't want a blog</strong>: just delete this directory, and use <code>blog: false</code> in your Docusaurus config.</p>]]></content:encoded>
             <category>Facebook</category>
             <category>Hello</category>
-            <category>Docusaurus</category>
-        </item>
-        <item>
-            <title><![CDATA[Journal Layout QA Fixture]]></title>
-            <link>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</link>
-            <guid>https://hsilan-sui.github.io/dev-notes/my-tide/journal-layout-test</guid>
-            <pubDate>Thu, 26 Aug 2021 00:00:00 GMT</pubDate>
-            <description><![CDATA[This is a QA fixture for verifying the Journal same-day layout and vertical navigation.]]></description>
-            <content:encoded><![CDATA[<p>This is a QA fixture for verifying the Journal same-day layout and vertical navigation.
-It is not a real journal entry, essay, poem, or site-owner writing.</p>
-<p>This placeholder exists only so the Journal list page can render a day with more than one entry from real Docusaurus blog plugin data.
-Delete this file before publishing the Journal as personal writing.</p>]]></content:encoded>
             <category>Docusaurus</category>
         </item>
         <item>
