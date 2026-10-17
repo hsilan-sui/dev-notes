@@ -15,6 +15,7 @@ const MOBILE_QUERY = '(max-width: 596px)';
 export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, todayKey, onSelectDay}) {
   const [variant, setVariant] = useState('desktop');
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(0);
   const scrollRef = useRef(null);
   const dragRef = useRef(null);
   const settleRef = useRef(null);
@@ -38,8 +39,34 @@ export default function WaveTimeline({days, currentDayKey, mostRecentDayKey, tod
     };
   }, []);
 
-  const opts = variant === 'mobile' ? MOBILE_WAVE : DESKTOP_WAVE;
-  const width = useMemo(() => trackWidth(days.length, opts), [days.length, opts]);
+  useLayoutEffect(() => {
+    const node = scrollRef.current;
+    if (!node) {
+      return undefined;
+    }
+
+    const measure = () => {
+      const nextWidth = node.clientWidth;
+      setViewportWidth((current) => (current === nextWidth ? current : nextWidth));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const baseOpts = variant === 'mobile' ? MOBILE_WAVE : DESKTOP_WAVE;
+  const opts = useMemo(() => {
+    const baseWidth = trackWidth(days.length, baseOpts);
+    if (!viewportWidth || baseWidth >= viewportWidth || days.length < 2) {
+      return baseOpts;
+    }
+
+    const spacing = (viewportWidth - baseOpts.leftBuffer - baseOpts.rightBuffer) / (days.length - 1);
+    return {...baseOpts, spacing: Math.max(baseOpts.spacing, spacing)};
+  }, [baseOpts, days.length, viewportWidth]);
+  const width = useMemo(() => Math.max(trackWidth(days.length, opts), viewportWidth), [days.length, opts, viewportWidth]);
   const densityAnchors = useMemo(() => buildDensityAnchors(days, opts), [days, opts]);
   const positions = useMemo(
     () => days.map((day, index) => dayNodePosition(index, days.length, opts, opts.phase, densityAnchors)),
