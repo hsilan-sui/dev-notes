@@ -43,3 +43,41 @@ export function removeSignal(entries, id) {
       ? {...entry, replies: entry.replies.filter(reply => reply.id !== id)}
       : entry);
 }
+
+// Count and cut text the way people see it: one flag, one accented letter or
+// one Thai syllable is one character (the API counts the same way).
+const graphemes = typeof Intl !== 'undefined' && Intl.Segmenter
+  ? new Intl.Segmenter(undefined, {granularity: 'grapheme'})
+  : null;
+
+export function splitGraphemes(text) {
+  return graphemes ? Array.from(graphemes.segment(text), part => part.segment) : Array.from(text);
+}
+
+export function clampGraphemes(text, max) {
+  const parts = splitGraphemes(text);
+  return parts.length > max ? parts.slice(0, max).join('') : text;
+}
+
+export const TONE_MAX_LENGTH = 5;
+const TONES_KEY = 'mytide.signal.tones';
+
+// A visitor's own tones stay in their browser; nobody else's list grows.
+export function loadOwnTones() {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(TONES_KEY) || '[]');
+    return Array.isArray(stored) ? stored.filter(tone => typeof tone === 'string').slice(0, 6) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveOwnTone(tone, current) {
+  const next = [tone, ...current.filter(item => item !== tone)].slice(0, 6);
+  try {
+    window.localStorage.setItem(TONES_KEY, JSON.stringify(next));
+  } catch {
+    // A private window keeps it for this visit only.
+  }
+  return next;
+}

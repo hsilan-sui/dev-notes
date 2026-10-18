@@ -3,12 +3,24 @@ import clsx from 'clsx';
 import JournalContentArea from './JournalContentArea.jsx';
 import JournalHero from './JournalHero.jsx';
 import ImmerseReader from './ImmerseReader.jsx';
+import SiteBroadcast from './SiteBroadcast.jsx';
+import SiteCounter from './SiteCounter.jsx';
+import {SignalLangProvider} from './signalI18n.js';
 import useHoverIntent from './useHoverIntent.js';
 import useJournalTimeline from './useJournalTimeline.js';
 import './tokens.css';
 import styles from './JournalPage.module.css';
 
-export default function JournalPage({items = [], metadata}) {
+// The BB Call language (and the words that follow it) is shared by the whole page.
+export default function JournalPage(props) {
+  return (
+    <SignalLangProvider>
+      <JournalPageContent {...props} />
+    </SignalLangProvider>
+  );
+}
+
+function JournalPageContent({items = [], metadata}) {
   const timeline = useJournalTimeline(items);
   const contentRef = useRef(null);
   const [currentDayKey, setCurrentDayKey] = useState(timeline.mostRecentDayKey);
@@ -156,6 +168,7 @@ export default function JournalPage({items = [], metadata}) {
       data-immerse={immersePhase || undefined}
       inert={immersePhase === 'open' ? true : undefined}
     >
+      <SiteBroadcast />
       <JournalHero
         currentDay={currentDay}
         mostRecentDayKey={timeline.mostRecentDayKey}
@@ -219,6 +232,7 @@ export default function JournalPage({items = [], metadata}) {
           onClosed={handleImmerseClosed}
         />
       ) : null}
+      <SiteCounter />
       <div className={styles.liveRegion} aria-live="polite" aria-atomic="true">{announcement}</div>
     </main>
   );

@@ -12,7 +12,7 @@
   --pager-well: var(--journal-pager-well);
 
   position: relative;
-  width: 176px;
+  width: 260px;
   font-family: var(--journal-font-body), var(--ifm-font-family-base);
   transform-origin: top center;
   transition:
@@ -37,27 +37,32 @@
 
 /* The far bank waits smaller and quieter until a signal reaches it. */
 .small {
-  opacity: 0.7;
-  transform: scale(0.75);
+  opacity: 0.75;
+  transform: scale(0.82);
 }
 
+/* Molded plastic: a sheen from the upper left, a darker lower edge. */
 .body {
   display: grid;
-  gap: 7px;
-  width: 170px;
-  padding: 10px 10px 9px;
+  gap: 8px;
+  width: 260px;
+  box-sizing: border-box;
+  padding: 12px;
   border: 1px solid var(--pager-edge);
-  border-radius: 18px;
-  background: var(--pager-body);
+  border-radius: 24px;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.1) 0%, transparent 38%, rgba(0, 0, 0, 0.12) 100%),
+    var(--pager-body);
   box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.08),
-    0 10px 24px rgba(38, 41, 46, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+    0 14px 28px rgba(38, 41, 46, 0.26);
 }
 
 .grips {
   position: absolute;
-  top: 48px;
-  left: 169px;
+  top: 64px;
+  left: 258px;
   display: grid;
   gap: 3px;
 }
@@ -70,26 +75,39 @@
 }
 
 .bezel {
-  padding: 5px;
-  border-radius: 10px;
+  padding: 8px;
+  border-radius: 13px;
   background: var(--pager-bezel);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* Two lines like a real pager: a status row, then the page itself. */
 .lcd {
   display: grid;
-  gap: 3px;
-  height: 50px;
-  padding: 5px 7px;
+  grid-template-rows: 16px 34px;
+  gap: 4px;
+  height: 72px;
+  box-sizing: border-box;
+  padding: 6px 9px;
   overflow: hidden;
-  border-radius: 5px;
-  background: var(--journal-lcd);
-  box-shadow: inset 0 1px 4px rgba(30, 38, 24, 0.2);
+  border-radius: 6px;
+  background-color: var(--journal-lcd);
+  background-image: radial-gradient(rgba(30, 38, 24, 0.09) 0.7px, transparent 0.9px);
+  background-size: 3px 3px;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35);
   color: var(--journal-lcd-ink);
-  transition: background-color 300ms ease;
+  transition: background-color 300ms ease, box-shadow 300ms ease;
+}
+
+/* The backlight: on whenever the pager has something to show. */
+.lcdLit {
+  background-color: #cbdb97;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.25), 0 0 18px rgba(206, 226, 140, 0.55);
 }
 
 .lcdOff {
-  background: var(--journal-lcd-off);
+  background-color: var(--journal-lcd-off);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.35);
 }
 
 .lcdOff .lcdText,
@@ -97,19 +115,60 @@
   visibility: hidden;
 }
 
-.lcdMain {
-  position: relative;
-  height: 20px;
-  overflow: hidden;
+.lcdSub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
   font-family: var(--journal-font-pixel), var(--journal-font-mono), monospace;
-  font-size: 18px;
-  line-height: 20px;
+  font-size: 15px;
+  line-height: 16px;
   white-space: nowrap;
 }
 
-.lcdCjk {
-  font-family: var(--journal-font-mono), ui-monospace, monospace;
-  font-size: 13px;
+.status {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusWide {
+  font-family: var(--journal-font-lcd), var(--journal-font-mono), monospace;
+  font-size: 12px;
+}
+
+.clock {
+  margin-left: auto;
+}
+
+.battery {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 7px;
+  border: 1px solid var(--journal-lcd-ink);
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--journal-lcd-ink) 70%, transparent 70%);
+}
+
+.lcdMain {
+  position: relative;
+  height: 34px;
+  overflow: hidden;
+  font-family: var(--journal-font-pixel), var(--journal-font-mono), monospace;
+  font-size: 24px;
+  line-height: 34px;
+  white-space: nowrap;
+}
+
+/* Chinese, Japanese, Korean, Vietnamese…: a dot-matrix face, larger than before. */
+.lcdWide {
+  font-family: var(--journal-font-lcd), var(--journal-font-mono), monospace;
+  font-size: 18px;
+}
+
+.lcdBig {
+  font-size: 34px;
+  letter-spacing: 2px;
+  text-align: center;
 }
 
 .lcdText {
@@ -119,12 +178,16 @@
 .lcdMarquee {
   display: inline-block;
   padding-left: 100%;
-  font-family: var(--journal-font-mono), ui-monospace, monospace;
-  font-size: 13px;
+  font-family: var(--journal-font-lcd), var(--journal-font-mono), monospace;
+  font-size: 18px;
   animation-name: journal-lcd-marquee;
   animation-timing-function: linear;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
+}
+
+.lcdMarqueeLoop {
+  animation-iteration-count: infinite;
 }
 
 .lcdMarquee:hover {
@@ -154,8 +217,8 @@
   background: transparent;
   color: var(--journal-lcd-ink);
   caret-color: var(--journal-lcd-ink);
-  font-family: var(--journal-font-mono), ui-monospace, monospace;
-  font-size: 13px;
+  font-family: var(--journal-font-lcd), var(--journal-font-mono), monospace;
+  font-size: 17px;
 }
 
 .lcdInput::placeholder {
@@ -167,28 +230,15 @@
   pointer-events: none;
 }
 
-.lcdSub {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--journal-font-pixel), var(--journal-font-mono), monospace;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.subCjk {
-  font-family: var(--journal-font-mono), ui-monospace, monospace;
-  font-size: 8px;
-}
-
 .bars {
   display: inline-flex;
+  flex: 0 0 auto;
   gap: 1.5px;
 }
 
 .bar {
   width: 4px;
-  height: 5px;
+  height: 7px;
   background: rgba(30, 38, 24, 0.2);
 }
 
@@ -200,39 +250,50 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 4px;
 }
 
 .engrave {
   color: var(--pager-engrave);
-  font-size: 5px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
+  font-family: var(--journal-font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
 }
 
+/* MT01 / MT02: the pager's call sign, stamped on a plate so it stands out. */
 .model {
-  color: var(--pager-model);
-  font-size: 15px;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--journal-pager-key-label-strong);
+  color: var(--journal-pager-bezel);
+  font-size: 14px;
   font-style: italic;
   font-weight: 800;
-  line-height: 1;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.gray .model {
+  background: var(--journal-pager-gray-key-label-strong);
+  color: #eef1f3;
 }
 
 .controls {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .spacer {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
 }
 
 .keyWell {
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 3px;
-  padding: 3px;
-  border-radius: 999px;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 14px;
   background: var(--pager-well);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.35),
@@ -240,25 +301,27 @@
 }
 
 /* Molded rubber keys: a soft top highlight, a short shadow below, and a
-   press that sinks into the well. They look small; ::after keeps a 44px tap area. */
+   press that sinks into the well. ::after keeps a 44px tap area. */
 .pill {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   flex: 0 0 auto;
-  height: 24px;
+  height: 30px;
+  min-width: 30px;
   padding: 0 8px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 9px;
   white-space: nowrap;
   background: linear-gradient(180deg, var(--pager-key-top) 0%, var(--pager-key) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 1px 1px rgba(0, 0, 0, 0.35);
+    0 2px 0 rgba(0, 0, 0, 0.45);
   color: var(--pager-key-label);
   font-family: var(--journal-font-body), var(--ifm-font-family-base);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
   line-height: 1;
@@ -269,9 +332,20 @@
     color 160ms ease;
 }
 
+.arrow {
+  width: 30px;
+  padding: 0;
+  font-size: 10px;
+}
+
+.writeButton {
+  flex: 1 1 auto;
+  border-radius: var(--journal-radius-pill);
+}
+
 .pill::after {
   position: absolute;
-  inset: calc((var(--journal-touch-target) - 24px) / -2) -2px;
+  inset: calc((var(--journal-touch-target) - 30px) / -2) -2px;
   content: '';
 }
 
@@ -280,8 +354,8 @@
 }
 
 .pill:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
 .pill:disabled {
@@ -310,16 +384,12 @@
 
 /* Held down while its slip or the writing keyboard is open. */
 .pillOn {
-  transform: translateY(1px);
+  transform: translateY(2px);
   background: var(--pager-key-pressed);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
   color: var(--pager-key-label-hover);
 }
 
-.writeButton {
-  padding: 0 10px;
-  color: var(--pager-key-label-hover);
-}
 
 /* 「寫訊號」 is ringed by a slow, cool halo until the visitor first writes.
    Red stays reserved for signals in transit. */
@@ -346,6 +416,7 @@
 
 .round {
   display: grid;
+  flex: 0 0 auto;
   width: 22px;
   height: 22px;
   place-items: center;
@@ -355,8 +426,8 @@
 }
 
 .led {
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #4a5057;
 }
@@ -412,7 +483,7 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  width: 176px;
+  width: 260px;
   margin: 0;
   color: var(--journal-accent);
   font-family: 'Noto Serif TC', var(--journal-font-heading), serif;
@@ -449,7 +520,8 @@
   z-index: 20;
   display: grid;
   gap: 10px;
-  width: 196px;
+  width: 260px;
+  box-sizing: border-box;
   padding: 18px 18px 14px;
   border: 1px solid var(--journal-border);
   background: #fbfbf8;
@@ -470,24 +542,42 @@
 .slipTimes {
   color: var(--journal-ink-secondary);
   font-family: var(--journal-font-mono), ui-monospace, monospace;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .slipText {
   color: var(--journal-ink);
   font-family: var(--journal-font-heading), 'Noto Serif TC', Georgia, serif;
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
 }
 
+/* 「出自」 follows the sentence wherever it ends, not on a line of its own. */
 .slipSource {
-  justify-self: start;
+  display: inline;
+  margin-left: 0.6em;
   padding: 0;
   border: 0;
   background: transparent;
   color: var(--journal-accent);
-  font-size: 10px;
-  text-align: left;
+  font-family: var(--journal-font-body), sans-serif;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.slipModel {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--journal-pager-body);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.slipModel[data-bank='today'] {
+  background: var(--journal-pager-gray-body);
+  color: var(--journal-pager-gray-key-label-strong);
 }
 
 button.slipSource {
@@ -525,7 +615,7 @@ button.slipSource {
   z-index: 20;
   display: grid;
   gap: 4px;
-  width: 300px;
+  width: 340px;
   padding: 10px;
   border: 1px solid var(--journal-pager-edge);
   border-radius: 6px 6px 14px 14px;
@@ -684,13 +774,13 @@ button.slipSource {
 }
 
 .sheetMode .lcd {
-  height: 104px;
-  align-content: space-between;
+  grid-template-rows: 18px 1fr;
+  height: 112px;
   padding: 10px 12px;
 }
 
 .sheetMode .lcdMain {
-  height: 64px;
+  height: auto;
 }
 
 .sheetMode .lcdInput {
@@ -698,11 +788,7 @@ button.slipSource {
 }
 
 .sheetMode .lcdSub {
-  font-size: 14px;
-}
-
-.sheetMode .engrave {
-  font-size: 8px;
+  font-size: 16px;
 }
 
 .sheetMode .model {
@@ -778,3 +864,168 @@ button.slipSource {
 .emojiPalette { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--journal-touch-target), 1fr)); gap: var(--journal-space-xs); max-height: 156px; overflow-y: auto; }
 .emojiPalette button { min-width: var(--journal-touch-target); min-height: var(--journal-touch-target); padding: 0; border: 1px solid var(--pager-edge); border-radius: 6px; background: var(--pager-key); font-size: 22px; cursor: pointer; }
 .emojiPalette button:focus-visible { outline: 2px solid var(--journal-accent); outline-offset: 2px; }
+
+/* A new page: a slight, short buzz — felt more than seen. */
+.buzz .body {
+  animation: journal-pager-buzz 0.6s linear 2;
+}
+
+@keyframes journal-pager-buzz {
+  0%, 100% { transform: none; }
+  15% { transform: rotate(-0.6deg) translateX(-0.8px); }
+  30% { transform: rotate(0.6deg) translateX(0.8px); }
+  45% { transform: rotate(-0.5deg) translateX(-0.6px); }
+  60% { transform: rotate(0.5deg) translateX(0.6px); }
+  75% { transform: rotate(-0.3deg); }
+  90% { transform: rotate(0.3deg); }
+}
+
+/* 語氣: preset tones in their colours, a visitor's own in slate. */
+.tones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--journal-pager-edge);
+}
+
+.toneLabel {
+  margin-right: 2px;
+  color: var(--journal-pager-engrave);
+  font-size: 10px;
+}
+
+.toneChip {
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  background: #4a5560;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.toneChip[data-tone='說'] { background: #5c7285; }
+.toneChip[data-tone='想'] { background: #6b4f7a; }
+.toneChip[data-tone='覺得'] { background: #2f6b63; }
+.toneChip[data-tone='希望'] { background: #9a4a22; }
+.toneChip[data-tone='問'] { background: #345e8a; }
+
+.toneChip[aria-pressed='true'] {
+  box-shadow: 0 0 0 2px var(--journal-pager-body), 0 0 0 3.5px #eef1f3;
+  opacity: 1;
+}
+
+.toneCustom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toneCustom input {
+  width: 72px;
+  height: 22px;
+  box-sizing: border-box;
+  padding: 0 6px;
+  border: 1px dashed #6e757c;
+  border-radius: 5px;
+  background: transparent;
+  color: #eef1f3;
+  font-size: 11px;
+}
+
+.toneCustom input::placeholder {
+  color: #9aa2aa;
+}
+
+.toneUse {
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  background: #eef1f3;
+  color: #26292e;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sheetMode .tones {
+  border-bottom: 0;
+}
+
+.sheetMode .toneChip,
+.sheetMode .toneUse,
+.sheetMode .toneCustom input {
+  height: 32px;
+  font-size: 13px;
+}
+
+.sheetMode .toneCustom input {
+  width: 96px;
+}
+
+/* Tablets and phones: the pager, smaller, side by side; zoom keeps its
+   layout box in step with what you see. The writing sheet is never zoomed. */
+/* Narrow tablets: two pagers side by side still fit. */
+@media (min-width: 597px) and (max-width: 760px) {
+  .pager {
+    width: calc(260px * 0.82);
+  }
+
+  .body {
+    zoom: 0.82;
+  }
+
+  .grips {
+    display: none;
+  }
+
+  .sheetMode .body {
+    zoom: 1;
+  }
+}
+
+@media (max-width: 596px) {
+  .pager {
+    width: calc(260px * 0.66);
+  }
+
+  .body {
+    zoom: 0.66;
+  }
+
+  .grips {
+    display: none;
+  }
+
+  .slip,
+  .gray .slip {
+    left: auto;
+    right: -12px;
+  }
+
+  .pager:not(.gray) .slip {
+    left: -4px;
+    right: auto;
+  }
+
+  .replyCue {
+    width: 100%;
+    font-size: 11px;
+  }
+
+  .sheetMode .body {
+    zoom: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buzz .body {
+    animation: none;
+  }
+}

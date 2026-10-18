@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {SELF_DELETE_WINDOW_MS} from './signalRiver.js';
+import {useSignalLang} from './signalI18n.js';
 import styles from './SignalDeleteButton.module.css';
 
 const secondsLeft = writtenAt => Math.max(0, Math.ceil((writtenAt + SELF_DELETE_WINDOW_MS - Date.now()) / 1000));
@@ -7,6 +8,7 @@ const secondsLeft = writtenAt => Math.max(0, Math.ceil((writtenAt + SELF_DELETE_
 // A small, quiet way to take back your own signal while the window is open.
 // It counts down in seconds and disappears when the time is up.
 export default function SignalDeleteButton({writtenAt, onDelete}) {
+  const {t} = useSignalLang();
   const [left, setLeft] = useState(() => secondsLeft(writtenAt));
   const [busy, setBusy] = useState(false);
   const expired = left <= 0;
@@ -24,8 +26,8 @@ export default function SignalDeleteButton({writtenAt, onDelete}) {
       type="button"
       className={styles.button}
       disabled={busy}
-      aria-label={`收回這則訊號（還有 ${left} 秒）`}
-      title="收回這則訊號"
+      aria-label={t.deleteOwn(left)}
+      title={t.deleteTitle}
       onClick={async event => {
         event.stopPropagation();
         setBusy(true);

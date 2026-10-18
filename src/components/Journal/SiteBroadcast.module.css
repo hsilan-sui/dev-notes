@@ -1,0 +1,318 @@
+.wrap {
+  display: flex;
+  justify-content: center;
+  padding: 6px var(--journal-space-lg) 0;
+  background: var(--journal-bg-card);
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 880px;
+  height: 26px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #d5dde3;
+  border-radius: 3px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(38, 41, 46, 0.05);
+}
+
+.tag {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  height: 18px;
+  margin-left: 3px;
+  padding: 0 7px 0 8px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--journal-ink);
+  color: #ffffff;
+  font: 600 11px var(--journal-font-body), sans-serif;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.chevron {
+  opacity: 0.7;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ff5a36;
+  animation: journal-broadcast-dot 1.4s steps(1) infinite;
+}
+
+@keyframes journal-broadcast-dot {
+  50% { opacity: 0.25; }
+}
+
+.who {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  color: var(--journal-ink);
+  font: 600 11px var(--journal-font-body), sans-serif;
+}
+
+.says {
+  padding: 0 5px;
+  border-radius: 3px;
+  background: var(--journal-accent);
+  color: #ffffff;
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.track {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+}
+
+.run {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: journal-broadcast-run 52s linear infinite;
+}
+
+.box:hover .run,
+.box:focus-within .run {
+  animation-play-state: paused;
+}
+
+@keyframes journal-broadcast-run {
+  to { transform: translateX(-50%); }
+}
+
+.zh,
+.en {
+  padding-right: 56px;
+  font-size: 12px;
+}
+
+.zh {
+  color: #3b4046;
+  font-family: 'Noto Serif TC', serif;
+}
+
+.en {
+  color: var(--journal-accent);
+  font-family: var(--journal-font-body), sans-serif;
+}
+
+.stamp {
+  flex: 0 0 auto;
+  color: #a3aab1;
+  font: 10px var(--journal-font-mono), monospace;
+}
+
+.more {
+  flex: 0 0 auto;
+  padding: 0 10px 0 4px;
+  border: 0;
+  background: transparent;
+  color: #3c6e9e;
+  font: 11px var(--journal-font-body), sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.tag:focus-visible,
+.more:focus-visible,
+.sheet button:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 2px;
+}
+
+/* ── The full statement ─────────────────────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1299;
+  background: rgba(38, 41, 46, 0.22);
+}
+
+.sheet {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(820px, calc(100dvh - 64px));
+  box-sizing: border-box;
+  padding: 24px 44px 0;
+  border: 1px solid var(--journal-card-edge);
+  border-radius: 14px;
+  background: var(--journal-card-paper-light, var(--journal-card-paper));
+  box-shadow: var(--journal-card-shadow);
+  color: var(--journal-ink);
+  outline: none;
+  transform: translate(-50%, -50%);
+  animation: journal-statement-in 260ms ease-out;
+}
+
+@keyframes journal-statement-in {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 16px)); }
+}
+
+.sheetHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--journal-card-edge);
+}
+
+.sheetHead .tag {
+  cursor: default;
+}
+
+.date {
+  color: var(--journal-ink-secondary);
+  font: 11px var(--journal-font-mono), monospace;
+}
+
+.switch {
+  display: inline-flex;
+  margin-left: auto;
+  padding: 2px;
+  border: 1px solid var(--journal-card-edge);
+  border-radius: var(--journal-radius-pill);
+}
+
+.switch button {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--journal-radius-pill);
+  background: transparent;
+  color: var(--journal-ink-secondary);
+  font: 12px var(--journal-font-body), sans-serif;
+  cursor: pointer;
+}
+
+.switch button[aria-pressed='true'] {
+  background: var(--journal-ink);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.back {
+  min-height: var(--journal-touch-target);
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--journal-ink);
+  font: 13px var(--journal-font-body), sans-serif;
+  cursor: pointer;
+}
+
+.text {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 20px 0 32px;
+  scrollbar-width: thin;
+}
+
+.text p {
+  margin: 0 0 14px;
+  font: 17px/1.95 var(--journal-font-article), 'Noto Serif TC', serif;
+  letter-spacing: 0.02em;
+}
+
+.text .lead {
+  margin-bottom: 18px;
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+.text .turn {
+  color: var(--journal-accent);
+}
+
+/* 「內容決定閱讀體驗。」 — the line the whole site stands on. */
+.text .motto {
+  margin: 22px 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--journal-card-edge);
+  border-bottom: 1px solid var(--journal-card-edge);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+
+@media (max-width: 596px) {
+  .wrap {
+    padding: 6px 8px 0;
+  }
+
+  .stamp {
+    display: none;
+  }
+
+  .sheet {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 90dvh;
+    padding: 16px 20px 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+    transform: none;
+    animation-name: journal-statement-up;
+  }
+
+  @keyframes journal-statement-up {
+    from { opacity: 0; transform: translateY(24px); }
+  }
+
+  .text p {
+    font-size: 16px;
+  }
+
+  .text .lead {
+    font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .run,
+  .dot {
+    animation: none;
+  }
+
+  .copy {
+    display: none;
+  }
+
+  .track {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .run {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sheet {
+    animation: none;
+  }
+}

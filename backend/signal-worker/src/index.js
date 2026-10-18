@@ -3,6 +3,7 @@
 // site only needs MYTIDE_SIGNAL_API_URL pointed here.
 
 const MAX_TEXT_ELEMENTS = 40;
+const MAX_TONE_ELEMENTS = 5;
 const RECENT_THREAD_LIMIT = 100;
 const WRITES_PER_MINUTE = 10;
 // How long a writer can take back their own signal.
@@ -10,6 +11,10 @@ const SELF_DELETE_WINDOW_MS = 3 * 60_000;
 const BANKS = new Set(['past', 'today']);
 const SIGNAL_ID = /^[0-9a-f]{32}$/;
 const segmenter = new Intl.Segmenter('zh-Hant', {granularity: 'grapheme'});
+// Someone counts as online for this long after their tab last checked in.
+const ONLINE_WINDOW_MS = 90_000;
+const COUNTER_CALLS_PER_MINUTE = 20;
+const SESSION_ID = /^[0-9a-f]{32}$/;
 
 export default {
   async fetch(request, env) {
@@ -43,6 +48,10 @@ async function route(request, env) {
     return createSignal(request, env);
   }
 
+  if (pathname === '/api/counter' && request.method === 'POST') {
+    return countVisit(request, env);
+  }
+
   const match = pathname.match(/^\/api\/signals\/([^/]+)$/);
   if (match && request.method === 'DELETE') {
     return deleteSignal(request, env, match[1]);
@@ -57,7 +66,7 @@ async function listRecent(db) {
       SELECT id FROM signals WHERE thread_id IS NULL
       ORDER BY created_at DESC, id DESC LIMIT ?1
     )
-    SELECT id, thread_id, text, from_bank, created_at, departed, source_title, source_day_key
+    SELECT id, thread_id, text, from_bank, tone, created_at, departed, source_title, source_day_key
     FROM signals
     WHERE id IN (SELECT id FROM recent) OR thread_id IN (SELECT id FROM recent)
     ORDER BY created_at, id`).bind(RECENT_THREAD_LIMIT).all();
@@ -70,6 +79,7 @@ async function listRecent(db) {
       threadId: row.thread_id,
       text: row.text,
       from: row.from_bank,
+      tone: row.tone ?? '說',
       writtenAt: row.created_at,
       departed: row.departed,
       source: row.source_title && row.source_day_key ? {title: row.source_title, dayKey: row.source_day_key} : null,
@@ -93,7 +103,7 @@ async function createSignal(request, env) {
     return json({error: '請求格式無效'}, 400);
   }
 
-  const {text, error} = validate(body);
+  const {text, tone, error} = validate(body);
   if (error) return json({error}, 400);
 
   if (!(await allowWrite(env.DB, clientAddress(request)))) {
@@ -120,8 +130,8 @@ async function createSignal(request, env) {
   const createdAt = Date.now();
   const deleteKeyHash = body.deleteKey ? await sha256Hex(body.deleteKey) : null;
   await env.DB.prepare(`
-    INSERT INTO signals (id, thread_id, text, from_bank, created_at, departed, delete_key_hash)
-    VALUES (?1, ?2, ?3, ?4, ?5, 'today', ?6)`).bind(id, threadId, text, body.from, createdAt, deleteKeyHash).run();
+    INSERT INTO signals (id, thread_id, text, from_bank, tone, created_at, departed, delete_key_hash)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'today', ?7)`).bind(id, threadId, text, body.from, tone, createdAt, deleteKeyHash).run();
 
   return json({id, createdAt}, 201);
 }
@@ -166,7 +176,11 @@ function validate(body) {
   const text = clean(body.text);
   if (!text) return {error: '請先寫下一句話'};
   if ([...segmenter.segment(text)].length > MAX_TEXT_ELEMENTS) return {error: `訊號最多 ${MAX_TEXT_ELEMENTS} 個字`};
-  return {text};
+
+  const tone = body.tone == null ? '說' : clean(body.tone);
+  if (!tone || /[\s<>]|https?:|www\./iu.test(tone)) return {error: '語氣格式無效'};
+  if ([...segmenter.segment(tone)].length > MAX_TONE_ELEMENTS) return {error: `語氣最多 ${MAX_TONE_ELEMENTS} 個字`};
+  return {text, tone};
 }
 
 // One quiet line: drop control characters, line breaks and bidirectional
@@ -176,7 +190,7 @@ function clean(text) {
   return text.normalize('NFC').replace(/[\p{Cc}‪-‮⁦-⁩]/gu, '').trim();
 }
 
-async function allowWrite(db, client) {
+async function allowWrite(db, client, limit = WRITES_PER_MINUTE) {
   const now = Date.now();
   const windowStart = now - (now % 60_000);
   const row = await db.prepare(`
@@ -187,7 +201,55 @@ async function allowWrite(db, client) {
   if (Math.random() < 0.02) {
     await db.prepare('DELETE FROM write_limits WHERE window_start < ?1').bind(windowStart - 600_000).run();
   }
-  return row.count <= WRITES_PER_MINUTE;
+  return row.count <= limit;
+}
+
+// 無名小站-style counter. The page says whether this load starts today's
+// visit (it remembers that itself), and checks in while it stays open.
+async function countVisit(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({error: '請求格式無效'}, 400);
+  }
+  if (!body || typeof body.session !== 'string' || !SESSION_ID.test(body.session)) {
+    return json({error: '請求格式無效'}, 400);
+  }
+  if (!(await allowWrite(env.DB, `counter:${clientAddress(request)}`, COUNTER_CALLS_PER_MINUTE))) {
+    return json({error: 'too many requests'}, 429);
+  }
+
+  const now = Date.now();
+  const day = taipeiDay(now);
+  const writes = [env.DB.prepare(`
+    INSERT INTO presence (session, seen_at) VALUES (?1, ?2)
+    ON CONFLICT (session) DO UPDATE SET seen_at = excluded.seen_at`).bind(body.session, now)];
+  for (const kind of ['visit', 'view']) {
+    if (body[kind] === true) {
+      writes.push(env.DB.prepare(`
+        INSERT INTO site_counts (day, kind, count) VALUES (?1, ?2, 1)
+        ON CONFLICT (day, kind) DO UPDATE SET count = count + 1`).bind(day, kind));
+    }
+  }
+  if (Math.random() < 0.05) {
+    writes.push(env.DB.prepare('DELETE FROM presence WHERE seen_at < ?1').bind(now - ONLINE_WINDOW_MS));
+  }
+  await env.DB.batch(writes);
+
+  const [online, counts] = await env.DB.batch([
+    env.DB.prepare('SELECT COUNT(*) AS n FROM presence WHERE seen_at >= ?1').bind(now - ONLINE_WINDOW_MS),
+    env.DB.prepare(`
+      SELECT kind, SUM(count) AS total, SUM(CASE WHEN day = ?1 THEN count ELSE 0 END) AS today
+      FROM site_counts GROUP BY kind`).bind(day),
+  ]);
+  const totals = {visit: {today: 0, total: 0}, view: {today: 0, total: 0}};
+  for (const row of counts.results) totals[row.kind] = {today: row.today, total: row.total};
+  return json({online: online.results[0].n, visits: totals.visit, views: totals.view});
+}
+
+function taipeiDay(time) {
+  return new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Taipei'}).format(new Date(time));
 }
 
 function clientAddress(request) {

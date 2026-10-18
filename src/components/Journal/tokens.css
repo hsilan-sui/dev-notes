@@ -34,7 +34,7 @@
   --journal-content-gap: 18px;
   --journal-content-gap-mobile: 14px;
   --journal-card-body-padding: 44px 52px 52px 52px;
-  --journal-card-body-padding-mobile: 28px 26px 30px 26px;
+  --journal-card-body-padding-mobile: 22px 18px 24px 18px;
   --journal-card-body-gap: 22px;
   --journal-nav-row-gap: 32px;
   --journal-nav-row-gap-mobile: 24px;
@@ -112,6 +112,8 @@
   --journal-lcd-ink: #1E2618;
   --journal-signal: #BD3F1B;
   --journal-font-pixel: VT323;
+  /* Dot-matrix LCD face that also covers Chinese and Japanese. */
+  --journal-font-lcd: 'DotGothic16';
   --journal-font-mono: 'IBM Plex Mono';
   --journal-signal-travel: 3600ms;
   --journal-signal-first-arrival: 6000ms;
@@ -283,12 +285,16 @@
   --journal-cosmic-twinkle: 2200ms;
 }
 
-/* Warm paper cards and comfortable handheld reading. */
+/* Misty blue-grey paper, lit from the upper left, lifted off the page by
+   layered shadows; comfortable handheld reading. */
 .journal-scope {
-  --journal-card-paper: #FBF8F3;
-  --journal-card-edge: #D5C3AE;
-  --journal-card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 12px 32px rgba(100, 73, 45, 0.1), 0 2px 6px rgba(100, 73, 45, 0.05);
-  --journal-card-shadow-raised: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 20px 48px rgba(100, 73, 45, 0.15), 0 3px 8px rgba(100, 73, 45, 0.07);
+  --journal-card-paper: #F5F6F6;
+  --journal-card-paper-light: radial-gradient(120% 90% at 30% 0%, #FFFFFF 0%, #F5F6F6 55%, #EEF0F1 100%);
+  --journal-card-edge: #DCE0E3;
+  --journal-card-shadow: inset 0 1px 0 #FFFFFF, 0 1px 2px rgba(40, 52, 66, 0.06), 0 18px 36px -10px rgba(40, 52, 66, 0.2), 0 46px 70px -28px rgba(40, 52, 66, 0.26);
+  --journal-card-shadow-raised: inset 0 1px 0 #FFFFFF, 0 2px 4px rgba(40, 52, 66, 0.08), 0 26px 48px -12px rgba(40, 52, 66, 0.26), 0 60px 90px -32px rgba(40, 52, 66, 0.3);
+  /* 仙人掌明體: an old woodblock-print Song face for the stories themselves. */
+  --journal-font-article: 'Cactus Classical Serif';
   --journal-touch-target: 44px;
   --journal-reader-size-mobile: 17px;
   --journal-reader-leading-mobile: 1.95;

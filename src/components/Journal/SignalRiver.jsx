@@ -5,6 +5,7 @@ import SignalPager from './SignalPager.jsx';
 import SignalLightYears, {replyBankFor} from './SignalLightYears';
 import {loadOwnSignals, recordSignal, removeSignal, saveOwnSignals} from './signalRiver.js';
 import {readMsToken} from './useHoverIntent.js';
+import {LANGUAGES, toneLabel, useSignalLang} from './signalI18n.js';
 import styles from './SignalRiver.module.css';
 
 const BANKS = ['past', 'today'];
@@ -31,33 +32,42 @@ function clockNow() {
   return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 }
 
-function lcdFor(bank, state, clock, apiStatus) {
+const timeOf = (value) => {
+  const date = new Date(value);
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+};
+
+// What each LCD shows: a status row (signal, words, time) and the page line.
+function lcdFor(bank, state, clock, apiStatus, t) {
+  const signal = state.signal;
+  const at = signal?.writtenAt ? timeOf(signal.writtenAt) : '';
   switch (state.phase) {
     case 'off':
-      return {off: true, main: '', sub: '', bars: 0};
+      return {off: true, status: '', main: '', bars: 0};
     case 'boot1':
-      return {main: 'MY TIDE', sub: MODEL[bank], bars: 0};
+      return {status: MODEL[bank], main: 'MY TIDE', bars: 0};
     case 'boot2':
-      return {main: 'SEARCHING', sub: '收訊中', bars: 2};
+      return {status: t.lcd.searching, main: 'SEARCHING', bars: 2};
     case 'boot3':
-      return {main: 'SIGNAL OK', sub: 'OK', bars: 5};
+      return {status: t.lcd.ok, main: 'SIGNAL OK', bars: 5};
     case 'incoming':
-      return {main: '1 NEW PAGE', sub: state.signal?.source ? `〈${state.signal.source.title}〉` : '未署名'};
+      return {status: t.lcd.newPage, clock: at,
+        main: signal?.source ? `〈${signal.source.title}〉` : `${MODEL[signal?.from] || ''} ${toneLabel(t, signal?.tone)}`};
     case 'preview':
-      return {marquee: state.signal?.text, sub: '▸ 按 ↗ 展開'};
+      return {status: t.lcd.newPage, clock: at, marquee: signal?.text};
     case 'waiting':
-      return {main: '1 NEW PAGE', sub: '▸ 按 ↗ 展開'};
+      return {status: t.lcd.newPage, clock: at, main: t.lcd.pressRead};
     case 'reading':
-      return {main: 'PAGE 1/1', sub: '已收下'};
+      return {status: 'PAGE 1/1', clock: at, main: t.lcd.read};
     case 'sent':
-      return {main: '訊號已出發', sub: 'SENT ▸▸▸', bars: 3};
+      return {status: 'SENT ▸▸▸', main: t.lcd.sent, bars: 3};
     case 'delivered':
-      return {main: '已抵達對岸', sub: 'SENT ✓'};
+      return {status: 'SENT ✓', main: t.lcd.delivered};
     default:
       if (apiStatus === 'offline') {
-        return {main: '儲存未連線', sub: '訊號尚未送出'};
+        return {status: t.lcd.notSent, main: t.lcd.offline};
       }
-      return {main: '收訊中', sub: clock};
+      return {status: t.lcd.idle, main: clock, big: true};
   }
 }
 
@@ -85,6 +95,7 @@ const easeInOut = (t) => 0.5 - Math.cos(Math.PI * t) / 2;
 // bank (MT02). A released signal travels along the wave as a red point and
 // arrives, unsigned, at the other bank.
 export default function SignalRiver({onSelectDay}) {
+  const {lang, t, setLang} = useSignalLang();
   const {siteConfig} = useDocusaurusContext();
   const apiBase = String(siteConfig.customFields?.signalApiBaseUrl || '').replace(/\/$/, '');
   const rootRef = useRef(null);
@@ -309,11 +320,11 @@ export default function SignalRiver({onSelectDay}) {
     [pagerRefs],
   );
 
-  async function release(bank, text) {
+  async function release(bank, text, tone = '說') {
     if (flightRef.current) return false;
     flightRef.current = true;
     setSending(true);
-    const signal = {text, departed: 'today', from: bank, writtenAt: Date.now(),
+    const signal = {text, tone, departed: 'today', from: bank, writtenAt: Date.now(),
       id: crypto.randomUUID().replaceAll('-', ''), threadId: banksRef.current[bank].replyToId || undefined};
     // Counted from before the request, so the countdown never outlives the server's window.
     const own = {key: crypto.randomUUID().replaceAll('-', ''), writtenAt: Date.now()};
@@ -325,7 +336,7 @@ export default function SignalRiver({onSelectDay}) {
         const response = await fetch(`${apiBase}/api/signals`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json', Accept: 'application/json'},
-          body: JSON.stringify({id: signal.id, text, from: bank, threadId: signal.threadId || null, deleteKey: own.key}),
+          body: JSON.stringify({id: signal.id, text, tone, from: bank, threadId: signal.threadId || null, deleteKey: own.key}),
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const saved = await response.json();
@@ -420,11 +431,24 @@ export default function SignalRiver({onSelectDay}) {
     pagerRefs[bank]?.querySelector('input')?.focus({preventScroll: true});
   }
 
+  // Every page the river has carried, oldest first: the pagers' memory.
+  const memory = history.flatMap(entry => [entry, ...(entry.replies || [])])
+    .filter(signal => signal.id !== 'first-arrival')
+    .sort((a, b) => a.writtenAt - b.writtenAt);
+  // The page a pager replays when it lights up by itself: the last one it got.
+  const echoFor = bank => [...memory].reverse().find(signal => signal.from !== bank) || memory.at(-1) || null;
+
   const isSmall = (bank) =>
     bank === 'today' && banks.today.phase === 'idle' && !banks.today.awaiting && !banks.today.replyHint;
 
   return (
-    <div ref={rootRef} className={styles.river}>
+    <div ref={rootRef} className={styles.river} lang={lang}>
+      <label className={styles.lang}>
+        <span>{t.language}</span>
+        <select value={lang} onChange={event => setLang(event.target.value)}>
+          {LANGUAGES.map(item => <option key={item.code} value={item.code}>{item.label}</option>)}
+        </select>
+      </label>
       {BANKS.map((bank) => {
         const state = banks[bank];
         const ledOn = ['incoming', 'preview', 'waiting'].includes(state.phase);
@@ -437,7 +461,9 @@ export default function SignalRiver({onSelectDay}) {
               model={MODEL[bank]}
               gray={bank === 'today'}
               small={isSmall(bank)}
-              lcd={lcdFor(bank, state, clock, apiStatus)}
+              lcd={lcdFor(bank, state, clock, apiStatus, t)}
+              memory={memory}
+              echoSignal={echoFor(bank)}
               led={ledOn}
               phase={state.phase}
               signal={ledOn || state.phase === 'reading' ? state.signal : null}
@@ -448,12 +474,13 @@ export default function SignalRiver({onSelectDay}) {
               }
               replyHint={Boolean(state.replyHint) && state.phase !== 'compose'}
               coarse={coarse}
-              onRead={() => {
+              onRead={(target) => {
                 // The bank that received a signal is the one to answer from.
+                // A page picked with ◀ ▶ from memory opens the same way.
                 setBanks((current) => ({
                   past: {...current.past, replyHint: false},
                   today: {...current.today, replyHint: false},
-                  [bank]: {...current[bank], phase: 'reading', replyHint: true},
+                  [bank]: {...current[bank], phase: 'reading', replyHint: true, ...(target ? {signal: target} : {})},
                 }));
                 const readAt = Date.now();
                 replyHintAtRef.current[bank] = readAt;
@@ -467,7 +494,7 @@ export default function SignalRiver({onSelectDay}) {
               busy={sending}
               onWrite={reply => beginCompose(bank, reply ? state.signal?.threadId || state.signal?.id : null)}
               onCancel={() => setBank(bank, {phase: state.signal ? 'waiting' : 'idle', replyToId: null})}
-              onRelease={(text) => release(bank, text)}
+              onRelease={(text, tone) => release(bank, text, tone)}
               onPreviewEnd={() =>
                 setBanks((current) =>
                   current[bank].phase === 'preview' ? {...current, [bank]: {...current[bank], phase: 'waiting'}} : current,
@@ -483,10 +510,10 @@ export default function SignalRiver({onSelectDay}) {
       {apiStatus !== 'connected' ? (
         <span className={styles.connectionStatus} role="status">
           {apiStatus === 'connecting'
-            ? '訊號連線中…'
+            ? t.river.connecting
             : apiStatus === 'offline'
-              ? '訊號暫時送不出去，請稍後再放一次。'
-              : '訊號只留在這次造訪，重新整理後不會保存。'}
+              ? t.river.offline
+              : t.river.local}
         </span>
       ) : null}
       <SignalLightYears
@@ -511,8 +538,8 @@ export default function SignalRiver({onSelectDay}) {
         <span ref={dotRef} className={styles.dot} style={{opacity: traveling ? 1 : 0}} />
       </span>
       <span className={styles.srOnly} aria-live="polite">
-        {banks.today.phase === 'incoming' || banks.past.phase === 'incoming' ? '收到一則訊號' : ''}
-        {banks.past.phase === 'delivered' || banks.today.phase === 'delivered' ? '訊號已抵達對岸' : ''}
+        {banks.today.phase === 'incoming' || banks.past.phase === 'incoming' ? t.river.arrived : ''}
+        {banks.past.phase === 'delivered' || banks.today.phase === 'delivered' ? t.river.delivered : ''}
       </span>
     </div>
   );

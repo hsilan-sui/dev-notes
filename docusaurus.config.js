@@ -17,7 +17,7 @@ const config = {
   tagline: "內容決定閱讀體驗",
   favicon: "img/icon-tide-round.svg", // 網站小圖示 icon（建議 32x32）
   stylesheets: [
-    "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&family=Noto+Serif+TC:wght@500&family=VT323&family=IBM+Plex+Mono:wght@400;500&display=swap",
+    "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&family=Noto+Serif+TC:wght@500&family=VT323&family=DotGothic16&family=Cactus+Classical+Serif&family=IBM+Plex+Mono:wght@400;500&display=swap",
   ],
 
   // Set the production url of your site here

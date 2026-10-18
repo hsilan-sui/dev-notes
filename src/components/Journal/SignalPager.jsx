@@ -2,11 +2,26 @@ import {forwardRef, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {flushSync} from 'react-dom';
 import clsx from 'clsx';
 import lockJournalScroll from './lockJournalScroll';
-import {SIGNAL_MAX_LENGTH} from './signalRiver.js';
+import {SIGNAL_MAX_LENGTH, TONE_MAX_LENGTH, clampGraphemes, loadOwnTones, saveOwnTone, splitGraphemes} from './signalRiver.js';
+import {PRESET_TONES, toneLabel, useSignalLang} from './signalI18n.js';
 import SignalDeleteButton from './SignalDeleteButton.jsx';
 import styles from './SignalPager.module.css';
 
-const hasCjk = (text) => /[^\x00-\x7F]/.test(text);
+const hasWide = (text) => /[^\x00-\x7F]/.test(text);
+const MODEL = {past: 'MT01', today: 'MT02'};
+const pad2 = value => String(value).padStart(2, '0');
+const clockOf = value => {
+  const date = new Date(value);
+  return `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+};
+const dayOf = value => {
+  const date = new Date(value);
+  return `${pad2(date.getMonth() + 1)}/${pad2(date.getDate())}`;
+};
+// Idle pagers now and then light up and replay the last page they got.
+const ECHO_MIN_MS = 40_000;
+const ECHO_SPREAD_MS = 50_000;
+const BROWSE_IDLE_MS = 9000;
 
 // Desktop keyboard layers. `code` mirrors KeyboardEvent.code so physical key
 // presses light the matching key; the system IME does the actual typing.
@@ -17,7 +32,8 @@ const ZHUYIN = {
   Digit1: 'ㄅ', Digit2: 'ㄉ', Digit3: 'ˇ', Digit4: 'ˋ', Digit5: 'ㄓ', Digit6: 'ˊ', Digit7: '˙', Digit8: 'ㄚ', Digit9: 'ㄞ', Digit0: 'ㄢ', Minus: 'ㄦ',
 };
 // Grouped by feeling, so a row reads like one mood: faces, hearts, sky and sea,
-// seasons, the city at night, small things in a day, gestures, little signals.
+// seasons, the city at night, small things in a day, music and hands, little
+// signals, then people of every skin tone, creatures, food and the wide world.
 const EMOJI = [
   '😊', '🥹', '🙂', '😂', '🥲', '😌', '😴', '🥺', '😮‍💨', '🫠',
   '🤍', '❤️', '🩵', '💙', '🩶', '💛', '🧡', '💜', '💔', '❤️‍🩹',
@@ -27,6 +43,10 @@ const EMOJI = [
   '☕', '🍵', '🍜', '🍰', '🍺', '📟', '💬', '✉️', '📷', '📖',
   '🎵', '🎧', '🎸', '🎹', '💭', '🫶', '🙏', '👋', '🤝', '🫂',
   '🔔', '⏳', '🕰️', '🗝️', '🧭', '🎈', '🪐', '🌠', '🐈', '🐕',
+  '👋🏻', '👋🏽', '👋🏿', '🫶🏻', '🫶🏽', '🫶🏿', '🙏🏻', '🙏🏽', '🙏🏿', '🤞🏼',
+  '🐢', '🐋', '🦋', '🐦', '🦊', '🐼', '🐧', '🦉', '🐌', '🌵',
+  '🍙', '🥟', '🍣', '🥐', '🌮', '🍕', '🧋', '🍓', '🍊', '🍉',
+  '🌍', '🌏', '🗺️', '✈️', '🧳', '🏔️', '🏝️', '🎐', '🪁', '🧸',
 ];
 const letterRow = (letters) => [...letters].map((ch) => ({label: ch, code: `Key${ch}`}));
 const digitRow = [...'1234567890'].map((ch) => ({label: ch, code: `Digit${ch}`}));
@@ -57,13 +77,8 @@ function Bars({count}) {
   );
 }
 
-function formatDeparted(dayKey) {
-  if (dayKey === 'today') {
-    return '剛剛出發 · 今天抵達';
-  }
-  const [, month, day] = dayKey.split('-');
-  return `${month}/${day} 出發 · 今天抵達`;
-}
+// A signal as one LCD line: who, in what tone, then the words.
+const pageLine = (t, signal) => `${MODEL[signal.from] || ''} ${toneLabel(t, signal.tone)}：${signal.text}`;
 
 const SignalPager = forwardRef(function SignalPager(
   {
@@ -74,6 +89,8 @@ const SignalPager = forwardRef(function SignalPager(
     led,
     phase,
     signal,
+    memory = [],
+    echoSignal,
     writeHint,
     replyHint,
     coarse,
@@ -90,9 +107,11 @@ const SignalPager = forwardRef(function SignalPager(
   },
   ref,
 ) {
+  const {t} = useSignalLang();
   const inputRef = useRef(null);
   const writeRef = useRef(null);
   const sheetRef = useRef(null);
+  const browseTimer = useRef(null);
   const [text, setText] = useState('');
   const [composing, setComposing] = useState(false);
   const [composition, setComposition] = useState('');
@@ -100,11 +119,19 @@ const SignalPager = forwardRef(function SignalPager(
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [shift, setShift] = useState(false);
   const [litKey, setLitKey] = useState(null);
+  const [tone, setTone] = useState('說');
+  const [ownTones, setOwnTones] = useState([]);
+  const [customTone, setCustomTone] = useState('');
+  const [browse, setBrowse] = useState(null);
+  const [echo, setEcho] = useState(false);
+  const [buzz, setBuzz] = useState(false);
   const isComposeMode = phase === 'compose';
   const sheet = isComposeMode && coarse;
-  const count = Array.from(text).length;
+  const count = splitGraphemes(text).length;
   // While the IME is composing, unconfirmed 注音 is not counted yet.
   const [committedCount, setCommittedCount] = useState(0);
+
+  useEffect(() => setOwnTones(loadOwnTones()), []);
 
   useEffect(() => {
     if (!composing) {
@@ -138,6 +165,52 @@ const SignalPager = forwardRef(function SignalPager(
     };
   }, [sheet]);
 
+  // A new page makes the whole pager buzz for a moment (and, where phones
+  // allow it after a tap, really vibrate).
+  useEffect(() => {
+    if (phase !== 'incoming') return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    setBuzz(true);
+    if (navigator.userActivation?.hasBeenActive) navigator.vibrate?.([90, 60, 90]);
+    const timer = window.setTimeout(() => setBuzz(false), 1300);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  // The occasional echo: only while idle, never for reduced motion.
+  useEffect(() => {
+    if (phase !== 'idle' || !echoSignal || browse !== null) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const timer = window.setTimeout(() => setEcho(true), ECHO_MIN_MS + Math.random() * ECHO_SPREAD_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase, echoSignal, browse, echo]);
+  useEffect(() => { if (phase !== 'idle') setEcho(false); }, [phase]);
+
+  useEffect(() => () => window.clearTimeout(browseTimer.current), []);
+
+  function step(direction) {
+    if (!memory.length) return;
+    setEcho(false);
+    setBrowse(current => {
+      if (current === null) return memory.length - 1;
+      return Math.min(memory.length - 1, Math.max(0, current + direction));
+    });
+    window.clearTimeout(browseTimer.current);
+    browseTimer.current = window.setTimeout(() => setBrowse(null), BROWSE_IDLE_MS);
+  }
+
+  const browsed = browse !== null ? memory[browse] : null;
+  const browsing = Boolean(browsed) && !isComposeMode && phase !== 'reading';
+  const echoing = echo && !browsing && phase === 'idle' && echoSignal;
+
+  let display = lcd;
+  if (browsing) {
+    display = {status: `MSG ${browse + 1}/${memory.length}`, clock: clockOf(browsed.writtenAt), marquee: pageLine(t, browsed), loop: true, bars: 5};
+  } else if (echoing) {
+    display = {status: `${t.lcd.echo} ${dayOf(echoSignal.writtenAt)}`, clock: clockOf(echoSignal.writtenAt), marquee: pageLine(t, echoSignal), bars: 5};
+  }
+  const lit = browsing || echoing || isComposeMode
+    || ['incoming', 'preview', 'waiting', 'reading', 'sent', 'delivered'].includes(phase);
+
   function startWriting(reply = false) {
     // Focus inside the same click so mobile browsers open the system keyboard.
     flushSync(() => onWrite(reply));
@@ -155,7 +228,7 @@ const SignalPager = forwardRef(function SignalPager(
     if (send) {
       let saved = false;
       try {
-        saved = await onRelease(message);
+        saved = await onRelease(message, tone);
       } catch {
         saved = false;
       }
@@ -182,7 +255,7 @@ const SignalPager = forwardRef(function SignalPager(
     const input = inputRef.current;
     const start = input.selectionStart ?? text.length;
     const end = input.selectionEnd ?? text.length;
-    const next = Array.from(text.slice(0, start) + value + text.slice(end)).slice(0, SIGNAL_MAX_LENGTH).join('');
+    const next = clampGraphemes(text.slice(0, start) + value + text.slice(end), SIGNAL_MAX_LENGTH);
     setText(next);
     input.focus();
     window.requestAnimationFrame(() => {
@@ -194,7 +267,7 @@ const SignalPager = forwardRef(function SignalPager(
   function pressKey(key) {
     lightKey(key.code ?? key.label);
     if (layer === 'zh') {
-      // 注音 composition belongs to the visitor's own input method.
+      // Typing in any language belongs to the visitor's own input method.
       inputRef.current?.focus();
       return;
     }
@@ -212,11 +285,20 @@ const SignalPager = forwardRef(function SignalPager(
       return;
     }
 
-    const previousCharacter = Array.from(text.slice(0, start)).at(-1) || '';
+    const previousCharacter = splitGraphemes(text.slice(0, start)).at(-1) || '';
     const from = start === end ? start - previousCharacter.length : start;
     setText(text.slice(0, from) + text.slice(end));
     input.focus();
     window.requestAnimationFrame(() => input.setSelectionRange(from, from));
+  }
+
+  function useCustomTone() {
+    const value = clampGraphemes(customTone.replace(/\s+/g, ''), TONE_MAX_LENGTH);
+    if (!value) return;
+    setOwnTones(current => saveOwnTone(value, current));
+    setTone(value);
+    setCustomTone('');
+    inputRef.current?.focus({preventScroll: true});
   }
 
   function handleKeyDown(event) {
@@ -233,6 +315,8 @@ const SignalPager = forwardRef(function SignalPager(
         finishWriting(false);
       } else if (phase === 'reading') {
         onCloseSlip();
+      } else if (browse !== null) {
+        setBrowse(null);
       }
       return;
     }
@@ -248,7 +332,34 @@ const SignalPager = forwardRef(function SignalPager(
     }
   }
 
-  const lcdIsCjk = hasCjk(lcd.main || '');
+  const mainIsWide = hasWide(display.main || '');
+  const toneChips = [...PRESET_TONES, ...ownTones.filter(own => !PRESET_TONES.includes(own))];
+  const tonePicker = (
+    <div className={styles.tones} role="group" aria-label={t.pager.tone}>
+      <span className={styles.toneLabel}>{t.pager.tone}</span>
+      {toneChips.map(item => (
+        <button type="button" key={item} className={styles.toneChip} aria-pressed={tone === item}
+          data-custom={PRESET_TONES.includes(item) ? undefined : ''} data-tone={item}
+          onMouseDown={event => event.preventDefault()} onClick={() => setTone(item)}>
+          {toneLabel(t, item)}
+        </button>
+      ))}
+      <span className={styles.toneCustom}>
+        <input
+          type="text"
+          value={customTone}
+          placeholder={`＋ ${t.pager.customPlaceholder}`}
+          aria-label={`${t.pager.customTone}（${t.pager.toneMax}）`}
+          onChange={event => setCustomTone(clampGraphemes(event.target.value.replace(/\s+/g, ''), TONE_MAX_LENGTH))}
+          onKeyDown={event => {
+            event.stopPropagation();
+            if (event.key === 'Enter' && !event.nativeEvent.isComposing) { event.preventDefault(); useCustomTone(); }
+          }}
+        />
+        {customTone ? <button type="button" className={styles.toneUse} onClick={useCustomTone}>{t.pager.useTone}</button> : null}
+      </span>
+    </div>
+  );
 
   return (
     <div
@@ -259,57 +370,65 @@ const SignalPager = forwardRef(function SignalPager(
         small && styles.small,
         sheet && styles.sheetMode,
         replyHint && styles.replyReady,
+        buzz && styles.buzz,
       )}
       onKeyDown={handleKeyDown}
       data-phase={phase}
     >
       {sheet ? <div className={styles.sheetBackdrop} onClick={event => { event.stopPropagation(); finishWriting(false); }} aria-hidden="true" /> : null}
       <div ref={sheetRef} className={styles.body} role={sheet ? 'dialog' : undefined}
-        aria-modal={sheet ? true : undefined} aria-label={sheet ? `從 ${model} 寫訊號` : undefined}>
+        aria-modal={sheet ? true : undefined} aria-label={sheet ? t.pager.writeFrom(model) : undefined}>
         <div className={styles.bezel}>
-          <div className={clsx(styles.lcd, lcd.off && styles.lcdOff)}>
-            <div className={clsx(styles.lcdMain, lcdIsCjk && styles.lcdCjk)}>
+          <div className={clsx(styles.lcd, display.off && styles.lcdOff, lit && styles.lcdLit)}>
+            <div className={styles.lcdSub}>
+              <Bars count={display.bars ?? 5} />
+              <span className={clsx(styles.status, hasWide(display.status || '') && styles.statusWide)}>
+                {isComposeMode ? `${committedCount}/${SIGNAL_MAX_LENGTH}` : display.status}
+              </span>
+              <span className={styles.clock}>{isComposeMode ? '' : display.clock}</span>
+              <span className={styles.battery} aria-hidden="true" />
+            </div>
+            <div className={clsx(styles.lcdMain, mainIsWide && styles.lcdWide, display.big && styles.lcdBig)}>
               <input
                 ref={inputRef}
                 className={clsx(styles.lcdInput, !isComposeMode && styles.lcdInputIdle)}
                 type="text"
                 value={text}
-                placeholder="不需要寫給誰"
+                placeholder={t.pager.placeholder}
                 enterKeyHint="send"
                 inputMode="text"
                 autoComplete="off"
-                aria-label="寫一則訊號"
+                dir="auto"
+                aria-label={t.pager.writeLabel}
                 aria-hidden={isComposeMode ? undefined : true}
                 tabIndex={isComposeMode ? 0 : -1}
                 readOnly={!isComposeMode}
-                onChange={event => setText(composing ? event.target.value : Array.from(event.target.value).slice(0, SIGNAL_MAX_LENGTH).join(''))}
+                onChange={event => setText(composing ? event.target.value : clampGraphemes(event.target.value, SIGNAL_MAX_LENGTH))}
                 onCompositionStart={() => setComposing(true)}
                 onCompositionUpdate={(event) => setComposition(event.data)}
                 onCompositionEnd={event => {
-                  setText(Array.from(event.currentTarget.value).slice(0, SIGNAL_MAX_LENGTH).join(''));
+                  setText(clampGraphemes(event.currentTarget.value, SIGNAL_MAX_LENGTH));
                   setComposing(false);
                   setComposition('');
                 }}
               />
               {!isComposeMode ? (
-                lcd.marquee ? (
+                display.marquee ? (
                   <span
-                    className={styles.lcdMarquee}
-                    style={{animationDuration: `${Math.max(4, Array.from(lcd.marquee).length * 0.34)}s`}}
-                    onAnimationEnd={onPreviewEnd}
+                    key={`${display.status}-${display.marquee}`}
+                    className={clsx(styles.lcdMarquee, display.loop && styles.lcdMarqueeLoop)}
+                    style={{animationDuration: `${Math.max(5, splitGraphemes(display.marquee).length * 0.36)}s`}}
+                    onAnimationEnd={() => {
+                      if (echoing) setEcho(false);
+                      else if (!browsing) onPreviewEnd();
+                    }}
                   >
-                    {lcd.marquee}
+                    {display.marquee}
                   </span>
                 ) : (
-                  <span className={styles.lcdText}>{lcd.main}</span>
+                  <span className={styles.lcdText}>{display.main}</span>
                 )
               ) : null}
-            </div>
-            <div className={styles.lcdSub}>
-              <Bars count={lcd.bars ?? 5} />
-              <span className={clsx(hasCjk(lcd.sub || '') && styles.subCjk)}>
-                {isComposeMode ? `${committedCount}/${SIGNAL_MAX_LENGTH}` : lcd.sub}
-              </span>
             </div>
           </div>
         </div>
@@ -318,20 +437,26 @@ const SignalPager = forwardRef(function SignalPager(
           <span className={styles.model}>{model}</span>
         </div>
         <div className={styles.controls}>
-          {/* The two keys sit in a recessed well, like molded keys on a real pager. */}
+          {/* The keys sit in a recessed well, like molded keys on a real pager. */}
           <span className={styles.keyWell}>
+            <button type="button" className={clsx(styles.pill, styles.arrow)} onClick={() => step(-1)}
+              disabled={!memory.length || isComposeMode} aria-label={t.pager.previous}>◀</button>
+            <button type="button" className={clsx(styles.pill, styles.arrow)} onClick={() => step(1)}
+              disabled={!memory.length || isComposeMode} aria-label={t.pager.next}>▶</button>
             <button
               type="button"
               className={clsx(styles.pill, styles.readButton, phase === 'reading' && styles.pillOn)}
-              onClick={phase === 'reading' ? onCloseSlip : onRead}
-              disabled={!signal}
-              aria-label={phase === 'reading' ? '收起訊號' : '展開訊號'}
+              onClick={() => {
+                if (phase === 'reading') { onCloseSlip(); return; }
+                const target = browsing ? browsed : null;
+                setBrowse(null);
+                onRead(target);
+              }}
+              disabled={!signal && !browsing}
+              aria-label={phase === 'reading' ? t.pager.close : t.pager.open}
               aria-expanded={phase === 'reading'}
             >
-              <svg className={styles.keyIcon} viewBox="0 0 10 10" aria-hidden="true">
-                <path d="M3 7 7 3M4 3h3v3" />
-              </svg>
-              <span aria-hidden="true">讀</span>
+              <span aria-hidden="true">{t.pager.read}</span>
             </button>
             <button
               ref={writeRef}
@@ -343,7 +468,7 @@ const SignalPager = forwardRef(function SignalPager(
               <svg className={styles.keyIcon} viewBox="0 0 10 10" aria-hidden="true">
                 <path d="M2 8l.6-2.2L7 1.4 8.6 3 4.2 7.4z" />
               </svg>
-              寫訊號
+              {t.pager.write}
             </button>
           </span>
           <span className={styles.spacer} />
@@ -351,14 +476,15 @@ const SignalPager = forwardRef(function SignalPager(
             <span className={styles.led} />
           </span>
         </div>
-        {sheet && emojiOpen ? <div className={styles.emojiPalette} role="group" aria-label="表情符號">
+        {sheet ? tonePicker : null}
+        {sheet && emojiOpen ? <div className={styles.emojiPalette} role="group" aria-label={t.pager.emoji}>
           {EMOJI.map(emoji => <button type="button" key={emoji} disabled={composing}
-            onMouseDown={event => event.preventDefault()} onClick={() => insert(emoji)} aria-label={`插入 ${emoji}`}>{emoji}</button>)}
+            onMouseDown={event => event.preventDefault()} onClick={() => insert(emoji)} aria-label={t.pager.insert(emoji)}>{emoji}</button>)}
         </div> : null}
         {sheet ? (
           <div className={styles.sheetActions}>
-            <button type="button" className={styles.sheetClose} onClick={() => finishWriting(false)}>收起</button>
-            <button type="button" className={styles.sheetClose} aria-label="選擇表情符號" aria-expanded={emojiOpen}
+            <button type="button" className={styles.sheetClose} onClick={() => finishWriting(false)}>{t.pager.fold}</button>
+            <button type="button" className={styles.sheetClose} aria-label={t.pager.chooseEmoji} aria-expanded={emojiOpen}
               onMouseDown={event => event.preventDefault()} onClick={() => setEmojiOpen(value => !value)}>😊</button>
             <button
               type="button"
@@ -366,7 +492,7 @@ const SignalPager = forwardRef(function SignalPager(
               onClick={() => finishWriting(true)}
               disabled={!text.trim() || composing || busy}
             >
-              放出
+              {t.pager.release}
             </button>
           </div>
         ) : null}
@@ -379,42 +505,49 @@ const SignalPager = forwardRef(function SignalPager(
       </span>
 
       {replyHint && phase !== 'reading' ? (
-        <p className={styles.replyCue}>↑ 從這台回一句</p>
+        <p className={styles.replyCue}>{t.pager.replyCue}</p>
       ) : null}
 
       {phase === 'reading' && signal ? (
-        <div className={styles.slip} role="region" aria-label="收到的訊號">
+        <div className={styles.slip} role="region" aria-label={t.pager.open}>
           <div className={styles.slipHead}>
-            <p className={styles.slipTimes}>{formatDeparted(signal.departed)}</p>
+            <p className={styles.slipTimes}>
+              <span className={styles.slipModel} data-bank={signal.from}>{MODEL[signal.from]}</span>
+              {' '}{toneLabel(t, signal.tone)} · {signal.departed === 'today'
+                ? t.pager.departedNow
+                : t.pager.departedOn(...String(signal.departed).split('-').slice(1))}
+            </p>
             {ownSignal ? <SignalDeleteButton writtenAt={ownSignal.writtenAt} onDelete={onDeleteOwn} /> : null}
           </div>
-          <p className={styles.slipText}>{signal.text}</p>
-          {signal.source ? (
-            <button type="button" className={styles.slipSource} onClick={() => onSource(signal.source)}>
-              —— 出自〈{signal.source.title}〉 ›
-            </button>
-          ) : (
-            <p className={styles.slipSource}>—— 未署名</p>
-          )}
+          <p className={styles.slipText} dir="auto">
+            {signal.text}
+            {/* 「出自」 follows the sentence wherever it ends. */}
+            {signal.source ? (
+              <button type="button" className={styles.slipSource} onClick={() => onSource(signal.source)}>
+                —— {t.pager.source(signal.source.title)}
+              </button>
+            ) : <span className={styles.slipSource}>—— {t.pager.unsigned}</span>}
+          </p>
           <div className={styles.slipActions}>
             <button type="button" className={clsx(replyHint && styles.replyButton)} onClick={() => startWriting(true)}>
-              {signal.source ? '留一句話' : '回一句'}
+              {signal.source ? t.pager.leaveWord : t.pager.reply}
             </button>
-            <button type="button" className={styles.slipClose} onClick={onCloseSlip}>收起</button>
+            <button type="button" className={styles.slipClose} onClick={onCloseSlip}>{t.pager.fold}</button>
           </div>
         </div>
       ) : null}
 
       {isComposeMode && !coarse ? (
         <div className={styles.keyboard}>
+          {tonePicker}
           {layer === 'zh' ? (
             <div className={styles.candidates} aria-live="polite">
-              {composition ? <span className={styles.composition}>{composition}</span> : '注音請用鍵盤輸入，選字交給你的輸入法'}
+              {composition ? <span className={styles.composition}>{composition}</span> : t.pager.imeHint}
             </div>
           ) : null}
           {layer === 'emoji' ? (
             <div className={styles.keyRow}>
-              <div className={styles.emojiRows} role="group" aria-label="表情符號">
+              <div className={styles.emojiRows} role="group" aria-label={t.pager.emoji}>
                 {LAYERS.emoji.map((row, rowIndex) => (
                   <div className={styles.keyRow} key={`emoji-${rowIndex}`}>
                     {row.map((key) => (
@@ -436,7 +569,7 @@ const SignalPager = forwardRef(function SignalPager(
                 tabIndex={-1}
                 className={clsx(styles.key, styles.keyWide, styles.keyTall, litKey === 'Backspace' && styles.keyLit)}
                 onClick={backspace}
-                aria-label="刪除"
+                aria-label={t.pager.backspace}
               >
                 ⌫
               </button>
@@ -476,7 +609,7 @@ const SignalPager = forwardRef(function SignalPager(
                   tabIndex={-1}
                   className={clsx(styles.key, styles.keyWide, litKey === 'Backspace' && styles.keyLit)}
                   onClick={backspace}
-                  aria-label="刪除"
+                  aria-label={t.pager.backspace}
                 >
                   ⌫
                 </button>
@@ -485,14 +618,14 @@ const SignalPager = forwardRef(function SignalPager(
           ))}
           <div className={styles.keyRow}>
             <button type="button" className={clsx(styles.key, styles.keyMode, layer === 'emoji' && styles.keyOn)}
-              aria-label="切換表情符號鍵盤" aria-pressed={layer === 'emoji'} onClick={() => setLayer(value => value === 'emoji' ? 'zh' : 'emoji')}>😊</button>
+              aria-label={t.pager.chooseEmoji} aria-pressed={layer === 'emoji'} onClick={() => setLayer(value => value === 'emoji' ? 'zh' : 'emoji')}>😊</button>
             <button
               type="button"
               tabIndex={-1}
               className={clsx(styles.key, styles.keyMode, (layer === 'zh' || layer === 'en') && styles.keyOn)}
               onClick={() => setLayer(layer === 'zh' ? 'en' : 'zh')}
             >
-              {layer === 'en' ? '英' : '中'}
+              {layer === 'en' ? t.pager.layerEn : t.pager.layerZh}
             </button>
             <button
               type="button"
@@ -508,10 +641,10 @@ const SignalPager = forwardRef(function SignalPager(
               className={clsx(styles.key, styles.keySpace, litKey === 'Space' && styles.keyLit)}
               onClick={() => (layer === 'zh' ? inputRef.current?.focus() : insert(' '))}
             >
-              {layer === 'zh' ? '空白／選字' : '空白'}
+              {layer === 'zh' ? t.pager.spaceIme : t.pager.space}
             </button>
             <button type="button" className={clsx(styles.key, styles.keyMode)} onClick={() => finishWriting(false)}>
-              收起
+              {t.pager.fold}
             </button>
             <button
               type="button"
@@ -519,7 +652,7 @@ const SignalPager = forwardRef(function SignalPager(
               onClick={() => finishWriting(true)}
               disabled={!text.trim() || composing || busy}
             >
-              放出
+              {t.pager.release}
             </button>
           </div>
         </div>

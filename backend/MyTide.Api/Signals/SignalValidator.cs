@@ -6,24 +6,36 @@ namespace MyTide.Api.Signals;
 public static class SignalValidator
 {
     public const int MaxTextElements = 40;
+    public const int MaxToneElements = 5;
+    public const string DefaultTone = "說";
 
     /// <summary>
     /// Returns the cleaned text, or an error message for the visitor.
     /// Signals are one quiet line: control characters, line breaks and
     /// bidirectional overrides (which can flip how text reads) are removed.
     /// </summary>
-    public static (string? Text, string? Error) Validate(SignalRequest request)
+    public static (string? Text, string? Tone, string? Error) Validate(SignalRequest request)
     {
-        if (!SignalBanks.IsValid(request.From)) return (null, "訊號來源無效");
-        if (request.Id is not null && !IsSignalId(request.Id)) return (null, "訊號識別碼格式無效");
-        if (request.ThreadId is not null && !IsSignalId(request.ThreadId)) return (null, "回覆訊號格式無效");
-        if (request.DeleteKey is not null && !IsSignalId(request.DeleteKey)) return (null, "收回金鑰格式無效");
+        if (!SignalBanks.IsValid(request.From)) return (null, null, "訊號來源無效");
+        if (request.Id is not null && !IsSignalId(request.Id)) return (null, null, "訊號識別碼格式無效");
+        if (request.ThreadId is not null && !IsSignalId(request.ThreadId)) return (null, null, "回覆訊號格式無效");
+        if (request.DeleteKey is not null && !IsSignalId(request.DeleteKey)) return (null, null, "收回金鑰格式無效");
 
         var text = Clean(request.Text);
-        if (text.Length == 0) return (null, "請先寫下一句話");
-        if (new StringInfo(text).LengthInTextElements > MaxTextElements) return (null, $"訊號最多 {MaxTextElements} 個字");
+        if (text.Length == 0) return (null, null, "請先寫下一句話");
+        if (new StringInfo(text).LengthInTextElements > MaxTextElements) return (null, null, $"訊號最多 {MaxTextElements} 個字");
 
-        return (text, null);
+        // 語氣: one short word, no spaces or links.
+        var tone = request.Tone is null ? DefaultTone : Clean(request.Tone);
+        if (tone.Length == 0 || tone.Any(char.IsWhiteSpace) || tone.Contains('<') || tone.Contains('>')
+            || tone.Contains("http:", StringComparison.OrdinalIgnoreCase) || tone.Contains("https:", StringComparison.OrdinalIgnoreCase)
+            || tone.Contains("www.", StringComparison.OrdinalIgnoreCase))
+        {
+            return (null, null, "語氣格式無效");
+        }
+        if (new StringInfo(tone).LengthInTextElements > MaxToneElements) return (null, null, $"語氣最多 {MaxToneElements} 個字");
+
+        return (text, tone, null);
     }
 
     /// <summary>Ids are 32 lowercase hex characters (a GUID in "N" format).</summary>

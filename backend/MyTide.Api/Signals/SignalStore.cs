@@ -68,6 +68,16 @@ public sealed class SignalStore(string connectionString)
             alter.CommandText = "ALTER TABLE signals ADD COLUMN delete_key_hash TEXT NULL";
             await alter.ExecuteNonQueryAsync();
         }
+
+        // Added later (same as the Worker's 0003 migration): 語氣 before a signal.
+        await using var toneColumn = connection.CreateCommand();
+        toneColumn.CommandText = "SELECT COUNT(*) FROM pragma_table_info('signals') WHERE name = 'tone'";
+        if (Convert.ToInt64(await toneColumn.ExecuteScalarAsync()) == 0)
+        {
+            await using var alter = connection.CreateCommand();
+            alter.CommandText = "ALTER TABLE signals ADD COLUMN tone TEXT NULL";
+            await alter.ExecuteNonQueryAsync();
+        }
     }
 
     public async Task<bool> IsReachableAsync()
@@ -95,7 +105,7 @@ public sealed class SignalStore(string connectionString)
                 SELECT id FROM signals WHERE thread_id IS NULL
                 ORDER BY created_at DESC, id DESC LIMIT $limit
             )
-            SELECT id, thread_id, text, from_bank, created_at, departed, source_title, source_day_key
+            SELECT id, thread_id, text, from_bank, created_at, departed, source_title, source_day_key, tone
             FROM signals
             WHERE id IN (SELECT id FROM recent) OR thread_id IN (SELECT id FROM recent)
             ORDER BY created_at, id
@@ -112,6 +122,7 @@ public sealed class SignalStore(string connectionString)
                     reader.IsDBNull(1) ? null : reader.GetString(1),
                     reader.GetString(2),
                     reader.GetString(3),
+                    reader.IsDBNull(8) ? SignalValidator.DefaultTone : reader.GetString(8),
                     reader.GetInt64(4),
                     reader.GetString(5),
                     reader.IsDBNull(6) ? null : reader.GetString(6),
@@ -139,7 +150,7 @@ public sealed class SignalStore(string connectionString)
     }
 
     public async Task<(InsertOutcome Outcome, SignalCreated? Signal)> InsertAsync(
-        string id, string? threadId, string text, string from, long createdAt, string? deleteKeyHash = null)
+        string id, string? threadId, string text, string from, string tone, long createdAt, string? deleteKeyHash = null)
     {
         await using var connection = await OpenAsync();
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync();
@@ -176,13 +187,14 @@ public sealed class SignalStore(string connectionString)
         {
             insert.Transaction = transaction;
             insert.CommandText = """
-                INSERT INTO signals (id, thread_id, text, from_bank, created_at, departed, delete_key_hash)
-                VALUES ($id, $threadId, $text, $from, $createdAt, 'today', $deleteKeyHash)
+                INSERT INTO signals (id, thread_id, text, from_bank, tone, created_at, departed, delete_key_hash)
+                VALUES ($id, $threadId, $text, $from, $tone, $createdAt, 'today', $deleteKeyHash)
                 """;
             insert.Parameters.AddWithValue("$id", id);
             insert.Parameters.AddWithValue("$threadId", (object?)threadId ?? DBNull.Value);
             insert.Parameters.AddWithValue("$text", text);
             insert.Parameters.AddWithValue("$from", from);
+            insert.Parameters.AddWithValue("$tone", tone);
             insert.Parameters.AddWithValue("$createdAt", createdAt);
             insert.Parameters.AddWithValue("$deleteKeyHash", (object?)deleteKeyHash ?? DBNull.Value);
             await insert.ExecuteNonQueryAsync();
@@ -240,6 +252,7 @@ public sealed class SignalStore(string connectionString)
         row.ThreadId,
         row.Text,
         row.From,
+        row.Tone,
         row.CreatedAt,
         row.Departed,
         row.SourceTitle is null || row.SourceDayKey is null ? null : new SignalSource(row.SourceTitle, row.SourceDayKey),

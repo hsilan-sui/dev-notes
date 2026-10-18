@@ -9,7 +9,7 @@
 .past,
 .today {
   position: absolute;
-  top: 58px;
+  top: 52px;
   z-index: 5;
   pointer-events: auto;
 }
@@ -34,6 +34,36 @@
 
 .past > * {
   transform-origin: top left;
+}
+
+/* BB Call's language, picked by the reader; it lasts for this visit only. */
+.lang {
+  position: absolute;
+  top: 12px;
+  right: 40px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--journal-ink-secondary);
+  font: 12px var(--journal-font-body), sans-serif;
+  pointer-events: auto;
+}
+
+.lang select {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--journal-lightyears-edge);
+  border-radius: var(--journal-radius-pill);
+  background: var(--journal-lightyears-paper);
+  color: var(--journal-ink);
+  font: 600 12px var(--journal-font-body), sans-serif;
+  cursor: pointer;
+}
+
+.lang select:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 2px;
 }
 
 /* The red point and its short trail, positioned along the wave in JS. */
@@ -102,6 +132,12 @@
 
   .today { justify-self: end; }
 
+  .lang {
+    position: static;
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+
   .connectionStatus {
     position: static;
     grid-column: 1 / -1;
@@ -121,10 +157,7 @@
 
 @media screen and (max-width: 596px) {
   .river {
-    min-height: 132px;
-  }
-
-  .past > :not([data-phase='compose']) {
-    transform: scale(0.9);
+    min-height: 0;
+    column-gap: var(--journal-space-xs);
   }
 }

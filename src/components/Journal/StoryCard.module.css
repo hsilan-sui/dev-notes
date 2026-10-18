@@ -4,7 +4,7 @@
   overflow: hidden;
   border: 1px solid var(--journal-card-edge);
   border-radius: var(--journal-radius-card);
-  background: var(--journal-card-paper);
+  background: var(--journal-card-paper-light, var(--journal-card-paper));
   box-shadow: var(--journal-card-shadow);
 }
 
@@ -82,18 +82,19 @@
 .title {
   margin: 0;
   color: var(--journal-ink);
-  font-family: var(--journal-font-heading), Georgia, serif;
+  font-family: var(--journal-font-article), var(--journal-font-heading), 'Noto Serif TC', serif;
   font-size: 30px;
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: 0.04em;
   line-height: 1.3;
 }
 
 .preview {
   margin: 0;
   color: var(--journal-ink-secondary);
-  font-family: var(--journal-font-body), var(--ifm-font-family-base);
-  font-size: 16px;
-  line-height: 1.75;
+  font-family: var(--journal-font-article), 'Noto Serif TC', serif;
+  font-size: 17px;
+  line-height: 1.85;
 }
 
 .tags {
@@ -150,9 +151,9 @@
 .fullContent {
   margin-top: 8px;
   color: var(--journal-ink);
-  font-family: var(--journal-font-body), var(--ifm-font-family-base);
+  font-family: var(--journal-font-article), 'Noto Serif TC', serif;
   text-align: left;
-  line-height: 1.75;
+  line-height: 1.9;
 }
 
 .body { min-width: 0; overflow-wrap: anywhere; }

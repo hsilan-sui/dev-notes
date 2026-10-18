@@ -1,4 +1,4 @@
-import {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
@@ -7,6 +7,9 @@ import styles from './TodaySong.module.css';
 
 const VOLUME_STEPS = 6;
 const YOUTUBE_ORIGIN = 'https://www.youtube-nocookie.com';
+const CORNER_KEY = 'mytide.tv.corner';
+const CORNERS = ['br', 'bl', 'tr', 'tl'];
+const phoneQuery = '(max-width: 596px)';
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
@@ -66,47 +69,88 @@ export default function TodaySong() {
   const resolvedSrc = useBaseUrl(song.src || '/');
   const src = song.src ? resolvedSrc : '';
 
-  // The player rests in the lower-right corner, but never over the
-  // 「未來之來」 tab (the next-day panel) or the story card: if they would meet,
-  // it settles just below them instead and scrolls with the page.
-  useLayoutEffect(() => {
-    const embed = embedRef.current;
-    if (!showEmbed || !embed) {
-      return undefined;
+  // The mini TV: YouTube's player must stay fully visible and at least
+  // 200 × 200 while it plays, so instead of shrinking it, it can be moved to
+  // any corner (desktop and tablet), gets out of the way of open panels, and
+  // can be folded away — folding also pauses it.
+  const [minimized, setMinimized] = useState(false);
+  const [corner, setCorner] = useState('br');
+  const [drag, setDrag] = useState(null);
+  const [overlay, setOverlay] = useState(false);
+  const [phone, setPhone] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(CORNER_KEY);
+      if (CORNERS.includes(saved)) setCorner(saved);
+    } catch {
+      // No storage: the TV starts in the lower right.
     }
+    const query = window.matchMedia(phoneQuery);
+    const sync = () => setPhone(query.matches);
+    sync();
+    query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
 
-    function place() {
-      delete embed.dataset.belowTab;
-      embed.style.top = '';
-      embed.style.left = '';
-      const box = embed.getBoundingClientRect();
-      // The 「未來之來」 tab, and the story card itself, stay uncovered.
-      const blockers = ['[aria-label^="下一篇："]', 'main article']
-        .map((selector) => document.querySelector(selector)?.getBoundingClientRect())
-        .filter((rect) => rect && rect.width > 0
-          && box.left < rect.right && box.right > rect.left
-          && box.top < rect.bottom && box.bottom > rect.top);
-      if (blockers.length === 0) {
-        return;
-      }
-
-      const below = Math.max(...blockers.map((rect) => rect.bottom));
-      const right = Math.max(...blockers.map((rect) => rect.right));
-      embed.dataset.belowTab = 'true';
-      embed.style.top = `${below + 16 + window.scrollY}px`;
-      embed.style.left = `${Math.min(window.innerWidth - box.width - 24, right - box.width) + window.scrollX}px`;
+  // Panels (訊號光年, 站內廣播) announce themselves; the TV steps aside, and on
+  // phones, where it would sit on top of them, it folds away (and pauses).
+  useEffect(() => {
+    function onOverlay(event) {
+      const open = Boolean(event.detail?.open);
+      setOverlay(open);
+      if (open && window.matchMedia(phoneQuery).matches) fold();
     }
+    window.addEventListener('mytide:overlay', onOverlay);
+    return () => window.removeEventListener('mytide:overlay', onOverlay);
+    // `fold` only sends a command and sets state.
+  }, []);
 
-    place();
-    window.addEventListener('resize', place);
-    window.addEventListener('scroll', place, {passive: true});
-    const timer = window.setInterval(place, 800);
-    return () => {
-      window.removeEventListener('resize', place);
-      window.removeEventListener('scroll', place);
-      window.clearInterval(timer);
-    };
-  }, [showEmbed]);
+  // Phones: the TV is a bar along the bottom; the page makes room for it.
+  useEffect(() => {
+    if (!phone || !showEmbed || minimized) return undefined;
+    const previous = document.body.style.paddingBottom;
+    document.body.style.paddingBottom = '232px';
+    return () => { document.body.style.paddingBottom = previous; };
+  }, [phone, showEmbed, minimized]);
+
+  function fold() {
+    command('pauseVideo');
+    setMinimized(true);
+  }
+
+  function unfold() {
+    setMinimized(false);
+    window.setTimeout(() => command('playVideo'), 60);
+  }
+
+  function startDrag(event) {
+    if (phone || event.button !== 0 || event.target.closest('button, iframe')) return;
+    const box = embedRef.current.getBoundingClientRect();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDrag({dx: event.clientX - box.left, dy: event.clientY - box.top, x: box.left, y: box.top});
+  }
+
+  function moveDrag(event) {
+    if (!drag) return;
+    setDrag(current => current && {...current, x: event.clientX - current.dx, y: event.clientY - current.dy});
+  }
+
+  function endDrag() {
+    if (!drag) return;
+    const box = embedRef.current.getBoundingClientRect();
+    const next = `${box.top + box.height / 2 > window.innerHeight / 2 ? 'b' : 't'}${box.left + box.width / 2 > window.innerWidth / 2 ? 'r' : 'l'}`;
+    setCorner(next);
+    setDrag(null);
+    try {
+      window.localStorage.setItem(CORNER_KEY, next);
+    } catch {
+      // Remembered for this visit only.
+    }
+  }
+
+  // While a panel is open, a TV in the lower right moves to the lower left.
+  const shownCorner = overlay && corner === 'br' ? 'bl' : corner;
 
   // Resolve "today" on the client, so the static build never pins a date.
   useEffect(() => {
@@ -127,6 +171,7 @@ export default function TodaySong() {
       audioRef.current?.pause();
       command('pauseVideo');
       setShowEmbed(false);
+      setMinimized(false);
       setPlaying(false);
       setCurrent(0);
     }
@@ -208,7 +253,10 @@ export default function TodaySong() {
       if (!showEmbed) {
         // Opening the embed on the visitor's click starts it (autoplay=1).
         setShowEmbed(true);
+        setMinimized(false);
         setStarted(true);
+      } else if (minimized) {
+        unfold();
       } else {
         command(playing ? 'pauseVideo' : 'playVideo');
       }
@@ -293,6 +341,7 @@ export default function TodaySong() {
 
       {/* Mobile: one line also controls playback; it never expands. */}
       <div className={styles.compactRow}>
+        {dayPicker}
         <button
           type="button"
           className={styles.compact}
@@ -304,7 +353,6 @@ export default function TodaySong() {
             {notice || (playing ? <Marquee text={label} /> : heading)}
           </span>
         </button>
-        {dayPicker}
       </div>
 
       <div className={styles.full}>
@@ -319,9 +367,10 @@ export default function TodaySong() {
               heading
             )}
           </span>
-          {dayPicker}
         </div>
 
+        <div className={styles.barRow}>
+        {dayPicker}
         <div className={styles.bar}>
           <button
             type="button"
@@ -382,17 +431,34 @@ export default function TodaySong() {
             />
           </div>
         </div>
+        </div>
         {showEmbed
           ? createPortal(
               // Rendered on <body> so no clipping ancestor can hide the player.
               <div className="journal-scope">
-                <div ref={embedRef} className={styles.embed} role="region" aria-label={`${heading}：YouTube 播放器`}>
+                <div
+                  ref={embedRef}
+                  className={styles.embed}
+                  role="region"
+                  aria-label={`${heading}：YouTube 播放器`}
+                  data-corner={shownCorner}
+                  data-dragging={drag ? '' : undefined}
+                  hidden={minimized}
+                  style={drag ? {left: drag.x, top: drag.y, right: 'auto', bottom: 'auto'} : undefined}
+                  onPointerDown={startDrag}
+                  onPointerMove={moveDrag}
+                  onPointerUp={endDrag}
+                  onPointerCancel={endDrag}
+                >
+                  <span className={styles.embedGrip} aria-hidden="true" />
+                  <button type="button" className={styles.embedFold} aria-label="縮小並暫停" onClick={fold}>–</button>
                   <button
                     type="button"
                     className={styles.embedClose}
                     aria-label="停止並關閉播放器"
                     onClick={() => {
                       setShowEmbed(false);
+                      setMinimized(false);
                       setPlaying(false);
                       setCurrent(0);
                     }}
@@ -414,7 +480,28 @@ export default function TodaySong() {
                       command('setVolume', [Math.round(volume * 100)]);
                     }}
                   />
+                  <p className={styles.embedCaption}>
+                    {playing ? <Equalizer /> : null}
+                    <span className={styles.embedTitle}>〈{song.title}〉— {song.artist}</span>
+                    <span className={styles.embedDate}>{shortDate(song.date)}</span>
+                  </p>
+                  <span className={styles.embedActions}>
+                    <button type="button" onClick={fold}>– 縮小（暫停）</button>
+                    <button type="button" data-close="" onClick={() => {
+                      setShowEmbed(false);
+                      setMinimized(false);
+                      setPlaying(false);
+                      setCurrent(0);
+                    }}>✕ 關閉</button>
+                  </span>
                 </div>
+                {minimized ? (
+                  <button type="button" className={styles.pill} data-corner={shownCorner} onClick={unfold}
+                    aria-label={`繼續播放：${label}`}>
+                    <span className={styles.pillPlay} aria-hidden="true">▶</span>
+                    <span>{song.title} — {song.artist}</span>
+                  </button>
+                ) : null}
               </div>,
               document.body,
             )

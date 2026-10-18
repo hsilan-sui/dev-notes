@@ -23,13 +23,13 @@ public static class SignalEndpoints
 
         app.MapPost("/api/signals", async (SignalRequest request, SignalStore store, TimeProvider clock) =>
         {
-            var (text, error) = SignalValidator.Validate(request);
+            var (text, tone, error) = SignalValidator.Validate(request);
             if (error is not null) return Results.BadRequest(new { error });
 
             var id = request.Id ?? Guid.NewGuid().ToString("N");
             var createdAt = clock.GetUtcNow().ToUnixTimeMilliseconds();
             var deleteKeyHash = request.DeleteKey is null ? null : Sha256Hex(request.DeleteKey);
-            var (outcome, signal) = await store.InsertAsync(id, request.ThreadId, text!, request.From!, createdAt, deleteKeyHash);
+            var (outcome, signal) = await store.InsertAsync(id, request.ThreadId, text!, request.From!, tone!, createdAt, deleteKeyHash);
 
             return outcome switch
             {

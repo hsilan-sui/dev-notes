@@ -1,0 +1,55 @@
+/* Small and pale on purpose: noticed only by those who look for it. */
+.counter {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+  padding: var(--journal-space-lg) var(--journal-space-lg) var(--journal-space-md);
+  color: var(--journal-ink-secondary);
+  font: 10px var(--journal-font-body), 'Noto Sans TC', sans-serif;
+}
+
+.counter p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+}
+
+.counter b {
+  color: var(--journal-accent);
+  font: 400 13px/12px var(--journal-font-pixel), monospace;
+}
+
+.counter i {
+  color: #c9ced3;
+  font-style: normal;
+}
+
+.live {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #7fb287;
+}
+
+.odometer {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.odometer span {
+  display: grid;
+  place-items: center;
+  width: 8px;
+  height: 12px;
+  border-radius: 1.5px;
+  background: #e3e8eb;
+  color: #4a5057;
+  font: 12px/12px var(--journal-font-pixel), monospace;
+}
+
+@media (max-width: 596px) {
+  .counter {
+    padding: var(--journal-space-md);
+  }
+}

@@ -3,7 +3,8 @@ namespace MyTide.Api.Signals;
 /// <summary>Body of <c>POST /api/signals</c>: a new signal, or a reply when <see cref="ThreadId"/> is set.</summary>
 /// <param name="Id">Optional client-generated id (32 hex chars) so a retried send is not stored twice.</param>
 /// <param name="DeleteKey">Optional one-time key (32 hex chars) that lets the writer take the signal back for a few minutes.</param>
-public sealed record SignalRequest(string? Text, string? From, string? Id = null, string? ThreadId = null, string? DeleteKey = null);
+/// <param name="Tone">Optional 語氣 shown before the signal (up to 5 characters); defaults to 說.</param>
+public sealed record SignalRequest(string? Text, string? From, string? Id = null, string? ThreadId = null, string? DeleteKey = null, string? Tone = null);
 
 /// <summary>One signal as returned by <c>GET /api/signals</c>; replies are nested under their original signal.</summary>
 public sealed record SignalResponse(
@@ -11,6 +12,7 @@ public sealed record SignalResponse(
     string? ThreadId,
     string Text,
     string From,
+    string Tone,
     long WrittenAt,
     string Departed,
     SignalSource? Source,
@@ -27,6 +29,7 @@ public sealed record StoredSignal(
     string? ThreadId,
     string Text,
     string From,
+    string Tone,
     long CreatedAt,
     string Departed,
     string? SourceTitle,

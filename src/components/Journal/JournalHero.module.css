@@ -48,3 +48,9 @@
   .hero > :nth-child(2) { order: 3; }
   .hero > :nth-child(3) { order: 2; }
 }
+
+/* Wide screens: the larger BB Calls hang in the upper corners; the river
+   runs just below them. */
+@media screen and (min-width: 1181px) {
+  .hero > :nth-child(2) { margin-top: 64px; }
+}
