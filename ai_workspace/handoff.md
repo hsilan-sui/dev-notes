@@ -88,16 +88,18 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 | 返回大爆炸 | 上線（Codex 改成 `CosmicReturn`） | `CosmicReturn.jsx` |
 | 〈一個週五下班的日常〉、熊貓騎士 | 上線（Codex） | `src/components/MyTide/*`、`specs/journal-friday-film-*`、`journal-panda-rider-*` |
 | 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（每天一首，用官方 YouTube 嵌入；「歌單 ▾」在播放條前面。目前：10/18〈快高長大〉、10/17〈五月之戀〉Enno 宅錄 demo。打開任何文章或影片時，歌會停止、YouTube 視窗會關閉） |
-| YouTube 小電視 | 上線 | `TodaySong.jsx`：桌機／平板在角落（可拖曳、放開吸附四角，位置存在 localStorage `mytide.tv.corner`；訊號光年或站內廣播打開時從右下讓到左下）；手機是底部播放列，頁面底部會多留 232px。「–」縮小＝暫停，變成膠囊，點了繼續播。z-index 1250，壓在所有面板上面，因為播放中的播放器不能被蓋住 |
+| YouTube 播放器 | 上線 | `TodaySong.jsx`：1180px 以下（平板、手機）在播放條正下方「嵌入」頁面、不浮動；1180px 以上是角落小電視（可拖曳，位置存在 localStorage `mytide.tv.corner`），會自動換到不蓋住 BB Call／語言選單／站內廣播的角落，z-index 1250 壓在面板上面。**沒有縮小功能、不用 CSS 藏 iframe**（YouTube 規定播放中必須看得見、至少 200×200） |
 | BB Call 兩岸、紅點傳送、回訊提示 | 上線，**訊號已保存在 D1** | `SignalRiver.jsx`、`SignalPager.jsx`：260px（窄平板 0.82、手機 0.66，用 CSS `zoom`；寫訊號的 sheet 不縮放）、兩行點陣螢幕（DotGothic16）、◀ ▶ 翻閱記憶、待機時每 40～90 秒隨機「回音」重播最後收到的訊息、收到時輕微震動（Android 實際震動）、表情符號 120 個 |
+| 回覆的對應 | 上線 | 每台 BB Call 的 ◀ ▶ 記憶只放「對岸傳來的」訊息，所以讀了再回，一定回到對岸；訊號光年的回覆由 `replyBankFor` 決定（串裡最後一個聲音的對岸）。桌機在訊號光年按「回一句」時，回覆的那台會浮到面板前（`data-floating`），送出後回覆直接出現在串裡 |
+| 網址安全檢查 | 上線 | Worker `checkLinks`：https、真實網域、非 IP、非 punycode、經 Cloudflare 防惡意 DNS（security.cloudflare-dns.com）查詢不被擋 → 安全，可點＋✅；否則純文字＋⚠️。網址算 10 個字、整則上限 400 字、最多 3 個網址（migration 0004 `links` 欄位；舊訊息載入時補查一次）。前端 `SignalText.jsx`。.NET 版尚未實作 |
 | 語氣標籤 | 上線 | 預設說／想／覺得／希望／問，讀者可自訂（最多 5 字，存在自己的 localStorage `mytide.signal.tones`）；顏色在 `SignalPager.module.css` 與 `SignalLightYears.jsx` |
-| BB Call 語言 | 上線 | `signalI18n.js`：中文（預設）、English、日本語、한국어、Español、Tiếng Việt；選擇存在 sessionStorage，只在這次瀏覽有效。訊息內容不翻譯 |
+| BB Call 語言 | 上線 | `signalI18n.js`：中文（預設）、English、日本語、한국어、Español、Tiếng Việt；選擇存在 sessionStorage，只在這次瀏覽有效。訊息內容不翻譯。桌機鍵盤跟著換：注音／假名／兩班式韓文／英文（西文多 ñ） |
 | 站內廣播 | 上線 | `SiteBroadcast.jsx`、`siteStatement.js`（跑馬燈＋點「站內廣播」或 more » 看全文，有中英切換） |
 | 計數器 | 上線，記在 D1 | `SiteCounter.jsx`（在線／造訪／瀏覽，今日與累計）。2026-10-18 部署時從 0 開始 |
 | 文章卡片 | 上線 | 霧灰藍紙（tokens `--journal-card-*`）、仙人掌明體（`--journal-font-article`），手機內距縮小；左右「回到過去／未來之來」未動 |
 | 三分鐘內收回自己的訊號 | 上線 | `SignalDeleteButton.jsx`、`signalRiver.js`。放出時產生一次性金鑰存在 localStorage（`mytide.signal.own`），伺服器只存 SHA-256（`delete_key_hash`，migration 0002）；`DELETE` 帶 `X-Delete-Key` |
 | 手機閱讀 | 上線 | 波浪 `touch-action: pan-x pan-y`（之前 `pan-x` 擋住往下滑）、「往下讀」按鈕（往下之後變成「往上 BB Call 留言」）、文章卡片左右邊緣的前一天／下一天箭頭 |
-| 訊號光年（噗浪感） | 上線 | `SignalLightYears.jsx`、`signalSky.js`：桌機／平板是橫向時間河（卡片在原地展開、回應多時卡片內捲動），手機是由新到舊的列表＋迷你時間河；背景依每則訊息的時刻上色（早晨紙色→午後→琥珀黃昏→深藍星空，星星會閃）；未讀是紅框（第一次造訪不標）；「無名」；「出自」接在句尾 |
+| 訊號光年（噗浪感） | 上線 | `SignalLightYears.jsx`、`signalSky.js`、`Starfield.jsx`：桌機／平板是橫向時間河（卡片在原地展開、回應多時卡片內捲動），手機是由新到舊的列表；背景依每則訊息的時刻上色（玫瑰色清晨→7:30 起藍天→琥珀黃昏→深藍星空）；星星用 canvas 畫，各自閃爍，偶爾有流星（減少動態時靜止）；未讀是紅框（第一次造訪不標）；「無名」；「出自」接在句尾 |
 
 設計稿：
 - 今天的正式版面與草圖在 Claude 畫布 https://claude.ai/artifact/L1wczcE7izmXxGBVdeUFp8 （頁面「正式版面」「元件」「草圖與討論」）。
@@ -111,7 +113,8 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 4. **匿名內容的管理**：目前只有站主手動刪除，沒有自動審核或檢舉功能。
 5. **動態 emoji** 還沒做：決定只用 Google Noto Animated Emoji（CC BY 4.0），下載圖檔前要先徵得站主同意並標註出處。
 6. **多個 Agent 同時改檔**：之前 Claude Code 與 Codex 同時修改同一批檔案，差點互相覆蓋。請一次只讓一個 Agent 負責一個區塊，交接時更新本文件。
-7. **計數器沒有擋機器人**：爬蟲也會被算進瀏覽人次（每個 IP 每分鐘最多 20 次）。
+7. **頁面容器用 `overflow-x: clip`**（`JournalPage.module.css`），不要改回 `hidden`：`hidden` 會讓 main 變成自己的捲動框，多一條捲軸並吃掉滑鼠滾輪。
+8. **計數器沒有擋機器人**：爬蟲也會被算進瀏覽人次（每個 IP 每分鐘最多 20 次）。
 
 ## 7. 下一步建議
 

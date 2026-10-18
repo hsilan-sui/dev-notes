@@ -188,10 +188,11 @@
   display: block;
 }
 
+/* Hung from the top of the paper, clear of 「上一篇／下一篇」 at its foot. */
 .previewVerticalText {
   position: absolute;
   left: 14px;
-  top: 50%;
+  top: 30px;
   color: var(--journal-ink);
   font-family: var(--journal-font-body), var(--ifm-font-family-base);
   font-size: 14px;
@@ -199,7 +200,6 @@
   letter-spacing: 0;
   line-height: 1.1;
   text-align: center;
-  transform: translateY(-50%);
   writing-mode: vertical-rl;
 }
 
