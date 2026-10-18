@@ -47,3 +47,11 @@ export function nightness(time) {
   const light = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   return Math.min(1, Math.max(0, (0.62 - light) / 0.4));
 }
+
+// 0 at night, 1 in full daylight: how much of the cloud layer shows. Clouds
+// gather after dawn and thin out as the dusk colours come.
+export function daylight(time) {
+  const hour = hourOf(time);
+  const ramp = (from, to) => Math.min(1, Math.max(0, (hour - from) / (to - from)));
+  return Math.min(ramp(6.3, 7.4), 1 - ramp(17.2, 18.4));
+}

@@ -47,6 +47,8 @@
   width: 100%;
   margin: 0;
   opacity: 0;
+  /* Invisible, but iOS Safari still zooms into controls under 16px. */
+  font-size: 16px;
   cursor: pointer;
 }
 

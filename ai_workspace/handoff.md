@@ -96,10 +96,11 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 | BB Call 語言 | 上線 | `signalI18n.js`：中文（預設）、English、日本語、한국어、Español、Tiếng Việt；選擇存在 sessionStorage，只在這次瀏覽有效。訊息內容不翻譯。桌機鍵盤跟著換：注音／假名／兩班式韓文／英文（西文多 ñ） |
 | 站內廣播 | 上線 | `SiteBroadcast.jsx`、`siteStatement.js`（跑馬燈＋點「站內廣播」或 more » 看全文，有中英切換） |
 | 計數器 | 上線，記在 D1 | `SiteCounter.jsx`（在線／造訪／瀏覽，今日與累計）。2026-10-18 部署時從 0 開始 |
+| 網站圖示與分享預覽 | 上線 | 分頁小圖示是 `static/img/icon-tide-round.svg`（站主設計的意識潮圖示）；Safari／iOS／Android 用由它產生的 PNG（`favicon-32.png`、`icon-tide-192/512.png`、`apple-touch-icon.png`，在 `docusaurus.config.js` 的 `headTags`）。分享預覽圖是 `mytide-card.png`，不用站主照片 |
 | 文章卡片 | 上線 | 霧灰藍紙（tokens `--journal-card-*`）、仙人掌明體（`--journal-font-article`），手機內距縮小；左右「回到過去／未來之來」未動 |
 | 三分鐘內收回自己的訊號 | 上線 | `SignalDeleteButton.jsx`、`signalRiver.js`。放出時產生一次性金鑰存在 localStorage（`mytide.signal.own`），伺服器只存 SHA-256（`delete_key_hash`，migration 0002）；`DELETE` 帶 `X-Delete-Key` |
 | 手機閱讀 | 上線 | 波浪 `touch-action: pan-x pan-y`（之前 `pan-x` 擋住往下滑）、「往下讀」按鈕（往下之後變成「往上 BB Call 留言」）、文章卡片左右邊緣的前一天／下一天箭頭 |
-| 訊號光年（噗浪感） | 上線 | `SignalLightYears.jsx`、`signalSky.js`、`Starfield.jsx`：桌機／平板是橫向時間河（卡片在原地展開、回應多時卡片內捲動），手機是由新到舊的列表；背景依每則訊息的時刻上色（玫瑰色清晨→7:30 起藍天→琥珀黃昏→深藍星空）；星星用 canvas 畫，各自閃爍，偶爾有流星（減少動態時靜止）；未讀是紅框（第一次造訪不標）；「無名」；「出自」接在句尾 |
+| 訊號光年（噗浪感） | 上線 | `SignalLightYears.jsx`、`signalSky.js`、`Starfield.jsx`：桌機／平板是橫向時間河（卡片在原地展開、回應多時卡片內捲動），手機是由新到舊的列表；背景依每則訊息的時刻上色（玫瑰色清晨→7:30 起藍天＋飄動的白雲→琥珀黃昏→深藍星空）；星星用 canvas 畫，各自閃爍，偶爾有流星（減少動態時靜止）；未讀是紅框（第一次造訪不標）；「無名」；「出自」接在句尾 |
 
 設計稿：
 - 今天的正式版面與草圖在 Claude 畫布 https://claude.ai/artifact/L1wczcE7izmXxGBVdeUFp8 （頁面「正式版面」「元件」「草圖與討論」）。
@@ -114,7 +115,10 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 5. **動態 emoji** 還沒做：決定只用 Google Noto Animated Emoji（CC BY 4.0），下載圖檔前要先徵得站主同意並標註出處。
 6. **多個 Agent 同時改檔**：之前 Claude Code 與 Codex 同時修改同一批檔案，差點互相覆蓋。請一次只讓一個 Agent 負責一個區塊，交接時更新本文件。
 7. **頁面容器用 `overflow-x: clip`**（`JournalPage.module.css`），不要改回 `hidden`：`hidden` 會讓 main 變成自己的捲動框，多一條捲軸並吃掉滑鼠滾輪。
-8. **計數器沒有擋機器人**：爬蟲也會被算進瀏覽人次（每個 IP 每分鐘最多 20 次）。
+8. **手機表單元件字級至少 16px**（寫訊號的輸入框、自訂語氣、語言選單、歌單 select）：小於 16px 時 iOS Safari 會放大整頁，讀者就得左右滑。
+9. **BB Call 在手機的縮放比例**（`SignalPager.module.css`，用 `zoom`）：390–596px 0.66、360–389px 0.6、359px 以下 0.52，確保兩台並排不重疊。寫訊號的 sheet 不縮放：浮在可見畫面上方、寬度 ≤ 340px；鍵盤打開或正在輸入自訂語氣時進入精簡模式（`data-compact`）。
+10. **RWD 守則寫在 `CLAUDE.md`**：改版面後要在 320／375／390／834／1080／1280／1440px 檢查，Chrome 和 WebKit 都要。
+11. **計數器沒有擋機器人**：爬蟲也會被算進瀏覽人次（每個 IP 每分鐘最多 20 次）。
 
 ## 7. 下一步建議
 

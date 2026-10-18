@@ -139,6 +139,7 @@ const SignalPager = forwardRef(function SignalPager(
   const sheetRef = useRef(null);
   const browseTimer = useRef(null);
   const buzzTimer = useRef(null);
+  const toneBlurTimer = useRef(null);
   const [text, setText] = useState('');
   const [composing, setComposing] = useState(false);
   const [composition, setComposition] = useState('');
@@ -156,6 +157,10 @@ const SignalPager = forwardRef(function SignalPager(
   const [browse, setBrowse] = useState(null);
   const [echo, setEcho] = useState(false);
   const [buzz, setBuzz] = useState(false);
+  // Phones: with the keyboard up (or a tone being typed) the sheet tightens so
+  // all of it stays in view — nothing hidden, nothing to swipe sideways for.
+  const [keyboardUp, setKeyboardUp] = useState(false);
+  const [toneFocus, setToneFocus] = useState(false);
   const isComposeMode = phase === 'compose';
   const sheet = isComposeMode && coarse;
   // A link counts as ten characters, so pasting one never eats the message.
@@ -193,6 +198,7 @@ const SignalPager = forwardRef(function SignalPager(
       sheetRef.current?.style.setProperty('--signal-keyboard-inset', `${inset}px`);
       sheetRef.current?.style.setProperty('--signal-viewport-top', `${viewport.offsetTop}px`);
       sheetRef.current?.style.setProperty('--signal-viewport-height', `${viewport.height}px`);
+      setKeyboardUp(viewport.height < window.innerHeight * 0.82);
     }
 
     sync();
@@ -201,6 +207,7 @@ const SignalPager = forwardRef(function SignalPager(
     return () => {
       viewport.removeEventListener('resize', sync);
       viewport.removeEventListener('scroll', sync);
+      setKeyboardUp(false);
     };
   }, [sheet]);
 
@@ -218,7 +225,10 @@ const SignalPager = forwardRef(function SignalPager(
     if (navigator.userActivation?.hasBeenActive) navigator.vibrate?.([90, 60, 90]);
     buzzTimer.current = window.setTimeout(() => setBuzz(false), 1400);
   }, [phase, signal?.id]);
-  useEffect(() => () => window.clearTimeout(buzzTimer.current), []);
+  useEffect(() => () => {
+    window.clearTimeout(buzzTimer.current);
+    window.clearTimeout(toneBlurTimer.current);
+  }, []);
 
   // The occasional echo: only while idle, never for reduced motion.
   useEffect(() => {
@@ -401,6 +411,10 @@ const SignalPager = forwardRef(function SignalPager(
           value={customTone}
           placeholder={`＋ ${t.pager.customPlaceholder}`}
           aria-label={`${t.pager.customTone}（${t.pager.toneMax}）`}
+          onFocus={() => { window.clearTimeout(toneBlurTimer.current); setToneFocus(true); }}
+          // Stay compact a moment after leaving the field, so the button the
+          // reader is tapping does not slide away under their finger.
+          onBlur={() => { toneBlurTimer.current = window.setTimeout(() => setToneFocus(false), 400); }}
           onChange={event => setCustomTone(clampGraphemes(event.target.value.replace(/\s+/g, ''), TONE_MAX_LENGTH))}
           onKeyDown={event => {
             event.stopPropagation();
@@ -429,6 +443,7 @@ const SignalPager = forwardRef(function SignalPager(
     >
       {sheet ? <div className={styles.sheetBackdrop} onClick={event => { event.stopPropagation(); finishWriting(false); }} aria-hidden="true" /> : null}
       <div ref={sheetRef} className={styles.body} role={sheet ? 'dialog' : undefined}
+        data-compact={sheet && (keyboardUp || toneFocus) ? '' : undefined}
         aria-modal={sheet ? true : undefined} aria-label={sheet ? t.pager.writeFrom(model) : undefined}>
         <div className={styles.bezel}>
           <div className={clsx(styles.lcd, display.off && styles.lcdOff, lit && styles.lcdLit)}>

@@ -3,7 +3,7 @@ import {createPortal} from 'react-dom';
 import styles from './SignalLightYears.module.css';
 import lockJournalScroll from './lockJournalScroll';
 import SignalDeleteButton from './SignalDeleteButton.jsx';
-import {nightness, skyAt} from './signalSky.js';
+import {daylight, nightness, skyAt} from './signalSky.js';
 import {PRESET_TONES, toneLabel, useSignalLang} from './signalI18n.js';
 import SignalText from './SignalText.jsx';
 import Starfield from './Starfield.jsx';
@@ -279,6 +279,10 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
             return (
               <div key={entry.id} className={styles.row} data-index={index} data-dark={dark || undefined}
                 style={{'--sky': skyAt(entry.writtenAt), '--sky-next': skyAt((older || entry).writtenAt), '--night': nightness(entry.writtenAt)}}>
+                {daylight(entry.writtenAt) > 0.1 ? (
+                  <span className={styles.rowClouds} aria-hidden="true"
+                    style={{opacity: daylight(entry.writtenAt), animationDelay: `${-((index * 37) % 90)}s`}} />
+                ) : null}
                 {nightness(entry.writtenAt) > 0.15 ? (
                   <Starfield className={styles.rowStars} meteors={firstNight}
                     style={{opacity: nightness(entry.writtenAt)}} />
@@ -301,6 +305,7 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
     const anchorOf = index => `calc(100% - ${width - PAD - index * STEP - 18}px)`;
     const stops = entries.map((entry, index) => [skyAt(entry.writtenAt), anchorOf(index)]);
     const nightStops = entries.map((entry, index) => [`rgba(0, 0, 0, ${nightness(entry.writtenAt).toFixed(2)})`, anchorOf(index)]);
+    const dayStops = entries.map((entry, index) => [`rgba(0, 0, 0, ${daylight(entry.writtenAt).toFixed(2)})`, anchorOf(index)]);
     const dusk = entries.map((entry, index) => ({index, hour: new Date(entry.writtenAt).getHours() + new Date(entry.writtenAt).getMinutes() / 60}))
       .filter(({hour}) => (hour > 17 && hour < 19.4) || (hour > 5 && hour < 6.6));
     body = (
@@ -309,6 +314,9 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
         data-has-open={openId ? '' : undefined}>
         <div className={styles.track} style={{width: `max(100%, ${width}px)`}}>
           <div className={styles.sky} aria-hidden="true" style={{background: `linear-gradient(90deg, ${skyStops(stops)})`}} />
+          <div className={styles.clouds} aria-hidden="true" style={{WebkitMaskImage: `linear-gradient(90deg, ${skyStops(dayStops)})`, maskImage: `linear-gradient(90deg, ${skyStops(dayStops)})`}}>
+            <span className={styles.cloudsFar} /><span className={styles.cloudsNear} />
+          </div>
           <div className={styles.nightShade} aria-hidden="true" style={{WebkitMaskImage: `linear-gradient(90deg, ${skyStops(nightStops)})`, maskImage: `linear-gradient(90deg, ${skyStops(nightStops)})`}} />
           {dusk.map(({index}) => (
             <span key={`dusk-${index}`} className={styles.duskGlow} aria-hidden="true" style={{left: `calc(${anchorOf(index)} - 210px)`}} />

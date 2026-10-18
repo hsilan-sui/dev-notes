@@ -254,10 +254,13 @@
 }
 
 .engrave {
+  overflow: hidden;
   color: var(--pager-engrave);
   font-family: var(--journal-font-mono), monospace;
   font-size: 9px;
   letter-spacing: 0.06em;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 
 /* MT01 / MT02: the pager's call sign, stamped on a plate so it stands out. */
@@ -1008,14 +1011,59 @@ button.slipSource {
 }
 
 .sheetMode .toneChip,
-.sheetMode .toneUse,
-.sheetMode .toneCustom input {
+.sheetMode .toneUse {
   height: 32px;
   font-size: 13px;
 }
 
+/* 16px or more: iOS Safari zooms the whole page into smaller inputs, and the
+   reader is left swiping sideways. */
+.sheetMode .toneCustom {
+  flex: 1 1 120px;
+  min-width: 0;
+}
+
 .sheetMode .toneCustom input {
-  width: 96px;
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  font-size: 16px;
+}
+
+/* Keyboard up, or a tone being typed: the same pager, tighter, all in view. */
+.sheetMode .body[data-compact] {
+  gap: 6px;
+  padding: 10px;
+}
+
+.sheetMode .body[data-compact] .bezel {
+  padding: 5px;
+}
+
+.sheetMode .body[data-compact] .lcd {
+  grid-template-rows: 14px 1fr;
+  height: 58px;
+  padding: 5px 10px;
+}
+
+.sheetMode .body[data-compact] .lcdSub {
+  font-size: 13px;
+}
+
+.sheetMode .body[data-compact] .labelRow {
+  display: none;
+}
+
+.sheetMode .body[data-compact] .toneChip,
+.sheetMode .body[data-compact] .toneUse,
+.sheetMode .body[data-compact] .toneCustom input {
+  height: 28px;
+}
+
+.sheetMode .body[data-compact] .sheetClose,
+.sheetMode .body[data-compact] .release {
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 
 /* Tablets and phones: the pager, smaller, side by side; zoom keeps its
@@ -1068,6 +1116,33 @@ button.slipSource {
     font-size: 11px;
   }
 
+  .sheetMode .body {
+    zoom: 1;
+  }
+}
+
+/* Two pagers side by side must fit: (screen − 40px padding − 6px gap) / 2. */
+@media (max-width: 389px) {
+  .pager {
+    width: calc(260px * 0.6);
+  }
+
+  .body {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 359px) {
+  .pager {
+    width: calc(260px * 0.52);
+  }
+
+  .body {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 389px) {
   .sheetMode .body {
     zoom: 1;
   }

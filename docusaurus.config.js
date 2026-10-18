@@ -16,6 +16,13 @@ const config = {
   title: "意識潮 | My Tide", // 目前唯一公開展示的作品
   tagline: "內容決定閱讀體驗",
   favicon: "img/icon-tide-round.svg", // 網站小圖示 icon（建議 32x32）
+  // PNG fallbacks of the same 意識潮 mark: Safari, iOS home screens and
+  // Android don't use the SVG favicon.
+  headTags: [
+    {tagName: "link", attributes: {rel: "icon", type: "image/png", sizes: "32x32", href: "/dev-notes/img/favicon-32.png"}},
+    {tagName: "link", attributes: {rel: "icon", type: "image/png", sizes: "192x192", href: "/dev-notes/img/icon-tide-192.png"}},
+    {tagName: "link", attributes: {rel: "apple-touch-icon", sizes: "180x180", href: "/dev-notes/img/apple-touch-icon.png"}},
+  ],
   stylesheets: [
     "https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,500&family=Noto+Serif+TC:wght@500&family=VT323&family=DotGothic16&family=Cactus+Classical+Serif&family=IBM+Plex+Mono:wght@400;500&display=swap",
   ],
@@ -104,7 +111,8 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: "img/me.png",
+      // Share preview: the 意識潮 mark, not a personal photo.
+      image: "img/mytide-card.png",
       navbar: {
         title: "意識潮", //導覽列左上角標題
         logo: {
