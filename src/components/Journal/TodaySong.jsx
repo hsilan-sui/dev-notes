@@ -320,7 +320,7 @@ export default function TodaySong() {
         onChange={(event) => chooseDay(Number(event.target.value))}
       >
         {songsByDate.map((item, i) => (
-          <option key={item.date} value={i}>
+          <option key={`${item.date}-${item.youtubeId || item.src}`} value={i}>
             {`${item.date === todayKey ? '今天' : shortDate(item.date)}　${item.title} — ${item.artist}`}
           </option>
         ))}
