@@ -38,7 +38,7 @@ export default function SignalDeleteButton({writtenAt, onDelete}) {
       <svg viewBox="0 0 12 12" aria-hidden="true">
         <path d="M2.5 3.5h7M5 3.5V2.5h2v1M3.5 3.5l.5 6h4l.5-6M5.2 5.2v2.8M6.8 5.2v2.8" />
       </svg>
-      <span aria-hidden="true">{left}</span>
+      <span aria-hidden="true">{left}s</span>
     </button>
   );
 }

@@ -8,13 +8,14 @@
   border: 0;
   border-radius: var(--journal-radius-pill);
   background: transparent;
-  opacity: 0.75;
+  opacity: 0.85;
   cursor: pointer;
 }
 
-/* Doubled class: stays small and light inside sheets that set `button { font: inherit }`. */
+/* Doubled class: stays small inside sheets that set `button { font: inherit }`.
+   Red, like a signal still in flight: it can be taken back for a little while. */
 .button.button {
-  color: var(--journal-ink-secondary);
+  color: var(--journal-signal);
   font-family: var(--journal-font-mono), ui-monospace, monospace;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
@@ -30,7 +31,7 @@
 
 .button.button:hover,
 .button.button:focus-visible {
-  color: var(--journal-ink);
+  color: #9e3416;
   opacity: 1;
 }
 

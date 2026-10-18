@@ -1,0 +1,26 @@
+.link,
+.plain {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.link {
+  color: var(--journal-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: 2px;
+}
+
+.plain {
+  color: var(--journal-ink-secondary);
+}
+
+.mark {
+  margin-left: 2px;
+  font-size: 0.85em;
+  text-decoration: none;
+}

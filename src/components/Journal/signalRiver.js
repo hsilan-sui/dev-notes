@@ -81,3 +81,13 @@ export function saveOwnTone(tone, current) {
   }
   return next;
 }
+
+// Links in a signal: each counts as LINK_WEIGHT characters toward the 40 (the
+// API counts the same way), and a whole signal is at most SIGNAL_RAW_MAX long.
+export const LINK_WEIGHT = 10;
+export const SIGNAL_RAW_MAX = 400;
+export const LINK_PATTERN = /https?:\/\/[^\s<>"'「」『』（）。，、！？]+/giu;
+
+export function signalLength(text) {
+  return splitGraphemes(text.replace(LINK_PATTERN, 'x'.repeat(LINK_WEIGHT))).length;
+}

@@ -342,6 +342,7 @@ export default function SignalRiver({onSelectDay}) {
         const saved = await response.json();
         signal.id = saved.id;
         signal.writtenAt = saved.createdAt;
+        signal.links = saved.links || [];
         seenSignalIds.current.add(signal.id);
         setApiStatus('connected');
       } catch {
@@ -360,7 +361,7 @@ export default function SignalRiver({onSelectDay}) {
       // A private window just keeps the hint.
     }
     setWriteHint(false);
-    setBank(bank, {phase: 'sent', signal: null, lastSent: text, replyToId: null});
+    setBank(bank, {phase: 'sent', signal: null, lastSent: text, replyToId: null, floating: false});
     const other = OTHER[bank];
     // The far bank wakes to full size while the signal is on its way.
     setBanks((current) =>
@@ -385,13 +386,13 @@ export default function SignalRiver({onSelectDay}) {
     return true;
   }
 
-  function beginCompose(bank, replyToId) {
+  function beginCompose(bank, replyToId, floating = false) {
     replyHintAtRef.current = {};
     setBanks(current => {
       const other = OTHER[bank];
       return {...current,
-        [other]: {...current[other], phase: current[other].phase === 'compose' ? 'idle' : current[other].phase, replyHint: false},
-        [bank]: {...current[bank], phase: 'compose', replyHint: false, replyToId: replyToId || null},
+        [other]: {...current[other], phase: current[other].phase === 'compose' ? 'idle' : current[other].phase, replyHint: false, floating: false},
+        [bank]: {...current[bank], phase: 'compose', replyHint: false, replyToId: replyToId || null, floating},
       };
     });
   }
@@ -424,10 +425,13 @@ export default function SignalRiver({onSelectDay}) {
     return true;
   }
 
+  // A reply chosen in 訊號光年 is written on the pager across the river from
+  // the thread's last voice. On desktop that pager floats up over the panel,
+  // with its keyboard, so the reader never leaves the thread.
   function replyFromHistory(entry) {
     if (flightRef.current) return;
     const bank = replyBankFor(entry);
-    flushSync(() => beginCompose(bank, entry.id));
+    flushSync(() => beginCompose(bank, entry.id, !coarse));
     pagerRefs[bank]?.querySelector('input')?.focus({preventScroll: true});
   }
 
@@ -435,8 +439,11 @@ export default function SignalRiver({onSelectDay}) {
   const memory = history.flatMap(entry => [entry, ...(entry.replies || [])])
     .filter(signal => signal.id !== 'first-arrival')
     .sort((a, b) => a.writtenAt - b.writtenAt);
+  // A pager remembers only the pages it received — the ones sent from the
+  // other bank — so 「讀」 then 「回一句」 always answers across the river.
+  const memoryFor = bank => memory.filter(signal => signal.from !== bank);
   // The page a pager replays when it lights up by itself: the last one it got.
-  const echoFor = bank => [...memory].reverse().find(signal => signal.from !== bank) || memory.at(-1) || null;
+  const echoFor = bank => memoryFor(bank).at(-1) || null;
 
   const isSmall = (bank) =>
     bank === 'today' && banks.today.phase === 'idle' && !banks.today.awaiting && !banks.today.replyHint;
@@ -453,7 +460,8 @@ export default function SignalRiver({onSelectDay}) {
         const state = banks[bank];
         const ledOn = ['incoming', 'preview', 'waiting'].includes(state.phase);
         return (
-          <div key={bank} className={styles[bank]} data-composing={state.phase === 'compose' ? '' : undefined}>
+          <div key={bank} className={styles[bank]} data-composing={state.phase === 'compose' ? '' : undefined}
+            data-floating={state.floating && state.phase === 'compose' ? '' : undefined}>
             <SignalPager
               ref={(element) => {
                 pagerRefs[bank] = element;
@@ -462,7 +470,7 @@ export default function SignalRiver({onSelectDay}) {
               gray={bank === 'today'}
               small={isSmall(bank)}
               lcd={lcdFor(bank, state, clock, apiStatus, t)}
-              memory={memory}
+              memory={memoryFor(bank)}
               echoSignal={echoFor(bank)}
               led={ledOn}
               phase={state.phase}
@@ -493,7 +501,8 @@ export default function SignalRiver({onSelectDay}) {
               onCloseSlip={() => setBank(bank, {phase: 'idle', signal: null})}
               busy={sending}
               onWrite={reply => beginCompose(bank, reply ? state.signal?.threadId || state.signal?.id : null)}
-              onCancel={() => setBank(bank, {phase: state.signal ? 'waiting' : 'idle', replyToId: null})}
+              floating={Boolean(state.floating) && state.phase === 'compose'}
+              onCancel={() => setBank(bank, {phase: state.signal ? 'waiting' : 'idle', replyToId: null, floating: false})}
               onRelease={(text, tone) => release(bank, text, tone)}
               onPreviewEnd={() =>
                 setBanks((current) =>
@@ -507,6 +516,8 @@ export default function SignalRiver({onSelectDay}) {
           </div>
         );
       })}
+      {BANKS.some(bank => banks[bank].floating && banks[bank].phase === 'compose')
+        ? <div className={styles.floatBackdrop} aria-hidden="true" /> : null}
       {apiStatus !== 'connected' ? (
         <span className={styles.connectionStatus} role="status">
           {apiStatus === 'connecting'

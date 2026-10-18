@@ -2,7 +2,8 @@ import {forwardRef, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {flushSync} from 'react-dom';
 import clsx from 'clsx';
 import lockJournalScroll from './lockJournalScroll';
-import {SIGNAL_MAX_LENGTH, TONE_MAX_LENGTH, clampGraphemes, loadOwnTones, saveOwnTone, splitGraphemes} from './signalRiver.js';
+import {SIGNAL_MAX_LENGTH, SIGNAL_RAW_MAX, TONE_MAX_LENGTH, clampGraphemes, loadOwnTones, saveOwnTone, signalLength, splitGraphemes} from './signalRiver.js';
+import SignalText from './SignalText.jsx';
 import {PRESET_TONES, toneLabel, useSignalLang} from './signalI18n.js';
 import SignalDeleteButton from './SignalDeleteButton.jsx';
 import styles from './SignalPager.module.css';
@@ -31,6 +32,25 @@ const ZHUYIN = {
   KeyZ: 'ㄈ', KeyX: 'ㄌ', KeyC: 'ㄏ', KeyV: 'ㄒ', KeyB: 'ㄖ', KeyN: 'ㄙ', KeyM: 'ㄩ', Comma: 'ㄝ', Period: 'ㄡ', Slash: 'ㄥ',
   Digit1: 'ㄅ', Digit2: 'ㄉ', Digit3: 'ˇ', Digit4: 'ˋ', Digit5: 'ㄓ', Digit6: 'ˊ', Digit7: '˙', Digit8: 'ㄚ', Digit9: 'ㄞ', Digit0: 'ㄢ', Minus: 'ㄦ',
 };
+// 日本語: JIS kana layout. 한국어: 두벌식 (2-set) jamo. Both are typed by the
+// visitor's own input method; the keys only show where things are.
+const KANA = {
+  KeyQ: 'た', KeyW: 'て', KeyE: 'い', KeyR: 'す', KeyT: 'か', KeyY: 'ん', KeyU: 'な', KeyI: 'に', KeyO: 'ら', KeyP: 'せ',
+  KeyA: 'ち', KeyS: 'と', KeyD: 'し', KeyF: 'は', KeyG: 'き', KeyH: 'く', KeyJ: 'ま', KeyK: 'の', KeyL: 'り', Semicolon: 'れ',
+  KeyZ: 'つ', KeyX: 'さ', KeyC: 'そ', KeyV: 'ひ', KeyB: 'こ', KeyN: 'み', KeyM: 'も', Comma: 'ね', Period: 'る', Slash: 'め',
+  Digit1: 'ぬ', Digit2: 'ふ', Digit3: 'あ', Digit4: 'う', Digit5: 'え', Digit6: 'お', Digit7: 'や', Digit8: 'ゆ', Digit9: 'よ', Digit0: 'わ', Minus: 'ほ',
+};
+const HANGUL = {
+  KeyQ: 'ㅂ', KeyW: 'ㅈ', KeyE: 'ㄷ', KeyR: 'ㄱ', KeyT: 'ㅅ', KeyY: 'ㅛ', KeyU: 'ㅕ', KeyI: 'ㅑ', KeyO: 'ㅐ', KeyP: 'ㅔ',
+  KeyA: 'ㅁ', KeyS: 'ㄴ', KeyD: 'ㅇ', KeyF: 'ㄹ', KeyG: 'ㅎ', KeyH: 'ㅗ', KeyJ: 'ㅓ', KeyK: 'ㅏ', KeyL: 'ㅣ',
+  KeyZ: 'ㅋ', KeyX: 'ㅌ', KeyC: 'ㅊ', KeyV: 'ㅍ', KeyB: 'ㅠ', KeyN: 'ㅜ', KeyM: 'ㅡ',
+};
+// Layers whose letters come from the visitor's input method.
+const IME_KEYS = {zh: ZHUYIN, ja: KANA, ko: HANGUL};
+// Each BB Call language opens on its own keyboard.
+const NATIVE_LAYER = {'zh-Hant': 'zh', ja: 'ja', ko: 'ko', en: 'en', es: 'en', vi: 'en'};
+const IME_TOGGLE = {zh: '中', ja: 'あ', ko: '한'};
+
 // Grouped by feeling, so a row reads like one mood: faces, hearts, sky and sea,
 // seasons, the city at night, small things in a day, music and hands, little
 // signals, then people of every skin tone, creatures, food and the wide world.
@@ -50,15 +70,20 @@ const EMOJI = [
 ];
 const letterRow = (letters) => [...letters].map((ch) => ({label: ch, code: `Key${ch}`}));
 const digitRow = [...'1234567890'].map((ch) => ({label: ch, code: `Digit${ch}`}));
+const qwertyIme = [
+  [...digitRow, {label: '-', code: 'Minus'}],
+  letterRow('QWERTYUIOP'),
+  [...letterRow('ASDFGHJKL'), {label: ';', code: 'Semicolon'}],
+  [...letterRow('ZXCVBNM'), {label: ',', code: 'Comma'}, {label: '.', code: 'Period'}, {label: '/', code: 'Slash'}],
+];
 const LAYERS = {
   emoji: Array.from({length: EMOJI.length / 10}, (_, index) => EMOJI.slice(index * 10, index * 10 + 10).map(label => ({label}))),
-  zh: [
-    [...digitRow, {label: '-', code: 'Minus'}],
-    letterRow('QWERTYUIOP'),
-    [...letterRow('ASDFGHJKL'), {label: ';', code: 'Semicolon'}],
-    [...letterRow('ZXCVBNM'), {label: ',', code: 'Comma'}, {label: '.', code: 'Period'}, {label: '/', code: 'Slash'}],
-  ],
+  zh: qwertyIme,
+  ja: qwertyIme,
+  ko: qwertyIme,
   en: [digitRow, letterRow('QWERTYUIOP'), letterRow('ASDFGHJKL'), letterRow('ZXCVBNM')],
+  // Español: the same letters plus ñ.
+  es: [digitRow, letterRow('QWERTYUIOP'), [...letterRow('ASDFGHJKL'), {label: 'Ñ'}], letterRow('ZXCVBNM')],
   num: [
     digitRow,
     [...'，。？！、：；'].map((label) => ({label})).concat({label: '……'}),
@@ -94,6 +119,7 @@ const SignalPager = forwardRef(function SignalPager(
     writeHint,
     replyHint,
     coarse,
+    floating,
     busy,
     onRead,
     onCloseSlip,
@@ -107,15 +133,20 @@ const SignalPager = forwardRef(function SignalPager(
   },
   ref,
 ) {
-  const {t} = useSignalLang();
+  const {lang, t} = useSignalLang();
   const inputRef = useRef(null);
   const writeRef = useRef(null);
   const sheetRef = useRef(null);
   const browseTimer = useRef(null);
+  const buzzTimer = useRef(null);
   const [text, setText] = useState('');
   const [composing, setComposing] = useState(false);
   const [composition, setComposition] = useState('');
-  const [layer, setLayer] = useState('zh');
+  const nativeLayer = NATIVE_LAYER[lang] || 'zh';
+  // Spanish shows its ñ on the letter layer.
+  const letterLayer = lang === 'es' ? 'es' : 'en';
+  const [layer, setLayer] = useState(nativeLayer);
+  const imeLayer = Boolean(IME_KEYS[layer]);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [shift, setShift] = useState(false);
   const [litKey, setLitKey] = useState(null);
@@ -127,11 +158,15 @@ const SignalPager = forwardRef(function SignalPager(
   const [buzz, setBuzz] = useState(false);
   const isComposeMode = phase === 'compose';
   const sheet = isComposeMode && coarse;
-  const count = splitGraphemes(text).length;
+  // A link counts as ten characters, so pasting one never eats the message.
+  const count = signalLength(text);
+  const tooLong = count > SIGNAL_MAX_LENGTH;
   // While the IME is composing, unconfirmed 注音 is not counted yet.
   const [committedCount, setCommittedCount] = useState(0);
 
   useEffect(() => setOwnTones(loadOwnTones()), []);
+  // Switching the BB Call language switches the keyboard with it.
+  useEffect(() => setLayer(nativeLayer === 'en' ? letterLayer : nativeLayer), [nativeLayer, letterLayer]);
 
   useEffect(() => {
     if (!composing) {
@@ -151,9 +186,13 @@ const SignalPager = forwardRef(function SignalPager(
       return undefined;
     }
 
+    // The sheet rests near the top of what is visible: on iOS the keyboard
+    // shrinks the visual viewport and may scroll it, so follow its top edge.
     function sync() {
       const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
       sheetRef.current?.style.setProperty('--signal-keyboard-inset', `${inset}px`);
+      sheetRef.current?.style.setProperty('--signal-viewport-top', `${viewport.offsetTop}px`);
+      sheetRef.current?.style.setProperty('--signal-viewport-height', `${viewport.height}px`);
     }
 
     sync();
@@ -167,14 +206,19 @@ const SignalPager = forwardRef(function SignalPager(
 
   // A new page makes the whole pager buzz for a moment (and, where phones
   // allow it after a tap, really vibrate).
+  // Its timer belongs to the buzz, not to the phase: the page moves on to
+  // its preview before the buzz ends, and must not leave it switched on (or
+  // the next arrival could not start it again).
   useEffect(() => {
-    if (phase !== 'incoming') return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    setBuzz(true);
+    if (phase !== 'incoming') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    window.clearTimeout(buzzTimer.current);
+    setBuzz(false);
+    window.requestAnimationFrame(() => setBuzz(true));
     if (navigator.userActivation?.hasBeenActive) navigator.vibrate?.([90, 60, 90]);
-    const timer = window.setTimeout(() => setBuzz(false), 1300);
-    return () => window.clearTimeout(timer);
-  }, [phase]);
+    buzzTimer.current = window.setTimeout(() => setBuzz(false), 1400);
+  }, [phase, signal?.id]);
+  useEffect(() => () => window.clearTimeout(buzzTimer.current), []);
 
   // The occasional echo: only while idle, never for reduced motion.
   useEffect(() => {
@@ -218,7 +262,7 @@ const SignalPager = forwardRef(function SignalPager(
   }
 
   async function finishWriting(send) {
-    if (send && busy) return;
+    if (send && (busy || tooLong)) return;
     const message = text.trim();
     if (send && !message) {
       inputRef.current?.focus();
@@ -243,7 +287,12 @@ const SignalPager = forwardRef(function SignalPager(
     setEmojiOpen(false);
     inputRef.current?.blur();
     if (!send) flushSync(onCancel);
-    writeRef.current?.focus({preventScroll: true});
+    if (floating) {
+      // Back to 訊號光年, which is still open in front of this pager's home.
+      window.dispatchEvent(new CustomEvent('mytide:floating-done'));
+    } else {
+      writeRef.current?.focus({preventScroll: true});
+    }
   }
 
   function lightKey(code) {
@@ -255,7 +304,7 @@ const SignalPager = forwardRef(function SignalPager(
     const input = inputRef.current;
     const start = input.selectionStart ?? text.length;
     const end = input.selectionEnd ?? text.length;
-    const next = clampGraphemes(text.slice(0, start) + value + text.slice(end), SIGNAL_MAX_LENGTH);
+    const next = clampGraphemes(text.slice(0, start) + value + text.slice(end), SIGNAL_RAW_MAX);
     setText(next);
     input.focus();
     window.requestAnimationFrame(() => {
@@ -266,13 +315,13 @@ const SignalPager = forwardRef(function SignalPager(
 
   function pressKey(key) {
     lightKey(key.code ?? key.label);
-    if (layer === 'zh') {
+    if (imeLayer) {
       // Typing in any language belongs to the visitor's own input method.
       inputRef.current?.focus();
       return;
     }
 
-    insert(layer === 'en' && !shift ? key.label.toLowerCase() : key.label);
+    insert((layer === 'en' || layer === 'es') && !shift ? key.label.toLowerCase() : key.label);
     setShift(false);
   }
 
@@ -332,6 +381,8 @@ const SignalPager = forwardRef(function SignalPager(
     }
   }
 
+  // Where 😊 and 123 return to: the language's own keyboard.
+  const home = nativeLayer === 'en' ? letterLayer : nativeLayer;
   const mainIsWide = hasWide(display.main || '');
   const toneChips = [...PRESET_TONES, ...ownTones.filter(own => !PRESET_TONES.includes(own))];
   const tonePicker = (
@@ -371,6 +422,7 @@ const SignalPager = forwardRef(function SignalPager(
         sheet && styles.sheetMode,
         replyHint && styles.replyReady,
         buzz && styles.buzz,
+        floating && styles.floating,
       )}
       onKeyDown={handleKeyDown}
       data-phase={phase}
@@ -383,7 +435,7 @@ const SignalPager = forwardRef(function SignalPager(
             <div className={styles.lcdSub}>
               <Bars count={display.bars ?? 5} />
               <span className={clsx(styles.status, hasWide(display.status || '') && styles.statusWide)}>
-                {isComposeMode ? `${committedCount}/${SIGNAL_MAX_LENGTH}` : display.status}
+                {isComposeMode ? `${tooLong ? '! ' : ''}${committedCount}/${SIGNAL_MAX_LENGTH}` : display.status}
               </span>
               <span className={styles.clock}>{isComposeMode ? '' : display.clock}</span>
               <span className={styles.battery} aria-hidden="true" />
@@ -403,11 +455,11 @@ const SignalPager = forwardRef(function SignalPager(
                 aria-hidden={isComposeMode ? undefined : true}
                 tabIndex={isComposeMode ? 0 : -1}
                 readOnly={!isComposeMode}
-                onChange={event => setText(composing ? event.target.value : clampGraphemes(event.target.value, SIGNAL_MAX_LENGTH))}
+                onChange={event => setText(composing ? event.target.value : clampGraphemes(event.target.value, SIGNAL_RAW_MAX))}
                 onCompositionStart={() => setComposing(true)}
                 onCompositionUpdate={(event) => setComposition(event.data)}
                 onCompositionEnd={event => {
-                  setText(clampGraphemes(event.currentTarget.value, SIGNAL_MAX_LENGTH));
+                  setText(clampGraphemes(event.currentTarget.value, SIGNAL_RAW_MAX));
                   setComposing(false);
                   setComposition('');
                 }}
@@ -490,7 +542,7 @@ const SignalPager = forwardRef(function SignalPager(
               type="button"
               className={styles.release}
               onClick={() => finishWriting(true)}
-              disabled={!text.trim() || composing || busy}
+              disabled={!text.trim() || composing || busy || tooLong}
             >
               {t.pager.release}
             </button>
@@ -520,7 +572,7 @@ const SignalPager = forwardRef(function SignalPager(
             {ownSignal ? <SignalDeleteButton writtenAt={ownSignal.writtenAt} onDelete={onDeleteOwn} /> : null}
           </div>
           <p className={styles.slipText} dir="auto">
-            {signal.text}
+            <SignalText text={signal.text} links={signal.links} />
             {/* 「出自」 follows the sentence wherever it ends. */}
             {signal.source ? (
               <button type="button" className={styles.slipSource} onClick={() => onSource(signal.source)}>
@@ -540,7 +592,7 @@ const SignalPager = forwardRef(function SignalPager(
       {isComposeMode && !coarse ? (
         <div className={styles.keyboard}>
           {tonePicker}
-          {layer === 'zh' ? (
+          {imeLayer || lang === 'vi' ? (
             <div className={styles.candidates} aria-live="polite">
               {composition ? <span className={styles.composition}>{composition}</span> : t.pager.imeHint}
             </div>
@@ -576,7 +628,7 @@ const SignalPager = forwardRef(function SignalPager(
             </div>
           ) : LAYERS[layer].map((row, rowIndex) => (
             <div className={styles.keyRow} key={`${layer}-${rowIndex}`}>
-              {rowIndex === 3 && (layer === 'zh' || layer === 'en') ? (
+              {rowIndex === 3 && layer !== 'num' ? (
                 <button
                   type="button"
                   tabIndex={-1}
@@ -595,12 +647,12 @@ const SignalPager = forwardRef(function SignalPager(
                   className={clsx(styles.key, litKey === (key.code ?? key.label) && styles.keyLit)}
                   onClick={() => pressKey(key)}
                 >
-                  {layer === 'zh' && key.code ? (
+                  {imeLayer && key.code ? (
                     <>
                       <span className={styles.keySub}>{key.label}</span>
-                      <span>{ZHUYIN[key.code]}</span>
+                      <span>{IME_KEYS[layer][key.code] || key.label}</span>
                     </>
-                  ) : layer === 'en' && !shift ? key.label.toLowerCase() : key.label}
+                  ) : (layer === 'en' || layer === 'es') && !shift ? key.label.toLowerCase() : key.label}
                 </button>
               ))}
               {rowIndex === 3 ? (
@@ -618,20 +670,22 @@ const SignalPager = forwardRef(function SignalPager(
           ))}
           <div className={styles.keyRow}>
             <button type="button" className={clsx(styles.key, styles.keyMode, layer === 'emoji' && styles.keyOn)}
-              aria-label={t.pager.chooseEmoji} aria-pressed={layer === 'emoji'} onClick={() => setLayer(value => value === 'emoji' ? 'zh' : 'emoji')}>😊</button>
-            <button
-              type="button"
-              tabIndex={-1}
-              className={clsx(styles.key, styles.keyMode, (layer === 'zh' || layer === 'en') && styles.keyOn)}
-              onClick={() => setLayer(layer === 'zh' ? 'en' : 'zh')}
-            >
-              {layer === 'en' ? t.pager.layerEn : t.pager.layerZh}
-            </button>
+              aria-label={t.pager.chooseEmoji} aria-pressed={layer === 'emoji'} onClick={() => setLayer(value => value === 'emoji' ? home : 'emoji')}>😊</button>
+            {IME_KEYS[nativeLayer] ? (
+              <button
+                type="button"
+                tabIndex={-1}
+                className={clsx(styles.key, styles.keyMode, (layer === nativeLayer || layer === letterLayer) && styles.keyOn)}
+                onClick={() => setLayer(layer === nativeLayer ? letterLayer : nativeLayer)}
+              >
+                {layer === nativeLayer ? IME_TOGGLE[nativeLayer] : 'EN'}
+              </button>
+            ) : null}
             <button
               type="button"
               tabIndex={-1}
               className={clsx(styles.key, styles.keyMode, layer === 'num' && styles.keyOn)}
-              onClick={() => setLayer(layer === 'num' ? 'zh' : 'num')}
+              onClick={() => setLayer(layer === 'num' ? home : 'num')}
             >
               123
             </button>
@@ -639,9 +693,9 @@ const SignalPager = forwardRef(function SignalPager(
               type="button"
               tabIndex={-1}
               className={clsx(styles.key, styles.keySpace, litKey === 'Space' && styles.keyLit)}
-              onClick={() => (layer === 'zh' ? inputRef.current?.focus() : insert(' '))}
+              onClick={() => (imeLayer ? inputRef.current?.focus() : insert(' '))}
             >
-              {layer === 'zh' ? t.pager.spaceIme : t.pager.space}
+              {imeLayer ? t.pager.spaceIme : t.pager.space}
             </button>
             <button type="button" className={clsx(styles.key, styles.keyMode)} onClick={() => finishWriting(false)}>
               {t.pager.fold}
@@ -650,7 +704,7 @@ const SignalPager = forwardRef(function SignalPager(
               type="button"
               className={clsx(styles.key, styles.keyRelease)}
               onClick={() => finishWriting(true)}
-              disabled={!text.trim() || composing || busy}
+              disabled={!text.trim() || composing || busy || tooLong}
             >
               {t.pager.release}
             </button>

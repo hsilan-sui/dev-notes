@@ -1,19 +1,19 @@
 // The sky behind 訊號光年: each signal sits on the colour of the hour it was
-// sent — paper-warm mornings, pale afternoons, an amber-to-rose dusk, and a
-// deep blue night with stars. Hours are the reader's local time.
+// sent — a rose dawn, blue sky from half past seven, an amber-to-rose dusk,
+// and a deep blue night with stars. Hours are the reader's local time.
 const STOPS = [
   [0, '#161C36'],
   [3.6, '#1E2645'],
   [4.6, '#3A4270'],
-  [5.3, '#9C8798'],
-  [5.9, '#E8B9A0'],
-  [6.8, '#EFDCC8'],
-  [8, '#EFE8DC'],
-  [10, '#F5F1E9'],
-  [12.5, '#F4F3EF'],
-  [15.5, '#EEEFEC'],
-  [16.7, '#EEE6D8'],
-  [17.4, '#F1D2AC'],
+  [5.3, '#8E87A8'],
+  [5.9, '#D9B8B4'],
+  [6.8, '#CFD6E6'],
+  [7.5, '#BFD9EE'],
+  [10, '#A9CDEB'],
+  [12.5, '#9FC7EA'],
+  [15.5, '#ABCDE8'],
+  [16.7, '#C4D3E2'],
+  [17.4, '#E9CDB0'],
   [17.9, '#ECB487'],
   [18.3, '#DE9A86'],
   [18.8, '#B2899A'],

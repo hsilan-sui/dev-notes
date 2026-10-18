@@ -4,6 +4,12 @@
 
 const MAX_TEXT_ELEMENTS = 40;
 const MAX_TONE_ELEMENTS = 5;
+// A link counts as this many characters toward the 40 (like a short link),
+// and a whole signal may be at most MAX_RAW_LENGTH characters long.
+const LINK_WEIGHT = 10;
+const MAX_RAW_LENGTH = 400;
+const MAX_LINKS = 3;
+const LINK_PATTERN = /https?:\/\/[^\s<>"'「」『』（）。，、！？]+/giu;
 const RECENT_THREAD_LIMIT = 100;
 const WRITES_PER_MINUTE = 10;
 // How long a writer can take back their own signal.
@@ -41,7 +47,7 @@ async function route(request, env) {
   }
 
   if (pathname === '/api/signals' && request.method === 'GET') {
-    return json(await listRecent(env.DB));
+    return json(await listRecent(env.DB, env));
   }
 
   if (pathname === '/api/signals' && request.method === 'POST') {
@@ -60,16 +66,25 @@ async function route(request, env) {
   return json({error: 'not found'}, 404);
 }
 
-async function listRecent(db) {
+async function listRecent(db, env) {
   const {results} = await db.prepare(`
     WITH recent AS (
       SELECT id FROM signals WHERE thread_id IS NULL
       ORDER BY created_at DESC, id DESC LIMIT ?1
     )
-    SELECT id, thread_id, text, from_bank, tone, created_at, departed, source_title, source_day_key
+    SELECT id, thread_id, text, from_bank, tone, links, created_at, departed, source_title, source_day_key
     FROM signals
     WHERE id IN (SELECT id FROM recent) OR thread_id IN (SELECT id FROM recent)
     ORDER BY created_at, id`).bind(RECENT_THREAD_LIMIT).all();
+
+  // Signals sent before links were checked: check them once now and keep the result.
+  // (match, not test: the pattern is global, and test() would carry lastIndex over.)
+  const unchecked = results.filter(row => row.links === null && row.text.match(LINK_PATTERN)).slice(0, 5);
+  for (const row of unchecked) {
+    const links = await checkLinks(row.text);
+    row.links = JSON.stringify(links);
+    await db.prepare('UPDATE signals SET links = ?1 WHERE id = ?2').bind(row.links, row.id).run();
+  }
 
   const threads = [];
   const byId = new Map();
@@ -80,6 +95,7 @@ async function listRecent(db) {
       text: row.text,
       from: row.from_bank,
       tone: row.tone ?? '說',
+      links: row.links ? JSON.parse(row.links) : [],
       writtenAt: row.created_at,
       departed: row.departed,
       source: row.source_title && row.source_day_key ? {title: row.source_title, dayKey: row.source_day_key} : null,
@@ -129,11 +145,13 @@ async function createSignal(request, env) {
 
   const createdAt = Date.now();
   const deleteKeyHash = body.deleteKey ? await sha256Hex(body.deleteKey) : null;
+  const links = await checkLinks(text);
   await env.DB.prepare(`
-    INSERT INTO signals (id, thread_id, text, from_bank, tone, created_at, departed, delete_key_hash)
-    VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'today', ?7)`).bind(id, threadId, text, body.from, tone, createdAt, deleteKeyHash).run();
+    INSERT INTO signals (id, thread_id, text, from_bank, tone, links, created_at, departed, delete_key_hash)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'today', ?8)`)
+    .bind(id, threadId, text, body.from, tone, links.length ? JSON.stringify(links) : null, createdAt, deleteKeyHash).run();
 
-  return json({id, createdAt}, 201);
+  return json({id, createdAt, links}, 201);
 }
 
 // Two ways to remove a signal (and its replies):
@@ -175,12 +193,54 @@ function validate(body) {
 
   const text = clean(body.text);
   if (!text) return {error: '請先寫下一句話'};
-  if ([...segmenter.segment(text)].length > MAX_TEXT_ELEMENTS) return {error: `訊號最多 ${MAX_TEXT_ELEMENTS} 個字`};
+  if (text.length > MAX_RAW_LENGTH) return {error: '訊號太長了'};
+  if ((text.match(LINK_PATTERN) || []).length > MAX_LINKS) return {error: `一則訊號最多 ${MAX_LINKS} 個網址`};
+  if (signalLength(text) > MAX_TEXT_ELEMENTS) return {error: `訊號最多 ${MAX_TEXT_ELEMENTS} 個字`};
 
   const tone = body.tone == null ? '說' : clean(body.tone);
   if (!tone || /[\s<>]|https?:|www\./iu.test(tone)) return {error: '語氣格式無效'};
   if ([...segmenter.segment(tone)].length > MAX_TONE_ELEMENTS) return {error: `語氣最多 ${MAX_TONE_ELEMENTS} 個字`};
   return {text, tone};
+}
+
+// What a reader sees as the length: one character per grapheme, a link as LINK_WEIGHT.
+function signalLength(text) {
+  return [...segmenter.segment(text.replace(LINK_PATTERN, 'x'.repeat(LINK_WEIGHT)))].length;
+}
+
+// Is a link safe to offer? Only plain https to a real domain that Cloudflare's
+// malware- and phishing-blocking resolver (1.1.1.2) does not block. Anything
+// we cannot confirm is not offered as a link.
+async function checkLinks(text) {
+  const found = [...new Set(text.match(LINK_PATTERN) || [])].slice(0, MAX_LINKS);
+  return Promise.all(found.map(async url => ({url, safe: await isSafeLink(url)})));
+}
+
+async function isSafeLink(raw) {
+  let url;
+  try {
+    url = new URL(raw);
+  } catch {
+    return false;
+  }
+  const host = url.hostname.toLowerCase();
+  if (url.protocol !== 'https:' || url.username || url.password) return false;
+  if (/^[\d.]+$/.test(host) || host.includes(':') || !host.includes('.')) return false;
+  // Punycode labels can imitate familiar names (xn--…).
+  if (host.split('.').some(label => label.startsWith('xn--'))) return false;
+  try {
+    const response = await fetch(`https://security.cloudflare-dns.com/dns-query?name=${encodeURIComponent(host)}&type=A`, {
+      headers: {Accept: 'application/dns-json'},
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!response.ok) return false;
+    const answer = await response.json();
+    const records = (answer.Answer || []).filter(record => record.type === 1);
+    // Blocked domains resolve to 0.0.0.0; unknown ones do not resolve at all.
+    return answer.Status === 0 && records.length > 0 && !records.some(record => record.data === '0.0.0.0');
+  } catch {
+    return false;
+  }
 }
 
 // One quiet line: drop control characters, line breaks and bidirectional

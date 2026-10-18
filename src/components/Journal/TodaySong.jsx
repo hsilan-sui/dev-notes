@@ -9,7 +9,9 @@ const VOLUME_STEPS = 6;
 const YOUTUBE_ORIGIN = 'https://www.youtube-nocookie.com';
 const CORNER_KEY = 'mytide.tv.corner';
 const CORNERS = ['br', 'bl', 'tr', 'tl'];
-const phoneQuery = '(max-width: 596px)';
+// Below this width the hero is too tight for a floating TV: the player opens
+// inline instead, in the page, where it can cover nothing.
+const inlineQuery = '(max-width: 1180px)';
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
@@ -69,11 +71,10 @@ export default function TodaySong() {
   const resolvedSrc = useBaseUrl(song.src || '/');
   const src = song.src ? resolvedSrc : '';
 
-  // The mini TV: YouTube's player must stay fully visible and at least
-  // 200 × 200 while it plays, so instead of shrinking it, it can be moved to
-  // any corner (desktop and tablet), gets out of the way of open panels, and
-  // can be folded away — folding also pauses it.
-  const [minimized, setMinimized] = useState(false);
+  // The mini TV (desktop and tablet): YouTube's player must stay fully
+  // visible and at least 200 × 200 while it plays, so it is never shrunk or
+  // hidden; it can be moved to any corner and gets out of the way of open
+  // panels. On tablets and phones it opens inline, right under the strip.
   const [corner, setCorner] = useState('br');
   const [drag, setDrag] = useState(null);
   const [overlay, setOverlay] = useState(false);
@@ -86,43 +87,19 @@ export default function TodaySong() {
     } catch {
       // No storage: the TV starts in the lower right.
     }
-    const query = window.matchMedia(phoneQuery);
+    const query = window.matchMedia(inlineQuery);
     const sync = () => setPhone(query.matches);
     sync();
     query.addEventListener('change', sync);
     return () => query.removeEventListener('change', sync);
   }, []);
 
-  // Panels (訊號光年, 站內廣播) announce themselves; the TV steps aside, and on
-  // phones, where it would sit on top of them, it folds away (and pauses).
+  // Panels (訊號光年, 站內廣播) announce themselves; the TV steps aside.
   useEffect(() => {
-    function onOverlay(event) {
-      const open = Boolean(event.detail?.open);
-      setOverlay(open);
-      if (open && window.matchMedia(phoneQuery).matches) fold();
-    }
+    const onOverlay = (event) => setOverlay(Boolean(event.detail?.open));
     window.addEventListener('mytide:overlay', onOverlay);
     return () => window.removeEventListener('mytide:overlay', onOverlay);
-    // `fold` only sends a command and sets state.
   }, []);
-
-  // Phones: the TV is a bar along the bottom; the page makes room for it.
-  useEffect(() => {
-    if (!phone || !showEmbed || minimized) return undefined;
-    const previous = document.body.style.paddingBottom;
-    document.body.style.paddingBottom = '232px';
-    return () => { document.body.style.paddingBottom = previous; };
-  }, [phone, showEmbed, minimized]);
-
-  function fold() {
-    command('pauseVideo');
-    setMinimized(true);
-  }
-
-  function unfold() {
-    setMinimized(false);
-    window.setTimeout(() => command('playVideo'), 60);
-  }
 
   function startDrag(event) {
     if (phone || event.button !== 0 || event.target.closest('button, iframe')) return;
@@ -149,8 +126,41 @@ export default function TodaySong() {
     }
   }
 
-  // While a panel is open, a TV in the lower right moves to the lower left.
-  const shownCorner = overlay && corner === 'br' ? 'bl' : corner;
+  // Wide screens: the TV never sits on a BB Call, the language menu or the
+  // broadcast strip. If its corner is taken, it moves to the first free one.
+  const [freeCorner, setFreeCorner] = useState(null);
+  useEffect(() => {
+    if (!showEmbed || phone) return undefined;
+    const SIZE = {w: 224, h: 260};
+    const M = 24;
+    const rectFor = (name) => {
+      const top = name[0] === 't', left = name[1] === 'l';
+      const x = left ? M : window.innerWidth - M - SIZE.w;
+      const y = top ? M : window.innerHeight - M - SIZE.h;
+      return {left: x, top: y, right: x + SIZE.w, bottom: y + SIZE.h};
+    };
+    const hits = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    function settle() {
+      const blockers = [...document.querySelectorAll('[data-phase], [class*="lang"] select, [aria-label="站內廣播 Broadcast"]')]
+        .map(element => element.getBoundingClientRect())
+        .filter(rect => rect.width > 0 && rect.bottom > 0 && rect.top < window.innerHeight);
+      const wanted = overlay && corner === 'br' ? 'bl' : corner;
+      const order = [wanted, ...CORNERS.filter(name => name !== wanted)];
+      const free = order.find(name => !blockers.some(rect => hits(rectFor(name), rect)));
+      setFreeCorner(free || wanted);
+    }
+    settle();
+    let frame = 0;
+    const later = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(settle); };
+    window.addEventListener('scroll', later, {passive: true});
+    window.addEventListener('resize', later);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', later);
+      window.removeEventListener('resize', later);
+    };
+  }, [showEmbed, phone, corner, overlay]);
+  const shownCorner = drag ? corner : freeCorner || corner;
 
   // Resolve "today" on the client, so the static build never pins a date.
   useEffect(() => {
@@ -171,7 +181,6 @@ export default function TodaySong() {
       audioRef.current?.pause();
       command('pauseVideo');
       setShowEmbed(false);
-      setMinimized(false);
       setPlaying(false);
       setCurrent(0);
     }
@@ -253,10 +262,7 @@ export default function TodaySong() {
       if (!showEmbed) {
         // Opening the embed on the visitor's click starts it (autoplay=1).
         setShowEmbed(true);
-        setMinimized(false);
         setStarted(true);
-      } else if (minimized) {
-        unfold();
       } else {
         command(playing ? 'pauseVideo' : 'playVideo');
       }
@@ -325,6 +331,58 @@ export default function TodaySong() {
     </span>
   );
 
+  // One player, two homes: a corner of the screen on desktop and tablet,
+  // inline under the strip on phones.
+  const embedNode = showEmbed ? (
+    <div
+      ref={embedRef}
+      className={styles.embed}
+      role="region"
+      aria-label={`${heading}：YouTube 播放器`}
+      data-corner={phone ? undefined : shownCorner}
+      data-dragging={drag ? '' : undefined}
+      style={drag ? {left: drag.x, top: drag.y, right: 'auto', bottom: 'auto'} : undefined}
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
+      <span className={styles.embedGrip} aria-hidden="true" />
+      <button
+        type="button"
+        className={styles.embedClose}
+        aria-label="停止並關閉播放器"
+        onClick={() => {
+          setShowEmbed(false);
+          setPlaying(false);
+          setCurrent(0);
+        }}
+      >
+        ✕
+      </button>
+      <iframe
+        key={youtubeId}
+        ref={iframeRef}
+        src={`${YOUTUBE_ORIGIN}/embed/${youtubeId}?autoplay=1&enablejsapi=1&playsinline=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`}
+        title={`${label}（YouTube 官方音源）`}
+        allow="autoplay; encrypted-media; picture-in-picture"
+        referrerPolicy="strict-origin-when-cross-origin"
+        onLoad={() => {
+          iframeRef.current?.contentWindow?.postMessage(
+            JSON.stringify({event: 'listening', id: 'today-song', channel: 'widget'}),
+            YOUTUBE_ORIGIN,
+          );
+          command('setVolume', [Math.round(volume * 100)]);
+        }}
+      />
+      <p className={styles.embedCaption}>
+        {playing ? <Equalizer /> : null}
+        <span className={styles.embedTitle}>〈{song.title}〉— {song.artist}</span>
+        <span className={styles.embedDate}>{shortDate(song.date)}</span>
+      </p>
+    </div>
+  ) : null;
+
   return (
     <div className={styles.player}>
       <audio
@@ -354,6 +412,7 @@ export default function TodaySong() {
           </span>
         </button>
       </div>
+
 
       <div className={styles.full}>
         <div className={styles.titleRow}>
@@ -432,81 +491,18 @@ export default function TodaySong() {
           </div>
         </div>
         </div>
-        {showEmbed
+        {showEmbed && !phone
           ? createPortal(
               // Rendered on <body> so no clipping ancestor can hide the player.
-              <div className="journal-scope">
-                <div
-                  ref={embedRef}
-                  className={styles.embed}
-                  role="region"
-                  aria-label={`${heading}：YouTube 播放器`}
-                  data-corner={shownCorner}
-                  data-dragging={drag ? '' : undefined}
-                  hidden={minimized}
-                  style={drag ? {left: drag.x, top: drag.y, right: 'auto', bottom: 'auto'} : undefined}
-                  onPointerDown={startDrag}
-                  onPointerMove={moveDrag}
-                  onPointerUp={endDrag}
-                  onPointerCancel={endDrag}
-                >
-                  <span className={styles.embedGrip} aria-hidden="true" />
-                  <button type="button" className={styles.embedFold} aria-label="縮小並暫停" onClick={fold}>–</button>
-                  <button
-                    type="button"
-                    className={styles.embedClose}
-                    aria-label="停止並關閉播放器"
-                    onClick={() => {
-                      setShowEmbed(false);
-                      setMinimized(false);
-                      setPlaying(false);
-                      setCurrent(0);
-                    }}
-                  >
-                    ✕
-                  </button>
-                  <iframe
-                    key={youtubeId}
-                    ref={iframeRef}
-                    src={`${YOUTUBE_ORIGIN}/embed/${youtubeId}?autoplay=1&enablejsapi=1&playsinline=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`}
-                    title={`${label}（YouTube 官方音源）`}
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    onLoad={() => {
-                      iframeRef.current?.contentWindow?.postMessage(
-                        JSON.stringify({event: 'listening', id: 'today-song', channel: 'widget'}),
-                        YOUTUBE_ORIGIN,
-                      );
-                      command('setVolume', [Math.round(volume * 100)]);
-                    }}
-                  />
-                  <p className={styles.embedCaption}>
-                    {playing ? <Equalizer /> : null}
-                    <span className={styles.embedTitle}>〈{song.title}〉— {song.artist}</span>
-                    <span className={styles.embedDate}>{shortDate(song.date)}</span>
-                  </p>
-                  <span className={styles.embedActions}>
-                    <button type="button" onClick={fold}>– 縮小（暫停）</button>
-                    <button type="button" data-close="" onClick={() => {
-                      setShowEmbed(false);
-                      setMinimized(false);
-                      setPlaying(false);
-                      setCurrent(0);
-                    }}>✕ 關閉</button>
-                  </span>
-                </div>
-                {minimized ? (
-                  <button type="button" className={styles.pill} data-corner={shownCorner} onClick={unfold}
-                    aria-label={`繼續播放：${label}`}>
-                    <span className={styles.pillPlay} aria-hidden="true">▶</span>
-                    <span>{song.title} — {song.artist}</span>
-                  </button>
-                ) : null}
-              </div>,
+              <div className="journal-scope">{embedNode}</div>,
               document.body,
             )
           : null}
       </div>
+      {/* Tablets and phones: the player opens in the page, right under the strip — not
+          floating over anything, clear of the browser's bottom bar. It scrolls
+          with the page like any embedded video; ✕ folds it back. */}
+      {showEmbed && phone ? embedNode : null}
     </div>
   );
 }

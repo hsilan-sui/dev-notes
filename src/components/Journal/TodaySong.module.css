@@ -285,10 +285,9 @@
   }
 }
 
-/* The mini TV. YouTube's player must stay fully visible and at least
-   200 × 200 while it plays, so it is never shrunk or covered: it rests in a
-   corner (draggable on desktop and tablet), above every panel, and folds
-   away into a pill — which also pauses it. */
+/* The mini TV (desktop and tablet). YouTube's player must stay fully visible
+   and at least 200 × 200 while it plays, so it is never shrunk, hidden or
+   covered: it rests in a corner (draggable), above every panel. */
 .embed {
   position: fixed;
   z-index: 1250;
@@ -301,10 +300,6 @@
   cursor: grab;
   touch-action: none;
   transition: left 240ms var(--journal-motion-ease), right 240ms var(--journal-motion-ease), top 240ms var(--journal-motion-ease), bottom 240ms var(--journal-motion-ease);
-}
-
-.embed[hidden] {
-  display: none;
 }
 
 .embed[data-dragging] {
@@ -364,11 +359,6 @@
   font: 13px var(--journal-font-pixel), monospace;
 }
 
-.embedActions {
-  display: none;
-}
-
-.embedFold,
 .embedClose {
   position: absolute;
   top: -14px;
@@ -388,11 +378,6 @@
   cursor: pointer;
 }
 
-.embedFold {
-  right: 26px;
-  background: #3b4046;
-}
-
 /* Loud on purpose: it must be found at once. */
 .embedClose {
   right: -14px;
@@ -400,62 +385,19 @@
 }
 
 /* Small to look at, comfortable to tap. */
-.embedFold::after,
 .embedClose::after {
   position: absolute;
   inset: -8px;
   content: '';
 }
 
-.embedFold:hover {
-  background: #26292e;
-}
-
 .embedClose:hover {
   background: #9e3416;
 }
 
-.embedFold:focus-visible,
-.embedClose:focus-visible,
-.embedActions button:focus-visible,
-.pill:focus-visible {
+.embedClose:focus-visible {
   outline: 2px solid var(--journal-accent);
   outline-offset: 2px;
-}
-
-/* Folded: a pill in the TV's corner; pressing it plays on from there. */
-.pill {
-  position: fixed;
-  z-index: 1250;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  max-width: calc(100vw - 32px);
-  padding: 0 16px 0 6px;
-  border: 0;
-  border-radius: var(--journal-radius-pill);
-  background: #2a2e33;
-  box-shadow: 0 8px 20px rgba(38, 41, 46, 0.3);
-  color: #eef1f3;
-  font: 600 13px var(--journal-font-body), 'Noto Sans TC', sans-serif;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.pill[data-corner='br'] { right: 24px; bottom: 24px; }
-.pill[data-corner='bl'] { left: 24px; bottom: 24px; }
-.pill[data-corner='tr'] { right: 24px; top: 24px; }
-.pill[data-corner='tl'] { left: 24px; top: 24px; }
-
-.pillPlay {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--journal-player-blue);
-  font-size: 11px;
 }
 
 .srOnly {
@@ -467,81 +409,65 @@
   white-space: nowrap;
 }
 
-@media screen and (max-width: 596px) {
-  .player {
-    width: 220px;
-  }
-
-  /* Phones: a mini player along the bottom, like a music app; the page
-     makes room for it. It never floats over the hero. */
+@media screen and (max-width: 1180px) {
+  /* Tablets and phones: the player opens inline, right under the strip —
+     part of the page, so it covers nothing and never meets a bottom bar. */
   .embed,
   .embed[data-corner] {
+    position: relative;
     top: auto;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: grid;
-    grid-template-columns: 200px minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
-    column-gap: 12px;
-    width: auto;
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    right: auto;
+    bottom: auto;
+    left: auto;
+    z-index: auto;
+    width: 200px;
+    margin: 12px auto 4px;
+    padding: 0;
     border-radius: 0;
-    background: linear-gradient(165deg, #343940, #22262a);
-    box-shadow: 0 -10px 24px rgba(38, 41, 46, 0.25);
+    background: none;
+    box-shadow: none;
     cursor: default;
+    touch-action: auto;
+    transition: none;
+    animation: journal-embed-open 220ms var(--journal-motion-ease);
+  }
+
+  @keyframes journal-embed-open {
+    from { opacity: 0; transform: translateY(-6px); }
   }
 
   .embed iframe {
-    grid-row: 1 / span 2;
+    border-radius: 2px;
+    outline: 1px solid rgba(169, 193, 214, 0.45);
   }
 
-  .embedGrip,
-  .embedFold,
-  .embedClose {
+  .embedGrip {
     display: none;
   }
 
   .embedCaption {
-    flex-wrap: wrap;
-    margin: 4px 0 0;
-    color: #eef1f3;
-    font-size: 14px;
-    white-space: normal;
+    justify-content: center;
+    color: var(--journal-ink-secondary);
+  }
+
+  .embedCaption .eq span {
+    background: var(--journal-player-blue-soft);
   }
 
   .embedDate {
-    margin-left: 0;
+    margin-left: 4px;
+    color: var(--journal-ink-secondary);
   }
 
-  .embedActions {
-    display: grid;
-    align-content: end;
-    gap: 8px;
+  .embedClose {
+    top: -12px;
+    right: -12px;
   }
+}
 
-  .embedActions button {
-    min-height: 40px;
-    border: 1px solid #4a5057;
-    border-radius: var(--journal-radius-pill);
-    background: #2a2e33;
-    color: #eef1f3;
-    font: 600 12px var(--journal-font-body), 'Noto Sans TC', sans-serif;
-    cursor: pointer;
-  }
-
-  .embedActions button[data-close] {
-    border-color: transparent;
-    background: var(--journal-signal);
-    color: #ffffff;
-  }
-
-  .pill,
-  .pill[data-corner] {
-    top: auto;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    left: auto;
+@media screen and (max-width: 596px) {
+  .player {
+    width: 220px;
   }
 
   .compactRow {
@@ -594,6 +520,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .embed,
+  .embed[data-corner] {
+    animation: none;
+  }
+
   .eq span {
     animation: none;
     transform: scaleY(0.7);

@@ -36,6 +36,21 @@
   transform-origin: top left;
 }
 
+/* A reply from 訊號光年 (desktop): the answering pager comes forward over
+   the panel; this dims what is behind it. */
+.past[data-floating],
+.today[data-floating] {
+  z-index: 1310;
+}
+
+.floatBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: rgba(38, 41, 46, 0.28);
+  pointer-events: auto;
+}
+
 /* BB Call's language, picked by the reader; it lasts for this visit only. */
 .lang {
   position: absolute;

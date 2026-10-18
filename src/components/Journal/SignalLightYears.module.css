@@ -31,10 +31,7 @@
 /* Real skies darken overhead and stay lighter toward the horizon. */
 .nightShade { background: linear-gradient(180deg, rgba(6, 9, 24, 0.55) 0%, rgba(6, 9, 24, 0.18) 45%, transparent 72%, rgba(255, 190, 140, 0.12) 100%); }
 .duskGlow { position: absolute; bottom: var(--axis); width: 420px; height: 55%; background: radial-gradient(ellipse 50% 70% at 50% 100%, rgba(244, 160, 110, 0.4), rgba(214, 140, 140, 0.16) 45%, transparent 75%); pointer-events: none; }
-.stars { bottom: calc(var(--axis) + 60px); overflow: hidden; }
-.starsA, .starsB { position: absolute; inset: 0; background-image: radial-gradient(1.5px 1.5px at 24px 36px, rgba(255, 255, 255, 0.9) 50%, transparent 51%), radial-gradient(1px 1px at 92px 118px, rgba(255, 255, 255, 0.75) 50%, transparent 51%), radial-gradient(1px 1px at 150px 64px, rgba(255, 255, 255, 0.6) 50%, transparent 51%), radial-gradient(2px 2px at 132px 150px, rgba(255, 246, 220, 0.95) 50%, transparent 51%), radial-gradient(1px 1px at 60px 170px, rgba(255, 255, 255, 0.7) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 176px 12px, rgba(220, 230, 255, 0.85) 50%, transparent 51%); background-size: 190px 190px; animation: journal-twinkle 3.6s ease-in-out infinite alternate; }
-.starsB { background-size: 230px 210px; background-position: 97px 61px; animation-duration: 5.2s; animation-delay: -2.4s; }
-@keyframes journal-twinkle { from { opacity: 0.35; } to { opacity: 1; } }
+.stars { width: 100%; height: calc(100% - var(--axis) - 60px); pointer-events: none; }
 
 .axis { position: absolute; left: 0; right: 0; bottom: var(--axis); height: 2px; background: var(--journal-accent); }
 .drop { position: absolute; top: calc(var(--lane) * (100% - var(--axis) - 170px) / 2 + 58px); bottom: var(--axis); width: 1px; background: rgba(92, 114, 133, 0.4); }
@@ -84,17 +81,10 @@
 .panel .replyAction:disabled { opacity: var(--journal-opacity-disabled-nav); cursor: default; }
 
 /* ── Phones: a list, newest first, each signal on the sky of its hour ─── */
-.strip { flex: 0 0 auto; padding: 0 var(--journal-space-md) var(--journal-space-xs); }
-.stripSky { position: relative; height: 32px; border-radius: 6px; }
-.stripDot { position: absolute; top: 12px; width: 8px; height: 8px; margin-left: -4px; box-sizing: border-box; border: 1.5px solid var(--journal-lightyears-paper); border-radius: 50%; background: var(--journal-accent); }
-.stripDot[data-unread] { background: var(--journal-signal); }
-.stripFrame { position: absolute; top: 2px; bottom: 2px; box-sizing: border-box; border: 1.5px solid var(--journal-lightyears-paper); border-radius: 5px; box-shadow: 0 0 0 1px rgba(38, 41, 46, 0.25); transition: left 200ms ease, width 200ms ease; }
-.stripLabels { display: flex; justify-content: space-between; margin-top: 4px; color: var(--journal-ink-secondary); font: 10px var(--journal-font-mono), monospace; }
-.now { color: var(--journal-signal); }
 .list { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
 .row { position: relative; padding: 4px var(--journal-space-md) 10px; background: linear-gradient(180deg, var(--sky), var(--sky-next)); }
-.row::before { position: absolute; inset: 0; background-image: radial-gradient(1.5px 1.5px at 24px 36px, rgba(255, 255, 255, 0.9) 50%, transparent 51%), radial-gradient(1px 1px at 92px 18px, rgba(255, 255, 255, 0.75) 50%, transparent 51%), radial-gradient(1px 1px at 150px 64px, rgba(255, 255, 255, 0.6) 50%, transparent 51%), radial-gradient(2px 2px at 300px 50px, rgba(255, 246, 220, 0.95) 50%, transparent 51%), radial-gradient(1px 1px at 240px 80px, rgba(255, 255, 255, 0.7) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 340px 12px, rgba(220, 230, 255, 0.85) 50%, transparent 51%); background-size: 360px 100px; content: ''; opacity: calc(var(--night) * 0.9); animation: journal-twinkle 4s ease-in-out infinite alternate; pointer-events: none; }
-.row > * { position: relative; }
+.rowStars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.row > :not(.rowStars) { position: relative; }
 .dayHead { margin: 8px 0 8px; color: var(--journal-accent); font: 600 11px var(--journal-font-mono), monospace; }
 .row[data-dark] .dayHead { color: #d5dae0; }
 .row .card { margin-top: 6px; }
@@ -118,6 +108,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .starsA, .starsB, .row::before { animation: none; }
-  .card, .stripFrame { transition: none; }
+  .card { transition: none; }
 }

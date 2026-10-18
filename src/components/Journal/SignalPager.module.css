@@ -341,6 +341,23 @@
 .writeButton {
   flex: 1 1 auto;
   border-radius: var(--journal-radius-pill);
+  /* A red ring that blinks like the 站內廣播 dot: this is where you speak. */
+  outline: 1.5px solid var(--journal-signal);
+  outline-offset: 1px;
+  animation: journal-write-ring 1.4s steps(1) infinite;
+}
+
+@keyframes journal-write-ring {
+  50% { outline-color: transparent; }
+}
+
+.writeButton.pillOn {
+  animation: none;
+}
+
+/* The first-visit hint keeps the same red blink rather than a second effect. */
+.writeButton.pillHint {
+  animation: journal-write-ring 1.4s steps(1) infinite;
 }
 
 .pill::after {
@@ -759,12 +776,16 @@ button.slipSource {
 
 .sheetMode .body {
   position: fixed;
-  right: 8px;
-  bottom: calc(var(--signal-keyboard-inset, 0px) + max(8px, env(safe-area-inset-bottom)));
-  left: 8px;
+  /* Near the top of the visible screen (above the keyboard), centred, never
+     wider than the screen. */
+  top: calc(var(--signal-viewport-top, 0px) + max(16px, env(safe-area-inset-top)));
+  right: 0;
+  left: 0;
   z-index: 1100;
-  width: auto;
-  max-height: calc(100dvh - var(--signal-keyboard-inset, 0px) - var(--journal-space-md));
+  width: min(340px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  margin: 0 auto;
+  max-height: calc(var(--signal-viewport-height, 100dvh) - 32px);
   overflow-y: auto;
   overscroll-behavior: contain;
   gap: 10px;
@@ -775,8 +796,8 @@ button.slipSource {
 
 .sheetMode .lcd {
   grid-template-rows: 18px 1fr;
-  height: 112px;
-  padding: 10px 12px;
+  height: 92px;
+  padding: 8px 12px;
 }
 
 .sheetMode .lcdMain {
@@ -840,7 +861,8 @@ button.slipSource {
       0 0 0 2px rgba(150, 175, 196, 0.45);
   }
 
-  .roundLit {
+  .roundLit,
+  .writeButton {
     animation: none;
   }
 
@@ -865,19 +887,46 @@ button.slipSource {
 .emojiPalette button { min-width: var(--journal-touch-target); min-height: var(--journal-touch-target); padding: 0; border: 1px solid var(--pager-edge); border-radius: 6px; background: var(--pager-key); font-size: 22px; cursor: pointer; }
 .emojiPalette button:focus-visible { outline: 2px solid var(--journal-accent); outline-offset: 2px; }
 
-/* A new page: a slight, short buzz — felt more than seen. */
+/* A new page: a short buzz, like a pager on a table — clear but not wild. */
 .buzz .body {
-  animation: journal-pager-buzz 0.6s linear 2;
+  animation: journal-pager-buzz 0.5s linear 2;
 }
 
 @keyframes journal-pager-buzz {
   0%, 100% { transform: none; }
-  15% { transform: rotate(-0.6deg) translateX(-0.8px); }
-  30% { transform: rotate(0.6deg) translateX(0.8px); }
-  45% { transform: rotate(-0.5deg) translateX(-0.6px); }
-  60% { transform: rotate(0.5deg) translateX(0.6px); }
-  75% { transform: rotate(-0.3deg); }
-  90% { transform: rotate(0.3deg); }
+  12% { transform: rotate(-1.4deg) translateX(-1.5px); }
+  25% { transform: rotate(1.4deg) translateX(1.5px); }
+  38% { transform: rotate(-1.1deg) translateX(-1.2px); }
+  50% { transform: rotate(1.1deg) translateX(1.2px); }
+  63% { transform: rotate(-0.7deg) translateX(-0.7px); }
+  76% { transform: rotate(0.7deg) translateX(0.7px); }
+  88% { transform: rotate(-0.3deg); }
+}
+
+/* Desktop reply from 訊號光年: the pager, with its keyboard, centred in
+   front of the panel. */
+.pager.floating {
+  position: fixed;
+  top: 88px;
+  left: 50%;
+  margin-left: -130px;
+  opacity: 1;
+  transform: none;
+  animation: journal-pager-float-in 240ms var(--journal-motion-ease);
+}
+
+@keyframes journal-pager-float-in {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
+.floating .keyboard,
+.gray.floating .keyboard {
+  right: auto;
+  left: -40px;
+}
+
+.floating .grips {
+  display: none;
 }
 
 /* 語氣: preset tones in their colours, a visitor's own in slate. */
@@ -1025,7 +1074,8 @@ button.slipSource {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .buzz .body {
+  .buzz .body,
+  .pager.floating {
     animation: none;
   }
 }

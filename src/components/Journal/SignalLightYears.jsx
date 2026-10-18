@@ -5,6 +5,8 @@ import lockJournalScroll from './lockJournalScroll';
 import SignalDeleteButton from './SignalDeleteButton.jsx';
 import {nightness, skyAt} from './signalSky.js';
 import {PRESET_TONES, toneLabel, useSignalLang} from './signalI18n.js';
+import SignalText from './SignalText.jsx';
+import Starfield from './Starfield.jsx';
 
 const MODEL = {past: 'MT01', today: 'MT02'};
 const OTHER = {past: 'today', today: 'past'};
@@ -76,7 +78,7 @@ function SignalCard({entry, open, unread, onToggle, ownSignals, onDeleteOwn, onS
         <Byline signal={entry} t={t} />
       </button>
       <p className={styles.text} dir="auto">
-        {entry.text}
+        <SignalText text={entry.text} links={entry.links} />
         {entry.source ? (
           <button type="button" className={styles.source} onClick={() => onSource(entry.source)}>
             —— {t.pager.source(entry.source.title)}
@@ -103,7 +105,7 @@ function SignalCard({entry, open, unread, onToggle, ownSignals, onDeleteOwn, onS
                         <SignalDeleteButton writtenAt={ownSignals[reply.id].writtenAt} onDelete={() => onDeleteOwn(reply.id)} />
                       ) : null}
                     </span>
-                    <p dir="auto">{reply.text}</p>
+                    <p dir="auto"><SignalText text={reply.text} links={reply.links} /></p>
                   </div>
                 ))}
               </div>
@@ -123,7 +125,6 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
   const mobile = useMobile();
   const [openId, setOpenId] = useState(null);
   const [closing, setClosing] = useState(false);
-  const [frame, setFrame] = useState([0.7, 1]);
   const panel = useRef(null);
   const scroller = useRef(null);
   const drag = useRef(null);
@@ -167,6 +168,13 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
     if (mobile) region.scrollTop = 0;
     else region.scrollLeft = region.scrollWidth;
   }, [mobile, entries.length]);
+
+  // After a reply written on a floating pager, focus comes back here.
+  useEffect(() => {
+    const regain = () => panel.current?.focus({preventScroll: true});
+    window.addEventListener('mytide:floating-done', regain);
+    return () => window.removeEventListener('mytide:floating-done', regain);
+  }, []);
 
   // A mouse wheel moves the river sideways, except inside a long reply list.
   useEffect(() => {
@@ -216,7 +224,10 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
     if (busy) return;
     // Opening the pager's input inside this click keeps mobile keyboards available.
     onReply(entry);
-    close(() => {});
+    // Desktop: the answering pager comes forward over this panel, which stays
+    // open so the reply lands in the thread right here. Phones fold the panel
+    // away for their writing sheet.
+    if (mobile) close(() => {});
   };
   const source = target => close(() => onSource(target));
   const replyCount = entries.reduce((sum, entry) => sum + entry.replies.length, 0);
@@ -249,20 +260,6 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
   }
   const endDrag = () => { drag.current = null; };
 
-  // Phones: where the visible part of the list sits on the little river above.
-  function syncFrame() {
-    const list = scroller.current;
-    if (!list || !entries.length) return;
-    const rows = Array.from(list.querySelectorAll('[data-index]'));
-    const top = list.scrollTop, bottom = top + list.clientHeight;
-    const visible = rows.filter(row => row.offsetTop + row.offsetHeight > top && row.offsetTop < bottom)
-      .map(row => Number(row.dataset.index));
-    if (!visible.length) return;
-    const last = Math.max(1, entries.length - 1);
-    setFrame([Math.min(...visible) / last, Math.max(...visible) / last]);
-  }
-  useEffect(() => { if (mobile) syncFrame(); }, [mobile, entries.length, openId]);
-
   const skyStops = (positions) => positions.map(([color, at]) => `${color} ${at}`).join(', ');
 
   let body;
@@ -270,30 +267,22 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
     body = <p className={styles.empty}>{t.years.empty}</p>;
   } else if (mobile) {
     const newestFirst = entries.map((entry, index) => ({entry, index})).reverse();
-    const stripStops = entries.map((entry, index) => [skyAt(entry.writtenAt), `${(index / Math.max(1, entries.length - 1)) * 100}%`]);
     body = (
       <>
-        <div className={styles.strip} aria-hidden="true">
-          <div className={styles.stripSky} style={{background: `linear-gradient(90deg, ${skyStops(stripStops)})`}}>
-            {entries.map((entry, index) => (
-              <span key={entry.id} className={styles.stripDot} data-unread={isUnread(entry) || undefined}
-                style={{left: `${(index / Math.max(1, entries.length - 1)) * 100}%`}} />
-            ))}
-            <span className={styles.stripFrame} style={{left: `calc(${frame[0] * 100}% - 6px)`, width: `calc(${(frame[1] - frame[0]) * 100}% + 12px)`}} />
-          </div>
-          <div className={styles.stripLabels}>
-            <span>{dayOf(entries[0].writtenAt)}</span>
-            <span className={styles.now}>{t.years.now}</span>
-          </div>
-        </div>
-        <div ref={scroller} className={styles.list} tabIndex={0} aria-label={t.years.timeline} onScroll={syncFrame}>
+        <div ref={scroller} className={styles.list} tabIndex={0} aria-label={t.years.timeline}>
           {newestFirst.map(({entry, index}, position) => {
             const older = newestFirst[position + 1]?.entry;
             const startsDay = position === 0 || dayOf(newestFirst[position - 1].entry.writtenAt) !== dayOf(entry.writtenAt);
             const dark = nightness(entry.writtenAt) > 0.45;
+            // Meteors only cross the first stretch of night; lower rows just twinkle.
+            const firstNight = dark && !newestFirst.slice(0, position).some(({entry: above}) => nightness(above.writtenAt) > 0.45);
             return (
               <div key={entry.id} className={styles.row} data-index={index} data-dark={dark || undefined}
                 style={{'--sky': skyAt(entry.writtenAt), '--sky-next': skyAt((older || entry).writtenAt), '--night': nightness(entry.writtenAt)}}>
+                {nightness(entry.writtenAt) > 0.15 ? (
+                  <Starfield className={styles.rowStars} meteors={firstNight}
+                    style={{opacity: nightness(entry.writtenAt)}} />
+                ) : null}
                 {startsDay ? (
                   <p className={styles.dayHead}>{dayOf(entry.writtenAt)}{isToday(entry.writtenAt) ? ` ${t.years.today}` : ''}</p>
                 ) : null}
@@ -324,9 +313,7 @@ function SignalSheet({entries, onReply, onSource, onClosed, busy, ownSignals, on
           {dusk.map(({index}) => (
             <span key={`dusk-${index}`} className={styles.duskGlow} aria-hidden="true" style={{left: `calc(${anchorOf(index)} - 210px)`}} />
           ))}
-          <div className={styles.stars} aria-hidden="true" style={{WebkitMaskImage: `linear-gradient(90deg, ${skyStops(nightStops)})`, maskImage: `linear-gradient(90deg, ${skyStops(nightStops)})`}}>
-            <span className={styles.starsA} /><span className={styles.starsB} />
-          </div>
+          <Starfield className={styles.stars} style={{WebkitMaskImage: `linear-gradient(90deg, ${skyStops(nightStops)})`, maskImage: `linear-gradient(90deg, ${skyStops(nightStops)})`}} />
           <div className={styles.axis} aria-hidden="true" />
           {entries.map((entry, index) => {
             const lane = index % 3;
