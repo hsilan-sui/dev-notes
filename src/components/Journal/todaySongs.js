@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-10-21',
+    title: '應該',
+    artist: '楊乃文',
+    // Official audio from the "楊乃文 - Topic" channel.
+    youtubeId: 'ORObi9p1QnE',
+    src: '',
+  },
+  {
     date: '2026-10-18',
     title: '再見莫妮卡',
     artist: '彭席彥 / Franky弗蘭奇',
