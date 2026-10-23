@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-10-23',
+    title: '光',
+    artist: '陳粒',
+    // Site-owner-selected upload from the "Release - Topic" channel.
+    youtubeId: 'w87JelvIevo',
+    src: '',
+  },
+  {
     date: '2026-10-21',
     title: '應該',
     artist: '楊乃文',
