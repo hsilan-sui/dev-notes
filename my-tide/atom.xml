@@ -2,11 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://hsilan-sui.github.io/dev-notes/my-tide</id>
     <title>意識潮 | My Tide Blog</title>
-    <updated>2026-10-08T00:00:00.000Z</updated>
+    <updated>2026-10-25T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://hsilan-sui.github.io/dev-notes/my-tide"/>
     <subtitle>意識潮 | My Tide Blog</subtitle>
     <icon>https://hsilan-sui.github.io/dev-notes/img/icon-tide-round.svg</icon>
+    <entry>
+        <title type="html"><![CDATA[失落文字博物館]]></title>
+        <id>https://hsilan-sui.github.io/dev-notes/my-tide/lost-words</id>
+        <link href="https://hsilan-sui.github.io/dev-notes/my-tide/lost-words"/>
+        <updated>2026-10-25T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[有些話，沉默了將近兩千年。]]></summary>
+        <content type="html"><![CDATA[<p>有些話，沉默了將近兩千年。</p>
+<p>一卷被火山燒黑的書，還留著沒有人讀到的句子。</p>
+<p>走進失落文字博物館，看看我們如何一點一點，讓那些字重新被看見。</p>
+<a href="https://hsilan-sui.github.io/dev-notes/%E5%A4%B1%E8%90%BD%E6%96%87%E5%AD%97%E5%8D%9A%E7%89%A9%E9%A4%A8/">繼續閱讀 →</a>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[一個週五下班的日常]]></title>
         <id>https://hsilan-sui.github.io/dev-notes/my-tide/friday-after-work</id>
