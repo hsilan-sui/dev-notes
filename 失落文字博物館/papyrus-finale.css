@@ -1,0 +1,53 @@
+/* Scoped to Step 8 of the standalone museum; use the exhibit's existing tokens. */
+.LostWords_papyrusFinale {
+  display: grid;
+  gap: var(--journal-space-md);
+  min-width: 0;
+}
+.LostWords_papyrusFinale .LostWords_papyrusReveal {
+  transform-box: view-box;
+  transform-origin: 84px 120px;
+  transform: scaleX(1);
+  transition: transform 1.4s cubic-bezier(.22, 1, .36, 1);
+}
+.LostWords_papyrusFinale .LostWords_papyrusRoll {
+  opacity: 0;
+  transform: translateX(0);
+  transition: transform 1.4s cubic-bezier(.22, 1, .36, 1), opacity .2s linear;
+  pointer-events: none;
+}
+.LostWords_papyrusFinale[data-phase="rolling"] .LostWords_papyrusReveal,
+.LostWords_papyrusFinale[data-phase="rolled"] .LostWords_papyrusReveal { transform: scaleX(0); }
+.LostWords_papyrusFinale[data-phase="rolling"] .LostWords_papyrusRoll,
+.LostWords_papyrusFinale[data-phase="rolled"] .LostWords_papyrusRoll {
+  opacity: 1;
+  transform: translateX(-192px);
+}
+.LostWords_papyrusFinale .LostWords_throughTime {
+  display: grid;
+  gap: var(--journal-space-xs);
+  padding: var(--journal-space-md);
+  border: 1px solid color-mix(in srgb, var(--journal-museum-accent) 30%, transparent);
+  border-radius: var(--journal-space-xs);
+  background: color-mix(in srgb, var(--journal-museum-accent) 7%, transparent);
+  color: var(--journal-museum-ink);
+  font-size: 15px;
+  line-height: 1.85;
+  animation: papyrus-time-in 1.6s ease-out both;
+}
+@keyframes papyrus-time-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.LostWords_papyrusFinale .LostWords_workButtons button {
+  min-height: var(--journal-touch-target);
+  max-width: 100%;
+  white-space: normal;
+}
+.LostWords_papyrusFinale .LostWords_workStage {
+  scroll-margin-top: calc(var(--lw-bar) + var(--journal-space-sm));
+}
+.LostWords_papyrusFinale[data-reduced-motion="true"] * { animation: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .LostWords_papyrusFinale * { animation: none; transition: none; }
+}

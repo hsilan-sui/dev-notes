@@ -9,14 +9,19 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-Hant</language>
         <item>
-            <title><![CDATA[失落文字博物館]]></title>
+            <title><![CDATA[一本本無法被翻開的書]]></title>
             <link>https://hsilan-sui.github.io/dev-notes/my-tide/lost-words</link>
             <guid>https://hsilan-sui.github.io/dev-notes/my-tide/lost-words</guid>
             <pubDate>Sun, 25 Oct 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[有些話，沉默了將近兩千年。]]></description>
-            <content:encoded><![CDATA[<p>有些話，沉默了將近兩千年。</p>
-<p>一卷被火山燒黑的書，還留著沒有人讀到的句子。</p>
-<p>走進失落文字博物館，看看我們如何一點一點，讓那些字重新被看見。</p>
+            <description><![CDATA[想像你手上有一本書，卻無法翻開任何一頁。
+
+    近兩千年前，義大利一場火山爆發，
+    讓這個想像成了真實。
+不打開書，也能讀懂嗎？]]></description>
+            <content:encoded><![CDATA[<p>想像你手上有一本書，卻無法翻開任何一頁。</p>
+<p>近兩千年前，義大利一場火山爆發，<br>
+讓這個想像成了真實。</p>
+<p>不打開書，也能讀懂嗎？</p>
 <a href="https://hsilan-sui.github.io/dev-notes/%E5%A4%B1%E8%90%BD%E6%96%87%E5%AD%97%E5%8D%9A%E7%89%A9%E9%A4%A8/">繼續閱讀 →</a>]]></content:encoded>
         </item>
         <item>

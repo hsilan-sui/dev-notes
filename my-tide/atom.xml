@@ -8,14 +8,19 @@
     <subtitle>意識潮 | My Tide Blog</subtitle>
     <icon>https://hsilan-sui.github.io/dev-notes/img/icon-tide-round.svg</icon>
     <entry>
-        <title type="html"><![CDATA[失落文字博物館]]></title>
+        <title type="html"><![CDATA[一本本無法被翻開的書]]></title>
         <id>https://hsilan-sui.github.io/dev-notes/my-tide/lost-words</id>
         <link href="https://hsilan-sui.github.io/dev-notes/my-tide/lost-words"/>
         <updated>2026-10-25T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[有些話，沉默了將近兩千年。]]></summary>
-        <content type="html"><![CDATA[<p>有些話，沉默了將近兩千年。</p>
-<p>一卷被火山燒黑的書，還留著沒有人讀到的句子。</p>
-<p>走進失落文字博物館，看看我們如何一點一點，讓那些字重新被看見。</p>
+        <summary type="html"><![CDATA[想像你手上有一本書，卻無法翻開任何一頁。
+
+    近兩千年前，義大利一場火山爆發，
+    讓這個想像成了真實。
+不打開書，也能讀懂嗎？]]></summary>
+        <content type="html"><![CDATA[<p>想像你手上有一本書，卻無法翻開任何一頁。</p>
+<p>近兩千年前，義大利一場火山爆發，<br>
+讓這個想像成了真實。</p>
+<p>不打開書，也能讀懂嗎？</p>
 <a href="https://hsilan-sui.github.io/dev-notes/%E5%A4%B1%E8%90%BD%E6%96%87%E5%AD%97%E5%8D%9A%E7%89%A9%E9%A4%A8/">繼續閱讀 →</a>]]></content>
     </entry>
     <entry>
