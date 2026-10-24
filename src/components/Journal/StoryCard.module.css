@@ -91,6 +91,7 @@
 
 .preview {
   margin: 0;
+  white-space: pre-wrap;
   color: var(--journal-ink-secondary);
   font-family: var(--journal-font-article), 'Noto Serif TC', serif;
   font-size: 17px;

@@ -82,9 +82,9 @@ function normalizeEntries(items) {
       return {
         title: metadata.title || frontMatter.title || '',
         formattedDate: metadata.formattedDate || dateFormatter.format(dateFromDayKey(dayKey)),
-        readingTimeMinutes: normalizeReadingTime(metadata.readingTime),
+        readingTimeMinutes: normalizeReadingTime(frontMatter.readingTimeMinutes ?? metadata.readingTime),
         imageUrl: frontMatter.image || undefined,
-        previewText: metadata.description || frontMatter.description || undefined,
+        previewText: frontMatter.description || metadata.description || undefined,
         tags: normalizeTags(metadata.tags || frontMatter.tags),
         // How this entry asks to be read, e.g. `immerse: hover` (Experiment 001).
         immerse: frontMatter.immerse || undefined,

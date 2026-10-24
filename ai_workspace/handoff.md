@@ -87,7 +87,7 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 | 越讀越深（依閱讀進度變深） | 上線 | `readingDepth.js`、tokens `--journal-deep-*` |
 | 返回大爆炸 | 上線（Codex 改成 `CosmicReturn`） | `CosmicReturn.jsx` |
 | 〈一個週五下班的日常〉、熊貓騎士 | 上線（Codex） | `src/components/MyTide/*`、`specs/journal-friday-film-*`、`journal-panda-rider-*` |
-| 〈失落文字博物館〉 | 2026-10-25 新增（Codex） | `blog/2026-10-25-lost-words/index.mdx`，首頁維持文字卡片與「繼續閱讀」，摘要「有些話，沉默了將近兩千年。」；`readingUrl` 連至 `static/失落文字博物館/index.html` 的獨立互動展覽（Claude 製作）。展覽圖片路徑兼容有／無尾端斜線，返回按鈕連回意識潮。 |
+| 〈一本本無法被翻開的書〉／失落文字博物館 | 2026-10-25 新增（Codex） | `blog/2026-10-25-lost-words/index.mdx`，首頁維持文字卡片與「繼續閱讀」，閱讀時間指定 3 分鐘，摘要以「想像你手上有一本書，卻無法翻開任何一頁。」開頭，保留分行與中段縮排（卡片文案於 2026-10-25 更新，末句「不打開書，也能讀懂嗎？」）；`readingUrl` 連至 `static/失落文字博物館/index.html` 的獨立互動展覽（Claude 製作）。展覽圖片路徑兼容有／無尾端斜線，返回按鈕連回意識潮。 |
 | 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（依日期收錄站主選曲，用 YouTube 嵌入；「歌單 ▾」在播放條前面。目前：10/23〈光〉陳粒（站主指定影片 w87JelvIevo）、10/21〈應該〉楊乃文（官方 Topic 音源）、10/18〈快高長大〉及〈再見莫妮卡〉彭席彥 / Franky弗蘭奇（站主指定的 Dreamer Music 歌詞影片）、10/17〈五月之戀〉Enno 宅錄 demo。同一天可有多首，預設選取當天或之前最新日期的第一首；10/23 起為〈光〉。打開任何文章或影片時，歌會停止、YouTube 視窗會關閉） |
 | YouTube 播放器 | 上線 | `TodaySong.jsx`：1180px 以下（平板、手機）在播放條正下方「嵌入」頁面、不浮動；1180px 以上是角落小電視（可拖曳，位置存在 localStorage `mytide.tv.corner`），會自動換到不蓋住 BB Call／語言選單／站內廣播的角落，z-index 1250 壓在面板上面。**沒有縮小功能、不用 CSS 藏 iframe**（YouTube 規定播放中必須看得見、至少 200×200） |
 | BB Call 兩岸、紅點傳送、回訊提示 | 上線，**訊號已保存在 D1** | `SignalRiver.jsx`、`SignalPager.jsx`：260px（窄平板 0.82、手機 0.66，用 CSS `zoom`；寫訊號的 sheet 不縮放）、兩行點陣螢幕（DotGothic16）、◀ ▶ 翻閱記憶、待機時每 40～90 秒隨機「回音」重播最後收到的訊息、收到時輕微震動（Android 實際震動）、表情符號 120 個 |
@@ -108,6 +108,8 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 - 較早的稿在 `design/component.pen`（v2～v7），只能透過 Pencil MCP 讀寫。「訊號摺子 v7」已由噗浪感的訊號光年取代。
 
 ## 6. 已知問題與技術債
+
+- **Step 8 微調（2026-10-25）**：`static/失落文字博物館/papyrus-finale.js` 與 `papyrus-finale.css` 是獨立展覽最後一步的可編輯來源，由 HTML 載入，沿用其 React、SVG 筆跡與設計 tokens。新增書寫完成、收捲／展開與完成書寫後的提示；原 Step 1–7 未改。狀態為 ready／writing／written／rolling／rolled／unrolling，筆跡只在 Erase 或 Make another 時清除。Through Time 暫沿用既有 `workshop.closing`，因需求貼文的 B「Ink & Fiber」、C 文案與部分狀態條款缺漏，待補。驗收腳本 `scripts/check-papyrus-finale.cjs` 需外部 playwright-core；此 Mac 使用 1.55.1 與 webkit-2203。Chrome 的既有隱藏輔助表格會撐大展覽 scrollWidth，但 Step 8 與展覽可見元素在指定七種寬度沒有溢出。
 
 1. **列表頁只拿得到截斷版 MDX**：〈大爆炸〉靠把 `<!-- truncate -->` 放在全文最後繞過。長期需要讓時間軸取得全文的正式管道。
 2. **YouTube 嵌入的限制**：播放中的播放器必須看得見、至少 200×200，不能被蓋住或調成透明。閱讀時會自動暫停、讓閱讀層蓋住，回來再繼續播。如果要「看不到影片、只有聲音」，必須改用有授權的音檔（`todaySongs.js` 的 `src`）。
