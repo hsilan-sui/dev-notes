@@ -32,6 +32,11 @@ async function check(type, name, executablePath) {
     await controls.getByRole('button', {name: 'Play', exact: true}).click();
     await page.waitForFunction(() => document.querySelector('[aria-labelledby="lw-eruption-title"] input').value === '1');
     await controls.getByRole('button', {name: 'Pause', exact: true}).click();
+    await page.setViewportSize({width: 390, height: 844});
+    assert.match(await model.innerText(), /Fixed side view/);
+    await eruption.locator('.LostWords_scrubTicks button').nth(3).click();
+    assert.ok(await model.getByText('Buried about 20 m deep', {exact: true}).isVisible());
+    await model.screenshot({path: `/private/tmp/mytide-step8-qa/${name}-volcano.png`});
 
     const workshop = page.locator('[aria-labelledby="lw-workshop-title"]');
     await workshop.locator('.LostWords_overviewFlow button').nth(2).click();
@@ -63,7 +68,7 @@ async function check(type, name, executablePath) {
     assert.equal(await tools.getByRole('button', {name: /剝成薄片/}).count(), 1);
     assert.equal(await workshop.getByRole('button', {name: '剝下一片', exact: true}).count(), 1);
     assert.deepEqual(errors, []);
-    console.log(`${name}: model controls, playback, persistent cutting choices, help, bilingual labels, seven widths PASS`);
+    console.log(`${name}: model controls, playback, fixed-view label, burial label, persistent cutting choices, help, bilingual labels, seven widths PASS`);
   } finally { await browser.close(); }
 }
 (async () => {
