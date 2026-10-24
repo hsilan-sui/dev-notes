@@ -109,6 +109,8 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 
 ## 6. 已知問題與技術債
 
+- **展品操作位置（2026-10-25）**：火山模型的上一刻／下一刻／播放放在模型正上方；「看看今天的現場」仍在下方。製紙第 3 步的「切成直條／剝成薄片」持續顯示在工作台內，上方有「？」可展開操作及兩種切法的說明；切換切法會重置本步切條進度，選薄片時動作按鈕顯示「剝下一片」。測試腳本 `scripts/check-exhibit-controls.cjs`。
+
 - **Step 8 微調（2026-10-25）**：`static/失落文字博物館/papyrus-finale.js` 與 `papyrus-finale.css` 是獨立展覽最後一步的可編輯來源，由 HTML 載入，沿用其 React、SVG 筆跡與設計 tokens。新增書寫完成、收捲／展開與完成書寫後的提示；原 Step 1–7 未改。狀態為 ready／writing／written／rolling／rolled／unrolling，筆跡只在 Erase 或 Make another 時清除。Through Time 暫沿用既有 `workshop.closing`，因需求貼文的 B「Ink & Fiber」、C 文案與部分狀態條款缺漏，待補。驗收腳本 `scripts/check-papyrus-finale.cjs` 需外部 playwright-core；此 Mac 使用 1.55.1 與 webkit-2203。Chrome 的既有隱藏輔助表格會撐大展覽 scrollWidth，但 Step 8 與展覽可見元素在指定七種寬度沒有溢出。
 
 1. **列表頁只拿得到截斷版 MDX**：〈大爆炸〉靠把 `<!-- truncate -->` 放在全文最後繞過。長期需要讓時間軸取得全文的正式管道。
