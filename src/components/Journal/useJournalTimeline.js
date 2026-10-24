@@ -89,6 +89,7 @@ function normalizeEntries(items) {
         // How this entry asks to be read, e.g. `immerse: hover` (Experiment 001).
         immerse: frontMatter.immerse || undefined,
         readingExperience: frontMatter.readingExperience || undefined,
+        readingUrl: frontMatter.readingUrl || undefined,
         // Optional reading-space treatments for immersive entries (Experiment 001).
         immerseDepth: frontMatter.immerseDepth || undefined,
         immerseReturn: frontMatter.immerseReturn || undefined,

@@ -11,6 +11,7 @@ import {RiderExperience} from '../MyTide/PandaRider/PandaRider';
 
 export default function StoryCard({entry, expanded, onExpand, onCollapse, immerse}) {
   const imageUrl = useBaseUrl(entry?.imageUrl || '/');
+  const readingUrl = useBaseUrl(entry?.readingUrl || '/');
   const isFilm = entry?.readingExperience === 'friday-film';
   const departureButton = useRef(null);
   const cardOrigin = useRef(null);
@@ -134,10 +135,17 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
           </div>
         ) : null}
         {!isImmersive ? (
+          entry.readingUrl ? (
+          <a className={styles.cta} href={readingUrl}>
+            <span>繼續閱讀</span>
+            <Icon name="arrow-right" className={styles.ctaIcon} />
+          </a>
+          ) : (
           <button ref={departureButton} type="button" className={styles.cta} onClick={onExpand}>
             <span>{isFilm ? '坐一會' : entry.readingExperience === 'panda-rider' ? '接單出發' : '繼續閱讀'}</span>
             <Icon name="arrow-right" className={styles.ctaIcon} />
           </button>
+          )
         ) : null}
       </div>
     </article>
