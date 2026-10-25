@@ -6,6 +6,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import {FridayFilmExperience} from '../MyTide/FridayFilm/FridayFilm';
 import Icon from './Icon.jsx';
 import CosmicReturn from './CosmicReturn';
+import useCountEntryOpen from './useCountEntryOpen.js';
 import styles from './StoryCard.module.css';
 import {RiderExperience} from '../MyTide/PandaRider/PandaRider';
 
@@ -16,6 +17,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
   const departureButton = useRef(null);
   const cardOrigin = useRef(null);
   const [cosmicReturning, setCosmicReturning] = useState(false);
+  const countEntryOpen = useCountEntryOpen();
   const returningFromRide = useRef(false);
   useEffect(() => {
     if (!expanded && !cosmicReturning && returningFromRide.current) {
@@ -136,7 +138,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
         ) : null}
         {!isImmersive ? (
           entry.readingUrl ? (
-          <a className={styles.cta} href={readingUrl}>
+          <a className={styles.cta} href={readingUrl} onClick={() => countEntryOpen(entry.slug)}>
             <span>繼續閱讀</span>
             <Icon name="arrow-right" className={styles.ctaIcon} />
           </a>

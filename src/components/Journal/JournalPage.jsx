@@ -6,6 +6,7 @@ import ImmerseReader from './ImmerseReader.jsx';
 import SiteBroadcast from './SiteBroadcast.jsx';
 import SiteCounter from './SiteCounter.jsx';
 import {SignalLangProvider} from './signalI18n.js';
+import useCountEntryOpen from './useCountEntryOpen.js';
 import useHoverIntent from './useHoverIntent.js';
 import useJournalTimeline from './useJournalTimeline.js';
 import './tokens.css';
@@ -133,6 +134,13 @@ function JournalPageContent({items = [], metadata}) {
   }, [currentDayKey, timeline.days]);
 
   const currentEntry = currentDay?.entries[currentEntryIndex] || currentDay?.entries[0] || null;
+
+  // Expanded in place or immersed: the reader opened this entry.
+  const countEntryOpen = useCountEntryOpen();
+  const openedSlug = isExpanded || immersePhase === 'open' ? currentEntry?.slug : null;
+  useEffect(() => {
+    countEntryOpen(openedSlug);
+  }, [countEntryOpen, openedSlug]);
 
   useEffect(() => {
     if (currentEntry) {

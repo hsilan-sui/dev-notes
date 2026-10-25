@@ -21,6 +21,8 @@ const segmenter = new Intl.Segmenter('zh-Hant', {granularity: 'grapheme'});
 const ONLINE_WINDOW_MS = 90_000;
 const COUNTER_CALLS_PER_MINUTE = 20;
 const SESSION_ID = /^[0-9a-f]{32}$/;
+// A story card's slug: the last segment of its permalink.
+const ENTRY_SLUG = /^[\p{L}\p{N}_-]{1,80}$/u;
 
 export default {
   async fetch(request, env) {
@@ -56,6 +58,10 @@ async function route(request, env) {
 
   if (pathname === '/api/counter' && request.method === 'POST') {
     return countVisit(request, env);
+  }
+
+  if (pathname === '/api/entry-open' && request.method === 'POST') {
+    return countEntryOpen(request, env);
   }
 
   const match = pathname.match(/^\/api\/signals\/([^/]+)$/);
@@ -306,6 +312,27 @@ async function countVisit(request, env) {
   const totals = {visit: {today: 0, total: 0}, view: {today: 0, total: 0}};
   for (const row of counts.results) totals[row.kind] = {today: row.today, total: row.total};
   return json({online: online.results[0].n, visits: totals.visit, views: totals.view});
+}
+
+// A reader opened a story card. The page only reports each entry once per tab.
+async function countEntryOpen(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({error: '請求格式無效'}, 400);
+  }
+  if (!body || typeof body.slug !== 'string' || !ENTRY_SLUG.test(body.slug)) {
+    return json({error: '請求格式無效'}, 400);
+  }
+  if (!(await allowWrite(env.DB, `counter:${clientAddress(request)}`, COUNTER_CALLS_PER_MINUTE))) {
+    return json({error: 'too many requests'}, 429);
+  }
+
+  await env.DB.prepare(`
+    INSERT INTO entry_opens (day, slug, count) VALUES (?1, ?2, 1)
+    ON CONFLICT (day, slug) DO UPDATE SET count = count + 1`).bind(taipeiDay(Date.now()), body.slug).run();
+  return new Response(null, {status: 204});
 }
 
 function taipeiDay(time) {
