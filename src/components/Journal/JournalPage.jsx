@@ -89,6 +89,41 @@ function JournalPageContent({items = [], metadata}) {
     }
   }, [timeline.mostRecentDayKey]);
 
+  // `/my-tide#lost-words` opens straight onto that entry's card; an unknown hash
+  // leaves the page on the most recent day.
+  const [scrollToEntry, setScrollToEntry] = useState(false);
+  useEffect(() => {
+    function openEntryFromHash() {
+      const slug = decodeHash(window.location.hash);
+      if (!slug) {
+        return;
+      }
+      for (const day of timeline.days) {
+        const index = day.entries.findIndex((entry) => entry.slug === slug);
+        if (index !== -1) {
+          setCurrentDayKey(day.dayKey);
+          setCurrentEntryIndex(index);
+          setScrollToEntry(true);
+          return;
+        }
+      }
+    }
+    openEntryFromHash();
+    window.addEventListener('hashchange', openEntryFromHash);
+    return () => window.removeEventListener('hashchange', openEntryFromHash);
+  }, [timeline.days]);
+
+  useEffect(() => {
+    if (!scrollToEntry) {
+      return;
+    }
+    setScrollToEntry(false);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    contentRef.current?.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'});
+    // Already down at the story: the phone cue offers the way back up.
+    setCueUp(true);
+  }, [scrollToEntry]);
+
   const currentDay = useMemo(() => {
     if (!currentDayKey) {
       return null;
@@ -236,4 +271,13 @@ function JournalPageContent({items = [], metadata}) {
       <div className={styles.liveRegion} aria-live="polite" aria-atomic="true">{announcement}</div>
     </main>
   );
+}
+
+function decodeHash(hash) {
+  const raw = hash.replace(/^#/, '');
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
 }

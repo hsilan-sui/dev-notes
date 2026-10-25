@@ -95,6 +95,8 @@ function normalizeEntries(items) {
         immerseReturn: frontMatter.immerseReturn || undefined,
         immerseReturnLine: frontMatter.immerseReturnLine || undefined,
         permalink: metadata.permalink,
+        // The last permalink segment, so `/my-tide#lost-words` can point at this entry.
+        slug: slugFromPermalink(metadata.permalink),
         date: dateFromDayKey(dayKey),
         dayKey,
         realEntryIndex: 0,
@@ -104,6 +106,14 @@ function normalizeEntries(items) {
       };
     })
     .filter(Boolean);
+}
+
+function slugFromPermalink(permalink) {
+  if (typeof permalink !== 'string') {
+    return undefined;
+  }
+
+  return permalink.split('/').filter(Boolean).pop();
 }
 
 function normalizeReadingTime(readingTime) {
