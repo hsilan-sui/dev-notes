@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-10-25',
+    title: 'diminished',
+    artist: 'Enno',
+    // Official music video from Enno Cheng's own channel (@enno_cheng).
+    youtubeId: 'H3pplvE-DO4',
+    src: '',
+  },
+  {
     date: '2026-10-23',
     title: '光',
     artist: '陳粒',
