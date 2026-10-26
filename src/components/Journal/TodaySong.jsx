@@ -44,19 +44,20 @@ function SongPicker({index, todayKey, onChoose}) {
 
   useEffect(() => {
     const closeOutside = (event) => {
-      if (!pickerRef.current?.contains(event.target)) pickerRef.current.open = false;
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) pickerRef.current.open = false;
     };
     document.addEventListener('pointerdown', closeOutside);
-    return () => document.removeEventListener('pointerdown', closeOutside);
+    document.addEventListener('focusin', closeOutside);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('focusin', closeOutside);
+    };
   }, []);
 
   return (
     <details
       ref={pickerRef}
       className={styles.days}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
-      }}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           event.currentTarget.open = false;
@@ -116,6 +117,7 @@ export default function TodaySong() {
   const [notice, setNotice] = useState('');
   const song = songsByDate[index];
   const resolvedSrc = useBaseUrl(song.src || '/');
+  const audioBaseUrl = useBaseUrl('/');
   const src = song.src ? resolvedSrc : '';
 
   // The mini TV (desktop and tablet): YouTube's player must stay fully
@@ -335,20 +337,38 @@ export default function TodaySong() {
     }
   }
 
-  function chooseDay(nextIndex) {
-    if (nextIndex === index) {
+  async function chooseDay(nextIndex) {
+    const nextSong = songsByDate[nextIndex];
+    setNotice('');
+    if (nextIndex !== index) {
+      audioRef.current?.pause();
+      setIndex(nextIndex);
+      setCurrent(0);
+      setDuration(NaN);
+      setPlaying(false);
+    }
+
+    // Selecting a song is an explicit request to listen, including when the
+    // same song was selected before. Open the visible player on this click.
+    setShowEmbed(Boolean(nextSong.youtubeId));
+    if (nextSong.youtubeId) {
+      setStarted(true);
+      if (nextIndex === index && showEmbed) command('playVideo');
       return;
     }
 
-    // Switching days keeps listening if a song was playing.
-    if (!playing) {
-      setShowEmbed(false);
+    if (!nextSong.src) {
+      setNotice('音源尚未設定');
+      return;
     }
-    audioRef.current?.pause();
-    setIndex(nextIndex);
-    setCurrent(0);
-    setDuration(NaN);
-    setPlaying(false);
+    try {
+      const audio = audioRef.current;
+      if (nextIndex !== index) audio.src = `${audioBaseUrl}${nextSong.src.replace(/^\//, '')}`;
+      await audio.play();
+      setStarted(true);
+    } catch {
+      setNotice('暫時無法播放');
+    }
   }
 
   const label = `${song.title} — ${song.artist}`;
