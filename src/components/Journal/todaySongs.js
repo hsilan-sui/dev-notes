@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-10-26',
+    title: '全世界失眠',
+    artist: 'Eason',
+    // Site-owner-selected upload from the "Kou" channel (@kou19).
+    youtubeId: 'E6A_cwM7PWY',
+    src: '',
+  },
+  {
     date: '2026-10-25',
     title: 'diminished',
     artist: 'Enno',
