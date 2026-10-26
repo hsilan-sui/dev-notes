@@ -399,6 +399,20 @@
   text-overflow: ellipsis;
 }
 
+.youtubeLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  color: var(--journal-player-line);
+  font: 12px var(--journal-font-body);
+  text-decoration: underline;
+}
+
+.youtubeLink:hover {
+  color: var(--journal-player-divider);
+}
+
 .embedDate {
   margin-left: auto;
   color: #9aa2aa;
@@ -494,6 +508,11 @@
   .embedCaption {
     justify-content: center;
     color: var(--journal-ink-secondary);
+  }
+
+  .youtubeLink,
+  .youtubeLink:hover {
+    color: var(--journal-player-blue);
   }
 
   .embedCaption .eq span {

@@ -151,7 +151,7 @@ export default function TodaySong() {
   }, []);
 
   function startDrag(event) {
-    if (phone || event.button !== 0 || event.target.closest('button, iframe')) return;
+    if (phone || event.button !== 0 || event.target.closest('button, iframe, a')) return;
     const box = embedRef.current.getBoundingClientRect();
     event.currentTarget.setPointerCapture(event.pointerId);
     setDrag({dx: event.clientX - box.left, dy: event.clientY - box.top, x: box.left, y: box.top});
@@ -180,7 +180,7 @@ export default function TodaySong() {
   const [freeCorner, setFreeCorner] = useState(null);
   useEffect(() => {
     if (!showEmbed || phone) return undefined;
-    const SIZE = {w: 224, h: 260};
+    const SIZE = {w: 224, h: embedRef.current?.offsetHeight || 304};
     const M = 24;
     const rectFor = (name) => {
       const top = name[0] === 't', left = name[1] === 'l';
@@ -415,7 +415,7 @@ export default function TodaySong() {
         key={youtubeId}
         ref={iframeRef}
         src={`${YOUTUBE_ORIGIN}/embed/${youtubeId}?autoplay=1&enablejsapi=1&playsinline=1&rel=0&origin=${encodeURIComponent(window.location.origin)}`}
-        title={`${label}（YouTube 官方音源）`}
+        title={`${label}（YouTube 播放器）`}
         allow="autoplay; encrypted-media; picture-in-picture"
         referrerPolicy="strict-origin-when-cross-origin"
         onLoad={() => {
@@ -431,6 +431,14 @@ export default function TodaySong() {
         <span className={styles.embedTitle}>〈{song.title}〉— {song.artist}</span>
         <span className={styles.embedDate}>{shortDate(song.date)}</span>
       </p>
+      <a
+        className={styles.youtubeLink}
+        href={`https://www.youtube.com/watch?v=${youtubeId}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        在 YouTube 聽這首歌 ↗
+      </a>
     </div>
   ) : null;
 

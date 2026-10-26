@@ -136,3 +136,5 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 - 視流量決定是否需要移到自架主機：`backend/MyTide.Api` 和 Dockerfile 已經準備好；改用 GCP 時，要先設 NT$300 的預算提醒（提醒只會通知、不會自動停止扣款）。
 
 - **歌單點歌修正（2026-10-26）**：點選任一首會開啟對應 YouTube 播放器，重選同首會送出 playVideo。`scripts/check-song-picker.cjs` 以 Chrome／WebKit 觸控驗證七種寬度、歌曲 ID 切換、同首續播指令及捲動；測試替換第三方 iframe，不代表實際音訊輸出驗證。
+
+- **YouTube 播放退路（2026-10-26）**：實際嵌入測試時，站主指定的〈全世界失眠〉回覆「無法播放這部影片」；保留指定影片，不更換版本。播放器下方提供「在 YouTube 聽這首歌」直接連結；iframe 標題改稱 YouTube 播放器，不將非官方上傳標為官方音源。

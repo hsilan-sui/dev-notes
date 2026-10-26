@@ -28,6 +28,7 @@ async function check(type, name, executablePath) {
       await iframe.waitFor({state: 'visible'});
       assert.match(await iframe.getAttribute('src'), /\/E6A_cwM7PWY\?autoplay=1/);
       assert.equal(await summary.locator('..').getAttribute('open'), null);
+      assert.equal(await page.getByRole('link', {name: '在 YouTube 聽這首歌 ↗'}).getAttribute('href'), 'https://www.youtube.com/watch?v=E6A_cwM7PWY');
       // Safari can blur the summary without focusing the tapped button.
       // Assert the source actually changes, not merely that the menu closes.
       await summary.tap();
