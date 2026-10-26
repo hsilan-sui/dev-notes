@@ -46,7 +46,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
       <article className={`${styles.card} ${styles.expanded}`}>
         {entry.imageUrl ? <img className={styles.image} src={imageUrl} alt="" loading="lazy" /> : null}
         <div className={`${styles.body} ${styles.expandedBody}`}>
-          <button type="button" className={styles.backLink} onClick={onCollapse}>
+          <button type="button" className={styles.backLink} onClick={returnFromExperience}>
             <Icon name="arrow-left" className={styles.ctaIcon} />
             <span>返回意識潮</span>
           </button>
@@ -77,7 +77,7 @@ export default function StoryCard({entry, expanded, onExpand, onCollapse, immers
               </BlogPostProvider>
             </div>
           ) : null}
-          <button type="button" className={styles.backLink} onClick={onCollapse}>
+          <button type="button" className={styles.backLink} onClick={returnFromExperience}>
             <Icon name="arrow-left" className={styles.ctaIcon} />
             <span>返回意識潮</span>
           </button>

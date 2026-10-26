@@ -71,7 +71,8 @@ export default function ImmerseReader({entry, originRef, onCloseStart, onClosed}
   const animationsRef = useRef([]);
   const closingRef = useRef(false);
   const deepens = entry.immerseDepth === 'deepen';
-  const singularity = entry.immerseReturn === 'singularity';
+  // Every reading ends in stardust unless an entry asks to fold back into its card.
+  const singularity = entry.immerseReturn !== 'collapse';
 
   const stopAnimations = useCallback(() => {
     animationsRef.current.forEach((animation) => animation.cancel());

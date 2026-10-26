@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import clsx from 'clsx';
 import JournalContentArea from './JournalContentArea.jsx';
 import JournalHero from './JournalHero.jsx';
+import CosmicReturn from './CosmicReturn';
 import ImmerseReader from './ImmerseReader.jsx';
 import SiteBroadcast from './SiteBroadcast.jsx';
 import SiteCounter from './SiteCounter.jsx';
@@ -91,8 +92,16 @@ function JournalPageContent({items = [], metadata}) {
   }, [timeline.mostRecentDayKey]);
 
   // `/my-tide#lost-words` opens straight onto that entry's card; an unknown hash
-  // leaves the page on the most recent day.
+  // leaves the page on the most recent day. `?return=stardust` (coming back from
+  // a reading page such as the museum) arrives through the stardust instead.
   const [scrollToEntry, setScrollToEntry] = useState(false);
+  const [stardustArrival, setStardustArrival] = useState(false);
+  // The card right after the content anchor, looked up when the stardust starts.
+  const arrivalOriginRef = useMemo(() => ({
+    get current() {
+      return contentRef.current?.nextElementSibling?.querySelector('article') || null;
+    },
+  }), []);
   useEffect(() => {
     function openEntryFromHash() {
       const slug = decodeHash(window.location.hash);
@@ -104,7 +113,16 @@ function JournalPageContent({items = [], metadata}) {
         if (index !== -1) {
           setCurrentDayKey(day.dayKey);
           setCurrentEntryIndex(index);
-          setScrollToEntry(true);
+          const params = new URLSearchParams(window.location.search);
+          if (params.get('return') === 'stardust') {
+            // Only once: a reload or a shared link opens plainly.
+            params.delete('return');
+            const query = params.toString();
+            window.history.replaceState(window.history.state, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
+            setStardustArrival(true);
+          } else {
+            setScrollToEntry(true);
+          }
           return;
         }
       }
@@ -273,6 +291,15 @@ function JournalPageContent({items = [], metadata}) {
           originRef={immerseCardRef}
           onCloseStart={handleImmerseCloseStart}
           onClosed={handleImmerseClosed}
+        />
+      ) : null}
+      {stardustArrival ? (
+        <CosmicReturn
+          originRef={arrivalOriginRef}
+          onComplete={() => {
+            setStardustArrival(false);
+            setCueUp(true);
+          }}
         />
       ) : null}
       <SiteCounter />

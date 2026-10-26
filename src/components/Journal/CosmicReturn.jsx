@@ -14,6 +14,12 @@ export default function CosmicReturn({originRef, onComplete, lockScroll = true, 
   useLayoutEffect(() => {
     const node = layer.current;
     const root = document.documentElement;
+    // The layer already covers the page, so bring the card into view under it:
+    // after a long article or another page, it may be (partly) out of sight.
+    const card = originRef.current?.getBoundingClientRect();
+    if (card && (card.top < 0 || card.bottom > innerHeight)) {
+      originRef.current.scrollIntoView({block: 'center', behavior: 'instant'});
+    }
     const oldOverflow = root.style.overflow;
     if (lockScroll) root.style.overflow = 'hidden';
     node.focus({preventScroll: true});
