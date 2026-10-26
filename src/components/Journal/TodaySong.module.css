@@ -39,19 +39,6 @@
   flex: 0 0 auto;
 }
 
-/* A tiny dropdown of the days; the native select stays invisible on top of
-   the small label so it remains keyboard- and screen-reader-friendly. */
-.daySelect {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  margin: 0;
-  opacity: 0;
-  /* Invisible, but iOS Safari still zooms into controls under 16px. */
-  font-size: 16px;
-  cursor: pointer;
-}
-
 .dayLabel {
   /* A solid pill, so readers can see there are more songs to pick. */
   display: inline-flex;
@@ -66,7 +53,64 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   white-space: nowrap;
+  list-style: none;
+  cursor: pointer;
   transition: background var(--journal-motion-hover-transition);
+}
+
+.dayLabel::-webkit-details-marker {
+  display: none;
+}
+
+.songList {
+  position: absolute;
+  top: calc(100% + var(--journal-space-xs));
+  left: 0;
+  z-index: 1300;
+  box-sizing: border-box;
+  width: min(264px, calc(100vw - 2 * var(--journal-space-md)));
+  max-height: min(220px, 40vh);
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--journal-player-blue) var(--journal-player-divider);
+  padding: var(--journal-space-xs);
+  border: 1px solid var(--journal-player-line);
+  border-radius: var(--journal-space-xs);
+  background: var(--journal-bg);
+}
+
+.songList::-webkit-scrollbar { width: 6px; }
+.songList::-webkit-scrollbar-track { background: var(--journal-player-divider); }
+.songList::-webkit-scrollbar-thumb {
+  background: var(--journal-player-blue);
+  border-radius: var(--journal-radius-pill);
+}
+
+.songOption {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: var(--journal-space-xs);
+  border: 0;
+  border-radius: var(--journal-space-xs);
+  background: transparent;
+  color: var(--journal-ink-secondary);
+  font: 13px/1.5 var(--journal-font-body);
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.songOption:hover,
+.songOption[aria-pressed='true'] {
+  background: var(--journal-player-divider);
+}
+
+.songOption:focus-visible {
+  outline: 2px solid var(--journal-accent);
+  outline-offset: -2px;
 }
 
 .days:hover .dayLabel {
@@ -482,11 +526,10 @@
     height: 22px;
   }
 
-  /* Phones: a larger invisible tap area over the small pill. */
-  .compactRow .daySelect {
+  .compactRow .dayLabel::after {
+    position: absolute;
     inset: -11px -4px;
-    width: auto;
-    height: auto;
+    content: '';
   }
 
   .compact {

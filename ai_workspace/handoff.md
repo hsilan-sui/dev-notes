@@ -88,7 +88,7 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 | 返回大爆炸 | 上線（Codex 改成 `CosmicReturn`） | `CosmicReturn.jsx` |
 | 〈一個週五下班的日常〉、熊貓騎士 | 上線（Codex） | `src/components/MyTide/*`、`specs/journal-friday-film-*`、`journal-panda-rider-*` |
 | 〈一本本無法被翻開的書〉／失落文字博物館 | 2026-10-25 新增（Codex） | `blog/2026-10-25-lost-words/index.mdx`，首頁維持文字卡片與「繼續閱讀」，閱讀時間指定 3 分鐘，摘要以「想像你手上有一本書，卻無法翻開任何一頁。」開頭，保留分行與中段縮排（卡片文案於 2026-10-25 更新，末句「不打開書，也能讀懂嗎？」）；`readingUrl` 連至 `static/失落文字博物館/index.html` 的獨立互動展覽（Claude 製作）。展覽圖片路徑兼容有／無尾端斜線，返回按鈕連回意識潮。 |
-| 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（依日期收錄站主選曲，用 YouTube 嵌入；「歌單 ▾」在播放條前面。目前：10/26〈全世界失眠〉Eason（站主指定的 Kou 頻道影片 E6A_cwM7PWY，已確認上線）、10/25〈diminished〉Enno、10/23〈光〉陳粒（站主指定影片 w87JelvIevo）、10/21〈應該〉楊乃文（官方 Topic 音源）、10/18〈快高長大〉及〈再見莫妮卡〉彭席彥 / Franky弗蘭奇（站主指定的 Dreamer Music 歌詞影片）、10/17〈五月之戀〉Enno 宅錄 demo。同一天可有多首，預設選取當天或之前最新日期的第一首；10/26 起為〈全世界失眠〉（已確認上線，歌曲提交 9c2c5e2）。打開任何文章或影片時，歌會停止、YouTube 視窗會關閉） |
+| 送給『今天』的歌 | 上線 | `TodaySong.jsx`、`todaySongs.js`（依日期收錄站主選曲，用 YouTube 嵌入；「歌單 ▾」在播放條前面；2026-10-26 改為頁面內可捲動清單（最高 220px／40vh、13px 歌曲文字、44px 點選高度，支援選曲後收起、點外側與 Escape 關閉），Chrome 與 WebKit 七種寬度驗證通過。目前：10/26〈全世界失眠〉Eason（站主指定的 Kou 頻道影片 E6A_cwM7PWY，已確認上線）、10/25〈diminished〉Enno、10/23〈光〉陳粒（站主指定影片 w87JelvIevo）、10/21〈應該〉楊乃文（官方 Topic 音源）、10/18〈快高長大〉及〈再見莫妮卡〉彭席彥 / Franky弗蘭奇（站主指定的 Dreamer Music 歌詞影片）、10/17〈五月之戀〉Enno 宅錄 demo。同一天可有多首，預設選取當天或之前最新日期的第一首；10/26 起為〈全世界失眠〉（已確認上線，歌曲提交 9c2c5e2）。打開任何文章或影片時，歌會停止、YouTube 視窗會關閉） |
 | YouTube 播放器 | 上線 | `TodaySong.jsx`：1180px 以下（平板、手機）在播放條正下方「嵌入」頁面、不浮動；1180px 以上是角落小電視（可拖曳，位置存在 localStorage `mytide.tv.corner`），會自動換到不蓋住 BB Call／語言選單／站內廣播的角落，z-index 1250 壓在面板上面。**沒有縮小功能、不用 CSS 藏 iframe**（YouTube 規定播放中必須看得見、至少 200×200） |
 | BB Call 兩岸、紅點傳送、回訊提示 | 上線，**訊號已保存在 D1** | `SignalRiver.jsx`、`SignalPager.jsx`：260px（窄平板 0.82、手機 0.66，用 CSS `zoom`；寫訊號的 sheet 不縮放）、兩行點陣螢幕（DotGothic16）、◀ ▶ 翻閱記憶、待機時每 40～90 秒隨機「回音」重播最後收到的訊息、收到時輕微震動（Android 實際震動）、表情符號 120 個 |
 | 回覆的對應 | 上線 | 每台 BB Call 的 ◀ ▶ 記憶只放「對岸傳來的」訊息，所以讀了再回，一定回到對岸；訊號光年的回覆由 `replyBankFor` 決定（串裡最後一個聲音的對岸）。桌機在訊號光年按「回一句」時，回覆的那台會浮到面板前（`data-floating`），送出後回覆直接出現在串裡 |
@@ -120,7 +120,7 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 5. **動態 emoji** 還沒做：決定只用 Google Noto Animated Emoji（CC BY 4.0），下載圖檔前要先徵得站主同意並標註出處。
 6. **多個 Agent 同時改檔**：之前 Claude Code 與 Codex 同時修改同一批檔案，差點互相覆蓋。請一次只讓一個 Agent 負責一個區塊，交接時更新本文件。
 7. **頁面容器用 `overflow-x: clip`**（`JournalPage.module.css`），不要改回 `hidden`：`hidden` 會讓 main 變成自己的捲動框，多一條捲軸並吃掉滑鼠滾輪。
-8. **手機表單元件字級至少 16px**（寫訊號的輸入框、自訂語氣、語言選單、歌單 select）：小於 16px 時 iOS Safari 會放大整頁，讀者就得左右滑。
+8. **手機表單元件字級至少 16px**（寫訊號的輸入框、自訂語氣、語言選單；歌單已改為按鈕清單，不受輸入欄位縮放限制）：小於 16px 時 iOS Safari 會放大整頁，讀者就得左右滑。
 9. **BB Call 在手機的縮放比例**（`SignalPager.module.css`，用 `zoom`）：390–596px 0.66、360–389px 0.6、359px 以下 0.52，確保兩台並排不重疊。寫訊號的 sheet 不縮放：浮在可見畫面上方、寬度 ≤ 340px；鍵盤打開或正在輸入自訂語氣時進入精簡模式（`data-compact`）。
 10. **RWD 守則寫在 `CLAUDE.md`**：改版面後要在 320／375／390／834／1080／1280／1440px 檢查，Chrome 和 WebKit 都要。
 11. **計數器沒有擋機器人**：爬蟲也會被算進瀏覽人次（每個 IP 每分鐘最多 20 次）。

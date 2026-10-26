@@ -39,6 +39,53 @@ function shortDate(dayKey) {
   return `${Number(month)}/${Number(day)}`;
 }
 
+function SongPicker({index, todayKey, onChoose}) {
+  const pickerRef = useRef(null);
+
+  useEffect(() => {
+    const closeOutside = (event) => {
+      if (!pickerRef.current?.contains(event.target)) pickerRef.current.open = false;
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    return () => document.removeEventListener('pointerdown', closeOutside);
+  }, []);
+
+  return (
+    <details
+      ref={pickerRef}
+      className={styles.days}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          event.currentTarget.open = false;
+          event.currentTarget.querySelector('summary').focus();
+        }
+      }}
+    >
+      <summary className={styles.dayLabel}>歌單 ▾</summary>
+      <div className={styles.songList} role="group" aria-label="選擇哪一天的歌">
+        {songsByDate.map((item, i) => (
+          <button
+            key={`${item.date}-${item.youtubeId || item.src}`}
+            type="button"
+            className={styles.songOption}
+            aria-pressed={i === index}
+            onClick={() => {
+              onChoose(i);
+              pickerRef.current.open = false;
+              pickerRef.current.querySelector('summary').focus();
+            }}
+          >
+            {`${item.date === todayKey ? '今天' : shortDate(item.date)}　${item.title} — ${item.artist}`}
+          </button>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 function PlayIcon({playing}) {
   return playing ? (
     <svg className={styles.icon} viewBox="0 0 10 10" aria-hidden="true">
@@ -310,25 +357,9 @@ export default function TodaySong() {
   const showMarquee = playing;
   const level = Math.round(volume * VOLUME_STEPS);
 
-  // 「歌單 ▾」: a native select laid invisibly over the pill, shown on phones too.
+  // A bounded in-page list keeps a growing playlist scrollable on phones.
   const dayPicker = (
-    <span className={styles.days}>
-      <select
-        className={styles.daySelect}
-        value={index}
-        aria-label="選擇哪一天的歌"
-        onChange={(event) => chooseDay(Number(event.target.value))}
-      >
-        {songsByDate.map((item, i) => (
-          <option key={`${item.date}-${item.youtubeId || item.src}`} value={i}>
-            {`${item.date === todayKey ? '今天' : shortDate(item.date)}　${item.title} — ${item.artist}`}
-          </option>
-        ))}
-      </select>
-      <span className={styles.dayLabel} aria-hidden="true">
-        歌單 ▾
-      </span>
-    </span>
+    <SongPicker index={index} todayKey={todayKey} onChoose={chooseDay} />
   );
 
   // One player, two homes: a corner of the screen on desktop and tablet,
