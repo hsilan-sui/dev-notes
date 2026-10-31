@@ -11,8 +11,8 @@ const todaySongs = [
     date: '2026-10-31',
     title: 'Merry Christmas Mr. Lawrence - FYI',
     artist: '宇多田光',
-    // Official audio from the "Utada - Topic" channel.
-    youtubeId: 'sMf4FZtylgw',
+    // Site-owner-selected IN THE FLESH 2010 live upload from Akemi Kpop.
+    youtubeId: 'digJoKxsBl4',
     src: '',
   },
   {
