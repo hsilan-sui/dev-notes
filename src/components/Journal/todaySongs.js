@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-10-31',
+    title: 'Merry Christmas Mr. Lawrence - FYI',
+    artist: '宇多田光',
+    // Official audio from the "Utada - Topic" channel.
+    youtubeId: 'sMf4FZtylgw',
+    src: '',
+  },
+  {
     date: '2026-10-26',
     title: '全世界失眠',
     artist: 'Eason',
