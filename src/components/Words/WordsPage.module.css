@@ -117,19 +117,19 @@
 .page {padding-block:var(--words-md);}
 .nav {margin-inline:var(--words-md);font-size:10px;}
 .intro {margin:var(--words-lg) var(--words-md) 0;}
-.intro h1 {font-size:32px;}
+.intro h1 {font-size:28px;}
 .titleLine {column-gap:var(--words-sm);row-gap:var(--words-xs);}
 .currentTheme {font-size:9px;padding-left:var(--words-sm);}
 .intro p {margin-top:var(--words-xs);}
 .intro small {font-size:10px;}
 .viewport {height:530px;}
-.originWorld {flex-basis:72px;width:72px;height:68px;}
-.originAura {width:112px;height:112px;}
-.originSphere {width:62px;height:62px;}
-.originOrbitBack {width:92px;height:36px;}
-.originOrbitFront {width:98px;height:38px;}
-.originContinentOne {width:29px;height:22px;left:7px;top:14px;}
-.originContinentTwo {width:22px;height:26px;right:8px;bottom:10px;}
+.originWorld {flex-basis:62px;width:62px;height:60px;}
+.originAura {width:92px;height:92px;}
+.originSphere {width:52px;height:52px;}
+.originOrbitBack {width:78px;height:30px;}
+.originOrbitFront {width:84px;height:32px;}
+.originContinentOne {width:24px;height:18px;left:6px;top:12px;}
+.originContinentTwo {width:18px;height:22px;right:7px;bottom:8px;}
 .planet {width:220px;height:190px;}
 .planetText strong {font-size:34px;}
 .planetText small {font-size:10px;}
