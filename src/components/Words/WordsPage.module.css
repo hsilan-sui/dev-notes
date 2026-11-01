@@ -116,7 +116,7 @@
 @media(max-width:700px) {
 .page {padding-block:var(--words-md);}
 .nav {margin-inline:var(--words-md);font-size:10px;}
-.intro {margin:var(--words-lg) var(--words-md) 0;}
+.intro {margin:var(--words-md) var(--words-md) 0;}
 .intro h1 {font-size:28px;}
 .titleLine {column-gap:var(--words-sm);row-gap:var(--words-xs);}
 .currentTheme {font-size:9px;padding-left:var(--words-sm);}
