@@ -1,4 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
+import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import {flushSync} from 'react-dom';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import SignalPager from './SignalPager.jsx';
@@ -95,6 +97,7 @@ const easeInOut = (t) => 0.5 - Math.cos(Math.PI * t) / 2;
 // bank (MT02). A released signal travels along the wave as a red point and
 // arrives, unsigned, at the other bank.
 export default function SignalRiver({onSelectDay}) {
+  const wordsUrl = useBaseUrl('/my-tide/words');
   const {lang, t, setLang} = useSignalLang();
   const {siteConfig} = useDocusaurusContext();
   const apiBase = String(siteConfig.customFields?.signalApiBaseUrl || '').replace(/\/$/, '');
@@ -527,14 +530,21 @@ export default function SignalRiver({onSelectDay}) {
               : t.river.local}
         </span>
       ) : null}
-      <SignalLightYears
-        entries={history}
-        busy={sending}
-        ownSignals={ownSignals}
-        onDeleteOwn={deleteOwnSignal}
-        onReply={replyFromHistory}
-        onSource={source => onSelectDay?.(source.dayKey)}
-      />
+      <div className={styles.exploreLinks}>
+        <SignalLightYears
+          entries={history}
+          busy={sending}
+          ownSignals={ownSignals}
+          onDeleteOwn={deleteOwnSignal}
+          onReply={replyFromHistory}
+          onSource={source => onSelectDay?.(source.dayKey)}
+        />
+        <Link className={styles.wordsEntry} to={wordsUrl}>
+          <span className={styles.wordsEntryPlanet} aria-hidden="true"><i /></span>
+          <span className={styles.wordsEntryCopy}><strong>詞語星圖</strong><small>詞源・詞根・詞綴</small></span>
+          <span className={styles.wordsEntryArrow} aria-hidden="true">↗</span>
+        </Link>
+      </div>
       <span className={styles.trailLayer} aria-hidden="true">
         {[0, 1, 2, 3, 4].map((index) => (
           <span

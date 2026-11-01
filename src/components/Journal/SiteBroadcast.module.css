@@ -286,8 +286,8 @@
 }
 
 .archive summary::-webkit-details-marker {display:none;}
-.archive summary::after {content:'＋';margin-left:auto;color:var(--journal-accent);}
-.archive[open] summary::after {content:'－';}
+.archive summary::after {content:'＋';display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;margin-left:auto;border:1px solid var(--journal-accent);border-radius:50%;background:var(--journal-accent-soft);color:var(--journal-ink);font:700 17px/1 var(--journal-font-body),sans-serif;box-shadow:0 2px 5px rgba(38,41,46,.12);}
+.archive[open] summary::after {content:'−';background:var(--journal-ink);color:#fff;border-color:var(--journal-ink);}
 .archivedText {padding-bottom:12px;}
 
 @media (max-width: 596px) {

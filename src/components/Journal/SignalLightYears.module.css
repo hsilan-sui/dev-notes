@@ -1,8 +1,13 @@
 .trigger { position: absolute; left: var(--journal-space-lg); bottom: var(--journal-space-md); display: flex; gap: var(--journal-space-sm); align-items: center; min-height: var(--journal-touch-target); padding: var(--journal-space-xs) var(--journal-space-sm); border: 0; background: transparent; color: var(--journal-accent); font: 12px var(--journal-font-body), sans-serif; cursor: pointer; pointer-events: auto; }
-.book { display: flex; height: 34px; perspective: 160px; filter: drop-shadow(0 3px 3px var(--journal-lightyears-shadow)); }
-.book i { width: 9px; border: 1px solid var(--journal-lightyears-edge); background: var(--journal-lightyears-paper); transform: skewY(-12deg); }
+.book { position:relative;display: flex;align-items:center;height: 38px;perspective:160px;filter:drop-shadow(0 4px 3px var(--journal-lightyears-shadow)); }
+.book::after {content:'';position:absolute;left:12px;right:-3px;bottom:1px;height:4px;background:#B8B7AB;transform:skewY(-10deg);border-radius:0 0 3px 1px;}
+.book i { position:relative;z-index:1;width: 8px;height:31px;border: 1px solid var(--journal-lightyears-edge);background:linear-gradient(90deg,#fff 0%,var(--journal-lightyears-paper) 76%,#E8E3D5 100%);transform:skewY(-12deg);box-shadow:inset 2px 0 #FFFFFF80; }
 .book i:nth-child(even) { background: var(--journal-accent-soft); transform: skewY(12deg); }
-.book i:first-child { width: 15px; background: var(--journal-accent); }
+.book i:first-child { width: 15px;height:34px;background:linear-gradient(120deg,#7C929E,var(--journal-accent));border-color:#586D7A; }
+.triggerCopy {display:flex;flex-direction:column;align-items:flex-start;gap:3px;}
+.triggerCopy strong {font:500 13px var(--journal-font-heading),serif;letter-spacing:.02em;}
+.triggerCopy small {font:10px var(--journal-font-body),sans-serif;opacity:.72;}
+.triggerArrow {align-self:flex-start;margin-left:4px;font-size:13px;opacity:.7;}
 .unread { position: absolute; top: var(--journal-space-xs); right: var(--journal-space-xs); width: 6px; height: 6px; border-radius: 50%; background: var(--journal-signal); }
 .trigger:focus-visible, .panel button:focus-visible, .river:focus-visible, .list:focus-visible { outline: 2px solid var(--journal-accent); outline-offset: 3px; }
 

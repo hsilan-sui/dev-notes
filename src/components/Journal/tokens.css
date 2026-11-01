@@ -321,3 +321,63 @@
   --journal-film-edge: #53504C;
   --journal-film-width: 460px;
 }
+
+.journal-scope {
+  /* 詞語星圖：沿用閱讀字體，深空探索／紙面展間。 */
+  --words-space: #080D1A;
+  --words-deep: #121E35;
+  --words-ink: #F0EEE8;
+  --words-muted: #B1BED2;
+  --words-blue: #C6DDF5;
+  --words-panel: #152237;
+  --words-edge: #3A4C69;
+  --words-home: #91C9BC;
+  --words-pain: #E4AF8A;
+  --words-paper: #FAF8F1;
+  --words-nebula: #334F7850;
+  --words-violet: #4B3E6840;
+  --words-veil: #030713B8;
+  --words-glow: #C6DDF526;
+  --words-ghost: #C6DDF508;
+  --words-serif: 'Newsreader', 'Noto Serif TC', serif;
+  --words-mono: 'IBM Plex Mono', monospace;
+  --words-body: 'Noto Serif TC', serif;
+  --words-xs: 8px;
+  --words-sm: 16px;
+  --words-md: 24px;
+  --words-lg: 40px;
+  --words-xl: 80px;
+  --words-section: 112px;
+  --words-target: 44px;
+  --words-fast: 180ms;
+}
+.journal-scope {
+  --words-home-reading: #426F65;
+  --words-pain-reading: #8E5033;
+}
+.journal-scope {
+  --words-anatomy-blue: #ACD2F1;
+  --words-anatomy-amber: #E7B58A;
+  --words-anatomy-blue-bg: #0B1622;
+  --words-anatomy-amber-bg: #21160E;
+  --words-anatomy-border: #43505C;
+  --words-anatomy-surface: #080D13;
+}
+.journal-scope {--words-affix:#91C9BC;--words-latin:#C0ADD9;}
+.journal-scope {
+  --words-origin-ocean:#153E58;
+  --words-origin-light:#9BD7E6;
+  --words-origin-land:#6E9D99;
+  --words-origin-ring:#A8C8D9;
+  --words-origin-shadow:#040914;
+}
+.journal-scope {
+  --words-prefix-mono:#80BFF0;
+  --words-prefix-mono-bg:#102236;
+  --words-prefix-poly:#C5A0E7;
+  --words-prefix-poly-bg:#231A30;
+  --words-prefix-without:#E7B26F;
+  --words-prefix-without-bg:#2B2012;
+  --words-prefix-pan:#80CDB8;
+  --words-prefix-pan-bg:#122A25;
+}

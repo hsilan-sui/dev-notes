@@ -388,9 +388,10 @@ export default function SignalLightYears({entries, onReply, onSource, busy, ownS
   const count = entries.length + entries.reduce((sum, entry) => sum + entry.replies.length, 0);
   useEffect(() => { if (open) setSeen(count); }, [open, count]);
   return <>
-    <button ref={trigger} type="button" className={styles.trigger} onClick={() => { setOpen(true); setSeen(count); }} aria-haspopup="dialog" aria-expanded={open}>
+    <button ref={trigger} type="button" className={styles.trigger} data-entry-trigger onClick={() => { setOpen(true); setSeen(count); }} aria-haspopup="dialog" aria-expanded={open}>
       <span className={styles.book} aria-hidden="true"><i /><i /><i /><i /></span>
-      <span>{t.years.trigger(count)}</span><span aria-hidden="true">›</span>
+      <span className={styles.triggerCopy} data-trigger-copy><strong>{t.years.trigger(count)}</strong><small>{t.years.timeline}</small></span>
+      <span className={styles.triggerArrow} data-trigger-arrow aria-hidden="true">↗</span>
       {count > seen ? <span className={styles.unread} aria-label={t.years.unread} /> : null}
     </button>
     {open ? <SignalSheet entries={entries} busy={busy} ownSignals={ownSignals} onDeleteOwn={onDeleteOwn} onReply={entry => { if (!busy) onReply(entry); }} onSource={onSource} onClosed={callback => {

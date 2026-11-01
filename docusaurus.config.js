@@ -76,7 +76,7 @@ const config = {
         // Keep source notes in docs/, but generate no public notes routes.
         docs: false,
         // The former portfolio and Markdown sample are not public pages.
-        pages: {include: ['index.js']},
+        pages: {include: ['index.js', 'my-tide/words/*.jsx']},
         blog: {
           routeBasePath: "my-tide",
           blogTitle: "意識潮 | My Tide",
