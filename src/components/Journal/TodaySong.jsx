@@ -431,14 +431,6 @@ export default function TodaySong() {
         <span className={styles.embedTitle}>〈{song.title}〉— {song.artist}</span>
         <span className={styles.embedDate}>{shortDate(song.date)}</span>
       </p>
-      <a
-        className={styles.youtubeLink}
-        href={`https://www.youtube.com/watch?v=${youtubeId}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        在 YouTube 聽這首歌 ↗
-      </a>
     </div>
   ) : null;
 
