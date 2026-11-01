@@ -1,7 +1,7 @@
 import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import lockJournalScroll from './lockJournalScroll';
-import {BROADCAST_LINE, STATEMENT, STATEMENT_DATE} from './siteStatement.js';
+import {ANNOUNCEMENT, BROADCAST_DATE, BROADCAST_LINE, STATEMENT, STATEMENT_DATE} from './siteStatement.js';
 import {useSignalLang} from './signalI18n.js';
 import styles from './SiteBroadcast.module.css';
 
@@ -38,7 +38,7 @@ function Statement({onClose}) {
         tabIndex={-1} onKeyDown={keys} lang={lang === 'zh' ? 'zh-Hant' : 'en'}>
         <header className={styles.sheetHead}>
           <span className={styles.tag} id="site-statement-title"><span className={styles.dot} aria-hidden="true" />{LABEL[lang]}</span>
-          <span className={styles.date}>{STATEMENT_DATE}</span>
+          <span className={styles.date}>{BROADCAST_DATE}</span>
           <span className={styles.switch} role="group" aria-label="中文 / English">
             <button type="button" aria-pressed={lang === 'zh'} onClick={() => setLang('zh')}>中文</button>
             <button type="button" aria-pressed={lang === 'en'} onClick={() => setLang('en')}>English</button>
@@ -46,9 +46,18 @@ function Statement({onClose}) {
           <button type="button" className={styles.back} onClick={onClose}>{BACK[lang]}</button>
         </header>
         <div className={styles.text}>
-          {STATEMENT[lang].map(([kind, line]) => (
-            <p key={line} className={kind ? styles[kind] : undefined}>{line}</p>
-          ))}
+          <section className={styles.announcement}>
+            <h2>{ANNOUNCEMENT.title[lang]}</h2>
+            {ANNOUNCEMENT[lang].map(line => <p key={line}>{line}</p>)}
+          </section>
+          <details className={styles.archive}>
+            <summary>{lang === 'zh' ? '初始廣播｜關於意識潮 · ' + STATEMENT_DATE : 'Original broadcast · About My Tide · ' + STATEMENT_DATE}</summary>
+            <div className={styles.archivedText}>
+              {STATEMENT[lang].map(([kind, line]) => (
+                <p key={line} className={kind ? styles[kind] : undefined}>{line}</p>
+              ))}
+            </div>
+          </details>
         </div>
       </section>
     </div>,
@@ -90,7 +99,7 @@ export default function SiteBroadcast() {
         <span className={styles.track}>
           <span className={styles.run}>{line}<span aria-hidden="true" className={styles.copy}>{line}</span></span>
         </span>
-        <span className={styles.stamp} aria-hidden="true">{STATEMENT_DATE.slice(5).replace('.', '/')}</span>
+        <span className={styles.stamp} aria-hidden="true">{BROADCAST_DATE.slice(5).replace('.', '/')}</span>
         <button type="button" className={styles.more} aria-haspopup="dialog" onClick={() => setOpen(true)}>more »</button>
       </div>
       {open ? <Statement onClose={close} /> : null}

@@ -263,6 +263,33 @@
   text-align: center;
 }
 
+.announcement h2 {
+  margin: 0 0 18px;
+  color: var(--journal-ink);
+  font: 600 23px/1.5 var(--journal-font-article), 'Noto Serif TC', serif;
+  letter-spacing: .03em;
+}
+
+.archive {
+  margin-top: 28px;
+  border-top: 1px solid var(--journal-card-edge);
+}
+
+.archive summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  color: var(--journal-ink-secondary);
+  font: 12px var(--journal-font-body), sans-serif;
+  cursor: pointer;
+  list-style: none;
+}
+
+.archive summary::-webkit-details-marker {display:none;}
+.archive summary::after {content:'＋';margin-left:auto;color:var(--journal-accent);}
+.archive[open] summary::after {content:'－';}
+.archivedText {padding-bottom:12px;}
+
 @media (max-width: 596px) {
   .wrap {
     padding: 6px 8px 0;
@@ -297,6 +324,8 @@
   .text .lead {
     font-size: 24px;
   }
+
+  .announcement h2 {font-size:21px;}
 }
 
 @media (prefers-reduced-motion: reduce) {

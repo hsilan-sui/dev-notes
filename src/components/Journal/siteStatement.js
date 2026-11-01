@@ -1,10 +1,33 @@
-// 站內廣播: where My Tide stands, in the author's own words. The marquee
-// carries the short line; the full text opens from 「站內廣播」 or 「more »」.
+// 站內廣播: latest owner announcement in the marquee; older statements remain
+// available in the archive inside the broadcast sheet.
+export const BROADCAST_DATE = '2026.11.01';
 export const STATEMENT_DATE = '2026.10.18';
 
 export const BROADCAST_LINE = {
-  zh: '這裡是意識潮——一場沒有預設答案的數位敘事實驗。文字、程式和 AI 混在一起，看看閱讀還能長成什麼樣子。',
-  en: 'This is My Tide — a digital storytelling experiment with no set answer. Words, code and AI mixed together, to see what reading can become.',
+  zh: '站長廣播｜詞語星圖。大學時接觸語言學，最近把詞源、詞根與詞綴整理成可以探索的星圖，歡迎一起玩玩看！',
+  en: 'From linguistics to a word map: explore the histories, roots and affixes behind words in the new Word Atlas.',
+};
+
+export const ANNOUNCEMENT = {
+  title: {zh: '站長廣播｜詞語星圖', en: 'A note from the site owner · Word Atlas'},
+  zh: [
+    '大學時接觸過語言學，一直都對詞源、詞根、詞綴很有興趣。',
+    '總覺得語言是很奇妙的東西。每個詞語都有它的過去，承載著不同時代的文化與價值觀，而意義也隨著人們的使用不斷演變。',
+    '最近開始閱讀詞源故事，意外發現語言背後藏著許多歷史與文化之間的有趣連結。',
+    '既然現在能用程式把這些關係呈現出來，就想試著做做看。',
+    '於是有了「詞語星圖」。',
+    '還在持續摸索，沒有什麼太遠大的計畫，單純覺得這件事很有趣，就來探索探索！',
+    '首頁新增了入口，有興趣的話歡迎一起玩玩看。',
+  ],
+  en: [
+    'I first encountered linguistics at university, and have long been interested in etymology, roots and affixes.',
+    'Language has always felt wonderfully strange to me. Every word has a past, carrying the cultures and values of its time, while its meaning keeps changing as people use it.',
+    'Recently, I started reading stories about word origins and found unexpected connections between language, history and culture.',
+    'Since code can make these relationships visible, I wanted to try building something with them.',
+    'That is how the Word Atlas came about.',
+    'I am still figuring it out, without any grand plan. I simply find it fascinating, and want to keep exploring.',
+    'There is now an entrance on the homepage. Come explore it with me if you like.',
+  ],
 };
 
 // Paragraph kinds: 'lead' opens it, 'turn' is where it turns, 'motto' is the line it stands on.
