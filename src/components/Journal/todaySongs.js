@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-11-09',
+    title: '虛擬',
+    artist: '陳粒',
+    // Site-owner-selected upload from the "Gariber" channel (@GariberZyo).
+    youtubeId: '8zX2fSv_DXY',
+    src: '',
+  },
+  {
     date: '2026-10-31',
     title: 'Merry Christmas Mr. Lawrence - FYI',
     artist: '宇多田光',
