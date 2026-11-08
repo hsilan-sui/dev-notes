@@ -32,7 +32,7 @@
 .originOrbitBack {box-shadow:0 0 12px #9BD7E622;}
 .originOrbitFront {width:136px;height:52px;transform:translate(-50%,-50%) rotate(-19deg);border-color:transparent transparent var(--words-origin-ring);clip-path:inset(50% 0 0);filter:drop-shadow(0 0 6px #A8C8D955);}
 .originOrbitFront i {position:absolute;right:12%;bottom:14%;width:7px;height:7px;border-radius:50%;background:#D5EFF4;box-shadow:0 0 12px 4px #9BD7E677;}
-.planet {position:absolute;transform:translate(-50%,-50%);width:300px;height:232px;border:0;background:none;color:var(--words-ink);padding:0;display:grid;place-items:center;isolation:isolate;}
+.planet {left:var(--planet-x);top:var(--planet-y);position:absolute;transform:translate(-50%,-50%);width:300px;height:232px;border:0;background:none;color:var(--words-ink);padding:0;display:grid;place-items:center;isolation:isolate;}
 .planet {z-index:2;}
 .planetText {position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:var(--words-xs);white-space:nowrap;pointer-events:none;}
 .planetText strong {font:44px var(--words-serif);font-weight:300;}
@@ -353,3 +353,68 @@
 .prefixExamples>div {padding:var(--words-xs) var(--words-sm);border:1px solid color-mix(in srgb,var(--prefix-color) 50%,var(--words-edge));border-radius:8px;background:color-mix(in srgb,var(--prefix-bg) 72%,var(--words-panel));}
 .prefixResult {padding:var(--words-xs);border-radius:8px;background:color-mix(in srgb,var(--prefix-bg) 55%,transparent);}
 .prefixResult strong {color:var(--prefix-color);}
+/* Two new constellations share the reader, each with its own source colour. */
+.earthTopic {--topic-color:var(--words-earth);--topic-surface:var(--words-earth-surface);}
+.waterTopic {--topic-color:var(--words-water);--topic-surface:var(--words-water-surface);}
+.earthPlanet {--words-blue:var(--words-earth);--words-glow:color-mix(in srgb,var(--words-earth) 18%,transparent);}
+.waterPlanet {--words-blue:var(--words-water);--words-glow:color-mix(in srgb,var(--words-water) 18%,transparent);}
+.earthPlanet .planetText strong {color:var(--words-earth);}
+.waterPlanet .planetText strong {color:var(--words-water);}
+.topicArticle .archiveHero h1 {color:var(--topic-color);overflow-wrap:anywhere;}
+.topicArticle strong {font-weight:500;}
+.topicEmblem {height:var(--words-topic-emblem-size);margin-top:var(--words-md);display:grid;place-items:center;}
+.soilEmblem,.waterEmblem {display:block;position:relative;width:var(--words-topic-emblem-size);height:var(--words-topic-emblem-size);border:1px solid var(--words-edge);border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--topic-surface),var(--words-deep));overflow:clip;}
+.soilEmblem::after {content:'';position:absolute;inset:63% 0 0;background:repeating-linear-gradient(0deg,transparent 0 10px,var(--words-edge) 11px 12px),var(--topic-surface);border-top:1px solid var(--topic-color);}
+.soilEmblem i:first-child {position:absolute;left:49%;top:24%;height:48%;width:2px;background:var(--words-home);transform:rotate(6deg);}
+.soilEmblem i:nth-child(2),.soilEmblem i:nth-child(3) {position:absolute;width:28%;height:18%;top:31%;left:26%;border:1px solid var(--words-home);border-radius:0 75% 0 75%;background:var(--words-prefix-pan-bg);transform:rotate(18deg);}
+.soilEmblem i:nth-child(3) {left:49%;top:22%;transform:rotate(-24deg);border-radius:75% 0 75% 0;}
+.waterEmblem::before {content:'';position:absolute;inset:20% 32%;border:1px solid var(--topic-color);border-radius:65% 35% 65% 65%;transform:rotate(-35deg);background:linear-gradient(120deg,var(--words-glow),var(--topic-surface));}
+.waterEmblem i {position:absolute;width:7px;height:7px;border-radius:50%;border:1px solid var(--topic-color);left:20%;top:30%;}
+.waterEmblem i:nth-child(2) {left:76%;top:48%;width:5px;height:5px;}
+.waterEmblem i:nth-child(3) {left:27%;top:75%;width:4px;height:4px;}
+.originSteps {list-style:none;padding:0;margin:var(--words-md) 0;display:grid;gap:var(--words-sm);}
+.originSteps li {position:relative;display:flex;flex-direction:column;gap:var(--words-xs);padding:var(--words-sm);background:var(--topic-surface);border:1px solid var(--words-edge);border-left:2px solid var(--topic-color);border-radius:8px;min-width:0;}
+.originSteps li+li::before {content:'↓';position:absolute;left:var(--words-sm);top:calc(-1 * var(--words-sm));color:var(--topic-color);font:12px var(--words-mono);}
+.originSteps strong {font:26px/1.4 var(--words-serif);color:var(--topic-color);overflow-wrap:anywhere;}
+.originSteps span {font-size:13px;}
+.topicNetwork {position:relative;height:var(--words-topic-network-height);margin-block:var(--words-md);}
+.topicNetwork svg {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.topicNetwork line {stroke:var(--words-edge);stroke-width:.3;}
+.topicNetwork .historyEdge {stroke-dasharray:.6 1;}
+.topicNetwork .selectedTopicEdge {stroke:var(--topic-color);stroke-width:.45;}
+.topicNode {position:absolute;transform:translate(-50%,-50%);width:44%;max-width:240px;min-height:var(--words-target);border:1px solid var(--words-edge);border-radius:10px;padding:var(--words-xs);background:var(--words-panel);color:var(--words-ink);display:flex;flex-direction:column;align-items:center;gap:var(--words-xs);}
+.topicNode strong {font:24px/1.2 var(--words-serif);color:var(--topic-color);max-width:100%;overflow-wrap:anywhere;}
+.topicNode small {font:10px/1.7 var(--words-body);}
+.topicSource {border-style:dotted;background:var(--words-deep);}
+.topicWord {background:var(--topic-surface);}
+.topicNode[aria-pressed=true] {outline:2px solid var(--topic-color);outline-offset:3px;}
+.reader .topicLegend {font:11px/1.9 var(--words-body);color:var(--words-muted);margin-block:var(--words-xs) var(--words-md);}
+.topicDetail {padding:var(--words-sm);border:1px solid var(--words-edge);border-radius:12px;background:var(--words-deep);overflow-wrap:anywhere;}
+.topicDetail>strong {font:28px/1.4 var(--words-serif);color:var(--topic-color);}
+.reader .topicDetail p {font-size:13px;margin-block:var(--words-xs);}
+.comparisonRoutes {display:grid;gap:var(--words-xs);}
+.comparisonRoutes>div {padding:var(--words-sm);border:1px solid var(--words-edge);border-radius:8px;display:flex;flex-direction:column;gap:var(--words-xs);min-width:0;background:var(--topic-surface);}
+.comparisonRoutes strong {font:20px/1.6 var(--words-serif);color:var(--topic-color);overflow-wrap:anywhere;}
+.comparisonRoutes span {font-size:12px;}
+.topicExample {border-left:2px solid var(--topic-color);padding-left:var(--words-sm);margin-block:var(--words-md);}
+.reader .topicExample p {margin-block:var(--words-xs);font-size:14px;}
+.reader .topicExample p[lang=en] {font:22px/1.7 var(--words-serif);}
+.confusablePair {display:grid;grid-template-columns:1fr 1fr;gap:var(--words-xs);}
+.confusablePair>div {display:flex;flex-direction:column;align-items:center;gap:var(--words-xs);border:1px solid var(--words-edge);border-radius:8px;padding:var(--words-sm) var(--words-xs);min-width:0;}
+.confusablePair strong {font:28px var(--words-serif);}
+.confusablePair strong span {color:var(--topic-color);text-decoration:underline;text-underline-offset:4px;}
+.confusablePair>div>span {font-size:11px;text-align:center;}
+.topicAction {min-height:var(--words-target);border:1px solid var(--topic-color);border-radius:6px;padding:var(--words-xs) var(--words-sm);background:var(--topic-surface);color:var(--words-ink);max-width:100%;}
+.topicAction:hover {background:var(--words-deep);}
+.topicEnding h2 {color:var(--topic-color);}
+@media(max-width:700px) {
+  .planet,.nextPlanet {left:var(--planet-mobile-x);top:var(--planet-mobile-y);width:min(44vw,220px);height:190px;}
+  .sphere,.nextPlanet .sphere {width:min(31vw,155px);height:min(31vw,155px);}
+  .orbit,.orbitFront,.nextPlanet .orbit,.nextPlanet .orbitFront {width:min(44vw,220px);height:54px;}
+  .planetText strong {font-size:clamp(22px,4.8vw,34px);}
+  .planetText small {font-size:clamp(8px,1.8vw,10px);}
+  .topicNode strong {font-size:clamp(17px,3.6vw,23px);}
+  .topicNode small {font-size:9px;}
+  .topicArticle .archiveHero h1 {font-size:clamp(40px,10vw,64px);}
+  .confusablePair strong {font-size:24px;}
+}

@@ -8,6 +8,8 @@ import { archive, details, primaryWords } from './archiveData';
 import { initialCamera, zoomAt } from './camera.mjs';
 import styles from './WordsPage.module.css';
 import EnthusiasmArticle, {EnthusiasmColour} from './EnthusiasmArticle';
+import TopicArchive from './TopicArchive';
+import {wordTopics} from './topicData';
 const keys = ['nostos', 'algos', 'nostalgia', 'nostalgic', 'algia', 'neuralgia', 'myalgia'];
 const positions = [[23, 10], [76, 10], [23, 62], [23, 90], [76, 32], [76, 62], [76, 90]];
 const edges = [[0, 2, 'source'], [1, 2, 'source'], [2, 3, 'derived'], [1, 4, 'source'], [4, 2, 'shared'], [4, 5, 'shared'], [4, 6, 'shared']];
@@ -39,7 +41,7 @@ function Family({source='nostalgia'}) {
   </div>;
 }
 function Archive({
-  onClose, word='nostalgia'
+  onClose, onOpen, word='nostalgia'
 }) {
   const [source, selectSource] = useState('nostalgia');
   const dialog = useRef(null);
@@ -50,9 +52,9 @@ function Archive({
   },[onClose]);
   return <div className={styles.backdrop}>
     <section ref={dialog} className={styles.dialog} role="dialog" aria-modal="false" aria-labelledby="archive-title">
-      <header className={styles.dialogBar}><span>WORD ARCHIVE {word==='enthusiasm'?'002':'001'} · 向下捲動閱讀</span><button onClick={onClose} aria-label="關閉展間，返回詞語星圖">收起 ×</button></header>
-      <div className={styles.reader} tabIndex="0" aria-label={`${word==='enthusiasm'?'Enthusiasm':'Nostalgia'} 詞源展間內容`}>
-        {word==='enthusiasm'?<EnthusiasmArticle/>:<article>
+      <header className={styles.dialogBar}><span>WORD ARCHIVE {primaryWords.find(item => item.word === word)?.archive} · 向下捲動閱讀</span><button onClick={onClose} aria-label="關閉展間，返回詞語星圖">收起 ×</button></header>
+      <div className={styles.reader} tabIndex="0" aria-label={`${word} 詞源展間內容`}>
+        {wordTopics[word] ? <TopicArchive word={word} onOpen={onOpen} onClose={onClose}/> : word==='enthusiasm'?<EnthusiasmArticle/>:<article>
           <header className={styles.archiveHero}><small>Word Archive 001｜意識潮</small><h1 id="archive-title"><WordColour word="nostalgia"/></h1><p>思鄉 · 懷舊 · 對過去的眷戀</p><h2>從一種疾病，<br />到一門販賣過去的生意。</h2></header>
           <section className={styles.anatomy} aria-labelledby="anatomy-title">
             <small>01 / WORD ANATOMY</small>
@@ -107,7 +109,7 @@ export default function WordsPage({
   const moved = useRef(false);
   const starts = useRef(new Map());
   const hoverTimer = useRef(null);
-  const small = size.width < 650;
+  const small = size.width <= 700;
   const closeArchive = React.useCallback(() => {
     setOpened(false);
     setPreview(null);
@@ -120,7 +122,7 @@ export default function WordsPage({
 
   };
   useEffect(() => {
-    const pop = () => {const slug=window.location.pathname.replace(/\/$/, '').split('/').at(-1);setOpened(['nostalgia','enthusiasm'].includes(slug)?slug:null);};
+    const pop = () => {const slug=window.location.pathname.replace(/\/$/, '').split('/').at(-1);setOpened(primaryWords.some(item => item.word === slug)?slug:null);};
     window.addEventListener('popstate', pop);
     const resize = new ResizeObserver(([entry]) => setSize({
       width: entry.contentRect.width,
@@ -204,11 +206,6 @@ export default function WordsPage({
     x: size.width / 2,
     y: size.height / 2
   }));
-  const planets = primaryWords.map(p => ({
-    ...p,
-    x: size.width * (small ? p.mobile[0] : p.desktop[0]),
-    y: small ? p.mobile[1] : p.desktop[1]
-  }));
   return <main className={`journal-scope ${styles.page}`} onPointerDown={e=>{if((opened||preview)&&!e.target.closest('[role="dialog"]')&&!e.target.closest('button'))closeArchive();}}>
     <Head><title>詞語星圖｜意識潮 My Tide</title><meta name="description" content="每個詞，都有來處。探索詞源、詞根與詞綴的宇宙。" /></Head>
     <Starfield className={styles.stars} meteors={false} />
@@ -219,7 +216,7 @@ export default function WordsPage({
         <span className={styles.originSphere}><i className={styles.originContinentOne} /><i className={styles.originContinentTwo} /><i className={styles.originLatitude} /></span>
         <span className={styles.originOrbitFront}><i /></span>
       </span>
-      <h1>詞語星圖</h1><span className={styles.currentTheme}>詞源星域 · 人生哲理</span>
+      <h1>詞語星圖</h1><span className={styles.currentTheme}>詞源星域 · 人生與日常</span>
     </div><p>每個詞，都有來處。</p></header>
     <div ref={viewport} className={styles.viewport} tabIndex="0" onKeyDown={e => {
       if (e.target !== e.currentTarget) return;
@@ -242,9 +239,11 @@ export default function WordsPage({
       <div className={styles.world} style={{
         transform: `translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`
       }}>
-        {planets.map(p => <button key={p.word} className={`${styles.planet} ${p.word === 'enthusiasm' ? styles.nextPlanet : ''}`} style={{
-          left: p.x,
-          top: p.y
+        {primaryWords.map(p => <button key={p.word} className={`${styles.planet} ${p.word === 'enthusiasm' ? styles.nextPlanet : ''} ${p.word === 'humble' ? styles.earthPlanet : p.word === 'humidity' ? styles.waterPlanet : ''}`} style={{
+          '--planet-x': `${p.desktop[0] * 100}%`,
+          '--planet-y': `${p.desktop[1]}px`,
+          '--planet-mobile-x': `${p.mobile[0] * 100}%`,
+          '--planet-mobile-y': `${p.mobile[1]}px`
         }} aria-label={`${p.word}，${p.status}`} onPointerEnter={e => {
           if (e.pointerType === 'mouse' && !pointers.current.size) {
             clearTimeout(hoverTimer.current);
@@ -265,7 +264,7 @@ export default function WordsPage({
           <span className={styles.orbit} aria-hidden="true" /><span className={styles.sphere} aria-hidden="true" /><span className={styles.orbitFront} aria-hidden="true" />
           <span className={styles.planetText} style={{
             transform: `scale(${1 / Math.max(.65, camera.scale)})`
-          }}>{camera.scale > .65 && <small>WORD ARCHIVE {p.archive}</small>}<strong>{p.word==='nostalgia'?<WordColour word="nostalgia"/>:<EnthusiasmColour/>}</strong>{camera.scale > .65 && <small>{p.status}</small>}</span>
+          }}>{camera.scale > .65 && <small>WORD ARCHIVE {p.archive}</small>}<strong>{p.word==='nostalgia'?<WordColour word="nostalgia"/>:p.word==='enthusiasm'?<EnthusiasmColour/>:p.word}</strong>{camera.scale > .65 && <small>{p.status}</small>}</span>
         </button>)}
       </div>
     </div>
@@ -273,6 +272,6 @@ export default function WordsPage({
           setCamera(initialCamera());
           setPreview(null);
         }}>重置視角</button></div></footer>
-    {(opened || preview) && <Archive key={opened||preview} word={opened||preview} onClose={closeArchive} />}
+    {(opened || preview) && <Archive key={opened||preview} word={opened||preview} onClose={closeArchive} onOpen={openArchive} />}
   </main>;
 }

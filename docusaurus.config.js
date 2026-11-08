@@ -49,6 +49,7 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   trailingSlash: false,
+  clientModules: ["./src/client/normalizeWordArchiveUrl.js"],
   /**
    * 第二區：功能與外掛設定
    */

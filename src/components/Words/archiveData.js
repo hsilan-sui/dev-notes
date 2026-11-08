@@ -86,16 +86,9 @@ export const details = {
 
 // Coordinates belong to the archive, rather than the canvas: future words
 // can extend beyond the initial viewport and remain reachable by pan/zoom.
-export const primaryWords = [{
-  word: 'nostalgia',
-  archive: '001',
-  status: '思鄉 · 懷舊',
-  desktop: [.21, 205],
-  mobile: [.16, 128]
-}, {
-  word: 'enthusiasm',
-  archive: '002',
-  status: '熱情 · 神聖感召',
-  desktop: [.77, 365],
-  mobile: [.70, 402]
-}];
+export const primaryWords = [
+  {word:'nostalgia', archive:'001', status:'思鄉 · 懷舊', desktop:[.26,170], mobile:[.25,135]},
+  {word:'enthusiasm', archive:'002', status:'熱情 · 神聖感召', desktop:[.74,170], mobile:[.75,135]},
+  {word:'humble', archive:'003', status:'謙卑 · 土地與低處', desktop:[.26,465], mobile:[.25,385]},
+  {word:'humidity', archive:'004', status:'濕度 · 空氣裡的水分', desktop:[.74,465], mobile:[.75,385]},
+];

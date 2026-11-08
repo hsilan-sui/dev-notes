@@ -1,6 +1,6 @@
 # 意識潮 My Tide — 交接文件
 
-> 最後更新：2026-10-18（Claude Code）
+> 最後更新：2026-11-09（Codex）
 > 給下一位接手的人或 AI Agent（Claude Code、Codex）。開始前先讀 `AGENTS.md` 和 `ai_workspace/my-tide-project-context.md`。
 > 每一輪的完整對話紀錄在 Obsidian：`/Users/suihsilan/dev_note_obsidian/04-Projects/意識潮 My Tide/`。
 
@@ -138,3 +138,14 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 - **歌單點歌修正（2026-10-26）**：點選任一首會開啟對應 YouTube 播放器，重選同首會送出 playVideo。`scripts/check-song-picker.cjs` 以 Chrome／WebKit 觸控驗證七種寬度、歌曲 ID 切換、同首續播指令及捲動；測試替換第三方 iframe，不代表實際音訊輸出驗證。
 
 - **YouTube 播放退路（2026-10-26）**：實際嵌入測試時，站主指定的〈全世界失眠〉回覆「無法播放這部影片」；保留指定影片，不更換版本。播放器下方提供「在 YouTube 聽這首歌」直接連結；iframe 標題改稱 YouTube 播放器，不將非官方上傳標為官方音源。
+
+
+## 8. 詞語星圖：Humble 與 Humidity（2026-11-09）
+
+- 主星圖保留 Nostalgia 001、Enthusiasm 002，新增兩顆獨立主詞彙：Humble 003（謙卑）、Humidity 004（濕度）。humility 是謙卑，不是濕度。四顆星球以 CSS 百分比與手機斷點定位，避免 SSR 初載使用桌面像素座標而裁切。
+- 新展間：`src/components/Words/TopicArchive.jsx`；文案、來源、節點與連線：`topicData.js`。沿用既有非模態深色閱讀面板，無語音、無外部圖片。Humble 使用土色／幼苗意象，Humidity 使用水色／水滴意象；色彩沿用 `Journal/tokens.css` 的新增 tokens。
+- Humble 詞族含 humus、humilis、humble、humility、humiliate、humiliation；Modest／modesty 以不同語源比較，《易經》／《老子》獨立為跨文化閱讀。Humidity 保留 humiditas 的名詞借詞路徑，並以不同線型連接 humidify、humidifier、humidification 的現代構詞。節點可選取查看完整歷史路徑；兩展間以「易混淆詞」按鈕互相切換，不建立同源線。
+- 直接入口：`/dev-notes/my-tide/words/humble` 與 `/dev-notes/my-tide/words/humidity`。`static/my-tide/words/**/index.html` 的 aliases 改為包含 baseUrl 的絕對路徑，兼容有／無尾端斜線。`src/client/normalizeWordArchiveUrl.js` 在 Docusaurus 路由預載前移除這五個入口的 `.html`，避免伺服器內容與客戶端路由不同導致重複渲染；保留 query/hash。其他路由不變。
+- 驗證：`npm run build`、既有 `tests/words-camera.test.mjs` 通過；`scripts/check-word-topics.cjs` 以 Chrome 與 WebKit 在 320／375／390／834／1080／1280／1440px 檢查頁面及 reader 無橫向溢位、主星球與詞族節點無重疊、詞族選取、交叉探索、Escape、兩個入口有／無尾端斜線與重載、舊展間及縮放重置。未做手機實機驗證。
+- 本機 QA 使用 `playwright-core@1.55.1`（安裝於 `/private/tmp/mytide-words-qa`）、既有 WebKit 2203 與 Chrome。Docusaurus serve 的 `.html` 轉址會丟失 baseUrl；驗證正式輸出需使用保留 `.html` 的靜態伺服器，將 build 掛在 `/dev-notes/`，再設定 `WORDS_PREVIEW_URL` 執行腳本。
+- 發布沿用 `.github/workflows/deploy.yml`：依站主本輪「直接部署」授權推送 main，建置時仍由 Actions 注入訊號 API URL。
