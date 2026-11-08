@@ -3,7 +3,7 @@
 // Other site paths, query strings and hashes retain their existing behavior.
 if (typeof window !== 'undefined') {
   const {pathname, search, hash} = window.location;
-  if (/\/my-tide\/words(?:\/(?:nostalgia|enthusiasm|humble|humidity))?\.html$/.test(pathname)) {
+  if (/\/my-tide\/words(?:\/(?:nostalgia|enthusiasm|humble|humidity|mission))?\.html$/.test(pathname)) {
     window.history.replaceState(window.history.state, '', `${pathname.slice(0, -5)}${search}${hash}`);
   }
 }

@@ -149,3 +149,12 @@ cd backend/signal-worker && npx wrangler d1 export mytide-signals --remote --out
 - 驗證：`npm run build`、既有 `tests/words-camera.test.mjs` 通過；`scripts/check-word-topics.cjs` 以 Chrome 與 WebKit 在 320／375／390／834／1080／1280／1440px 檢查頁面及 reader 無橫向溢位、主星球與詞族節點無重疊、詞族選取、交叉探索、Escape、兩個入口有／無尾端斜線與重載、舊展間及縮放重置。未做手機實機驗證。
 - 本機 QA 使用 `playwright-core@1.55.1`（安裝於 `/private/tmp/mytide-words-qa`）、既有 WebKit 2203 與 Chrome。Docusaurus serve 的 `.html` 轉址會丟失 baseUrl；驗證正式輸出需使用保留 `.html` 的靜態伺服器，將 build 掛在 `/dev-notes/`，再設定 `WORDS_PREVIEW_URL` 執行腳本。
 - 發布沿用 `.github/workflows/deploy.yml`：依站主本輪「直接部署」授權推送 main，建置時仍由 Actions 注入訊號 API URL。
+
+## 9. Mission 005 與三篇展間格式統一（2026-11-09）
+
+- 新增獨立主詞彙 Mission 005：`/dev-notes/my-tide/words/mission`，內容在 `MissionArticle.jsx` 與 `missionData.js`。主星圖新增第五顆紫色星球，原四顆座標不變；viewport 桌面 900px、手機 780px。
+- **站主明確指定：001 Nostalgia、002 Enthusiasm 是標準格式。** Humble 003、Humidity 004、Mission 005 必須沿用相同的「標題 → WORD ANATOMY 雙欄圖 → WORD FAMILY 高亮關係圖 → THE STORY 短故事 → WORD BUILDING 構詞記憶 → 收合來源」。001／002 本身未更動。往後不要自行增加開場插圖、音標／語音區、長篇例句、獨立詞彙詳解流程或額外哲學專區。
+- 此更新取代第 8 節的初版展間呈現：Humble、Humidity 移除開場圖示、歷史步驟卡、節點詳解框、獨立例句與額外延伸區；故事縮為三段，必要辨識與歷史提醒保留為短註記。`TopicArchive.jsx`、`topicData.js` 沿用既有 anatomy／family／memory／references CSS，`CompactFamily.jsx` 共用 001／002 相同的來源在上、記憶詞在下與點選高亮行為。
+- Mission 保留 21 詞，依「使命與派遣／接受、允許與承擔／提交與屈服／傳遞與發出／省略、中斷與解散」五組可展開詞族圖呈現，預設只展開第一組。mit-/mitt-、miss- 連到共同歷史詞族，commit → commitment 為英語衍生實線；不把 commission 等畫成英文 mission 的直接衍生。故事末段僅簡短保留 Sartre／Frankl 的哲學對照，來源附各詞索引。
+- 新入口 alias 支援有／無尾端斜線，並保留 query/hash；`.html` 網址正規化清單增加 mission。仍沿用原非模態閱讀層、Escape／收起與返回意識潮，不加入語音。
+- 驗證：`npm run build` 與既有 camera test 通過。`scripts/check-mission.cjs` 在 Chrome／WebKit 的 320／375／390／834／1080／1280／1440px 驗證三篇一致的 header／五段順序、短故事、無額外詳解流程、全部 21 詞高亮、anatomy 選取、來源展開、無橫向溢位或節點重疊，以及直接入口、query/hash 與重載。`scripts/check-word-topics.cjs` 亦驗證五顆主星球、舊展間與縮放重置。未做手機實機驗證。

@@ -383,9 +383,8 @@
 }
 .journal-scope {
   --words-earth: #D9B48B;
-  --words-earth-surface: #29231F;
   --words-water: #94D4DF;
-  --words-water-surface: #122D3B;
-  --words-topic-network-height: 720px;
-  --words-topic-emblem-size: 112px;
+}
+.journal-scope {
+  --words-mission: #C8B3EC;
 }

@@ -9,6 +9,7 @@ import { initialCamera, zoomAt } from './camera.mjs';
 import styles from './WordsPage.module.css';
 import EnthusiasmArticle, {EnthusiasmColour} from './EnthusiasmArticle';
 import TopicArchive from './TopicArchive';
+import MissionArticle from './MissionArticle';
 import {wordTopics} from './topicData';
 const keys = ['nostos', 'algos', 'nostalgia', 'nostalgic', 'algia', 'neuralgia', 'myalgia'];
 const positions = [[23, 10], [76, 10], [23, 62], [23, 90], [76, 32], [76, 62], [76, 90]];
@@ -54,7 +55,7 @@ function Archive({
     <section ref={dialog} className={styles.dialog} role="dialog" aria-modal="false" aria-labelledby="archive-title">
       <header className={styles.dialogBar}><span>WORD ARCHIVE {primaryWords.find(item => item.word === word)?.archive} · 向下捲動閱讀</span><button onClick={onClose} aria-label="關閉展間，返回詞語星圖">收起 ×</button></header>
       <div className={styles.reader} tabIndex="0" aria-label={`${word} 詞源展間內容`}>
-        {wordTopics[word] ? <TopicArchive word={word} onOpen={onOpen} onClose={onClose}/> : word==='enthusiasm'?<EnthusiasmArticle/>:<article>
+        {word === 'mission' ? <MissionArticle onClose={onClose}/> : wordTopics[word] ? <TopicArchive word={word} onOpen={onOpen} onClose={onClose}/> : word==='enthusiasm'?<EnthusiasmArticle/>:<article>
           <header className={styles.archiveHero}><small>Word Archive 001｜意識潮</small><h1 id="archive-title"><WordColour word="nostalgia"/></h1><p>思鄉 · 懷舊 · 對過去的眷戀</p><h2>從一種疾病，<br />到一門販賣過去的生意。</h2></header>
           <section className={styles.anatomy} aria-labelledby="anatomy-title">
             <small>01 / WORD ANATOMY</small>
@@ -239,7 +240,7 @@ export default function WordsPage({
       <div className={styles.world} style={{
         transform: `translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`
       }}>
-        {primaryWords.map(p => <button key={p.word} className={`${styles.planet} ${p.word === 'enthusiasm' ? styles.nextPlanet : ''} ${p.word === 'humble' ? styles.earthPlanet : p.word === 'humidity' ? styles.waterPlanet : ''}`} style={{
+        {primaryWords.map(p => <button key={p.word} className={`${styles.planet} ${p.word === 'enthusiasm' ? styles.nextPlanet : ''} ${p.word === 'humble' ? styles.earthPlanet : p.word === 'humidity' ? styles.waterPlanet : p.word === 'mission' ? styles.missionPlanet : ''}`} style={{
           '--planet-x': `${p.desktop[0] * 100}%`,
           '--planet-y': `${p.desktop[1]}px`,
           '--planet-mobile-x': `${p.mobile[0] * 100}%`,

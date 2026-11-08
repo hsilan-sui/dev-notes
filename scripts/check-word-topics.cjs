@@ -44,7 +44,7 @@ async function check(type, name, executablePath) {
       await page.waitForFunction(() => document.querySelector('[aria-label="可平移縮放的主詞彙星圖"]').clientWidth === innerWidth);
       await bounds(page, `${name} ${width} atlas`);
       const planets = await page.locator('button[aria-label*="，"]').evaluateAll(nodes => nodes.map(el => {const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom};}));
-      assert.equal(planets.length,4);
+      assert.equal(planets.length,5);
       for (const r of planets) assert(r.left>=0 && r.right<=width, `${name} ${width} planet is clipped`);
       for (let i=0;i<planets.length;i++) for(let j=i+1;j<planets.length;j++) {
         const a=planets[i], b=planets[j];
@@ -62,17 +62,13 @@ async function check(type, name, executablePath) {
         const node = group.getByRole('button',{name:word==='humble' ? 'humility n. 謙卑' : 'humidification n. 加濕作用',exact:true});
         await node.tap();
         assert.equal(await node.getAttribute('aria-pressed'),'true');
-        assert.match(await page.locator('#topic-node-detail').innerText(),word==='humble' ? /humilitas/ : /-ification/);
+        assert(await group.locator('line[class*=activeEdge]').count()>0,'selected word highlights its family');
         assert.equal(await dialog.locator('audio,video,iframe').count(),0,'no media controls');
         if (width===390 || width===1440) await page.screenshot({path:`/private/tmp/words-${name}-${width}-${word}-family.png`});
-        const next = word==='humble' ? 'humidity' : 'humble';
-        await dialog.getByRole('button',{name:new RegExp(`探索 ${next}`, 'i')}).tap();
-        await page.getByRole('dialog').getByRole('heading',{name:next,exact:true}).waitFor();
-        assert.equal(page.url(),before,'cross-exploration stays in the atlas');
         await page.keyboard.press('Escape');
         await page.getByRole('dialog').waitFor({state:'detached'});
       }
-      console.log(`${name} ${width}: four planets, both graphs, selection, cross-navigation, close, bounds passed`);
+      console.log(`${name} ${width}: five planets, both graphs, selection, compact format, close, bounds passed`);
     }
     for (const word of ['humble','humidity']) {
       for (const suffix of ['', '/']) {

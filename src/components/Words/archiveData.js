@@ -91,4 +91,5 @@ export const primaryWords = [
   {word:'enthusiasm', archive:'002', status:'熱情 · 神聖感召', desktop:[.74,170], mobile:[.75,135]},
   {word:'humble', archive:'003', status:'謙卑 · 土地與低處', desktop:[.26,465], mobile:[.25,385]},
   {word:'humidity', archive:'004', status:'濕度 · 空氣裡的水分', desktop:[.74,465], mobile:[.75,385]},
+  {word:'mission', archive:'005', status:'使命 · 送出與派遣', desktop:[.5,760], mobile:[.5,635]},
 ];
