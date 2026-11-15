@@ -8,6 +8,14 @@
 //   (e.g. '/audio/song.mp3'). Never upload commercial recordings without permission.
 const todaySongs = [
   {
+    date: '2026-11-15',
+    title: 'Feel Good Inc.',
+    artist: 'Gorillaz',
+    // Site-owner-selected upload from the "Minimal Sounds" channel (@MinimalSoundsMusic).
+    youtubeId: '-Fp0aTedjwI',
+    src: '',
+  },
+  {
     date: '2026-11-09',
     title: '虛擬',
     artist: '陳粒',
